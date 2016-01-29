@@ -1,6 +1,6 @@
 # javaroles
 
-A very rudimentary and light weighted implementation of a framework of role object modelling for Java.
+A very rudimentary and light weighted implementation of role object modelling for Java.
 
 Main features are mixin classes and interface name resolution.
 
