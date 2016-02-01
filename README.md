@@ -1,4 +1,4 @@
-# javaroles
+# javaroles ![travis-ci-branch:master](https://travis-ci.org/Mashashi/javaroles.svg?branch=master)
 
 A very rudimentary and light weighted implementation of role object modelling for Java.
 
