@@ -189,7 +189,8 @@ public class ClassUtils {
 		
 		List<String> classNames = new LinkedList<>();
 		File d = new File(path);
-		if(d.isDirectory()){ // If there is single files on classpath they will not be processed
+		if(d.isDirectory()){ 
+			
 			for(String fname : d.list()){
 				if(!path.endsWith("\\")){
 					path += "\\";
@@ -201,13 +202,20 @@ public class ClassUtils {
 					final String currentPkg = pkg+fname+".";
 					classNames.addAll(getAllClassNamesFolder(f.getAbsolutePath(), currentPkg));
 				}else{
-					if(fname.endsWith(".class")){
-						String className = fname.substring(0, fname.length()-".class".length());
-						classNames.add(pkg+className);
-					}
+					processFile(classNames, pkg, fname);
 				}
+				
 			}
+			
+		}else{
+			processFile(classNames, pkg, path);
 		}
 		return classNames;
+	}
+	public static void processFile(List<String> results, String pkg, String fName){
+		if(fName.endsWith(".class")){
+			String className = fName.substring(0, fName.length()-".class".length());
+			results.add(pkg+className);
+		}
 	}
 }
