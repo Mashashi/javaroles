@@ -3,6 +3,9 @@ package pt.mashashi.javaroles;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
+
+import org.apache.log4j.Logger;
 
 import javassist.CannotCompileException;
 import javassist.ClassPool;
@@ -18,6 +21,12 @@ import javassist.NotFoundException;
  *
  */
 public abstract class RoleRegister {
+	
+	protected String roleBusVarName;
+	
+	public RoleRegister(){
+		roleBusVarName = "roleBus"+UUID.randomUUID().toString().replace("-", "");
+	}
 	
 	/**
 	 * 
@@ -63,23 +72,35 @@ public abstract class RoleRegister {
 			CtMethod[] methods = cn.getDeclaredMethods();
 			HashMap<String, CtField> objectRoles = ClassUtils.getTypeFieldAnotated(cn, ObjectForRole.class);
 			
-			for(CtMethod method : methods){
+			methodInj: for(CtMethod method : methods){
 				CtClass i = ClassUtils.definedOnInterface(method, cn);
 				CtField roleObject = objectRoles.get(i!=null?i.getSimpleName():"");
 				
 				boolean isTargetInjection = method.getAnnotation(TurnOffRole.class)==null && (method.getAnnotation(TurnOnRole.class)!=null || roleObject!=null);	
 				if(isTargetInjection){
 					
-					if(!wasInjected)
+					if(!wasInjected){
+						
+						if(cn.isFrozen()){
+							// If the class was already loaded don't patch it. Maybe it was already processed
+							// This happens when running multiple test cases via "mvn test"
+							// The registerRool method will be called multiple times
+							Logger.getLogger(RoleBus.class.getName()).debug(cn.getName()+" is frozen");
+							break methodInj;
+						}
+						
 						cn.addField(
 								CtField.make(
 										getRoleBusDeclaration(), cn
 										)
 								);
+					}
 					
 					injectRoleDependency(cn, method, roleObject);
 					
 					wasInjected = true;
+					
+					Logger.getLogger(RoleBus.class.getName()).debug(cn.getName()+" add code injected in method "+method.getName()+" done");
 					
 				}
 				

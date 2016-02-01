@@ -18,6 +18,7 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 */
 
+
 /**
  * 
  * 
@@ -44,7 +45,7 @@ public class ResolveRoleTest {
 	        };
 	    }
 	}
-	@Rule public SingleTestRule test = new SingleTestRule("testBlockAssigment");*/
+	@Rule public SingleTestRule test = new SingleTestRule("");*/
 	
 	
 	

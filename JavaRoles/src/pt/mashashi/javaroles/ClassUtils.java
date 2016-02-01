@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.log4j.Logger;
+
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtField;
@@ -170,8 +172,13 @@ public class ClassUtils {
 			throw new RuntimeException();
 		}
 		while(e.hasMoreElements()){
-			String path = e.nextElement().toString().substring("file:/".length());
-			classNames.addAll(getAllClassNamesFolder(path));
+			String path = e.nextElement().toString();
+			Logger.getLogger(RoleBus.class).debug("classpath element: "+path);
+			path = path.substring("file:/".length());
+			//System.out.println(path);
+			List<String> found = getAllClassNamesFolder(path);
+			//Logger.getLogger(RoleBus.class).debug("classes found: "+found);
+			classNames.addAll(found);
 		}
 		return classNames;
 	}

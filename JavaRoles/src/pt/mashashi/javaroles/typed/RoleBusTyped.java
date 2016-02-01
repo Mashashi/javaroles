@@ -11,6 +11,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
+import org.apache.log4j.Logger;
 
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseException;
@@ -40,6 +41,9 @@ import pt.mashashi.javaroles.typed.role.ResolveRoleTest;
  */
 public class RoleBusTyped extends RoleBus{
 	
+	
+	private static Logger log = Logger.getLogger(RoleBus.class.getName());
+	
 	// Key - File name
 	private static HashMap<String, CompilationUnit> cus = new HashMap<>();
 	
@@ -59,6 +63,8 @@ public class RoleBusTyped extends RoleBus{
 	
 	@SuppressWarnings("unchecked")
 	public Object resolve(CtMethod methodInvoked, Object[] params) throws MissProcessingException{
+		
+		log.debug("resolve");
 		
 		Object returnByRole = null;
 		
@@ -141,6 +147,8 @@ public class RoleBusTyped extends RoleBus{
 			CtMethod methodInvoked,
 			Object[] params, 
 			String roleName) throws NotFoundException {
+		
+		
 		
 		Object roleReturned = null;
 		
