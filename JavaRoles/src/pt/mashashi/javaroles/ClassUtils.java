@@ -189,24 +189,25 @@ public class ClassUtils {
 		
 		List<String> classNames = new LinkedList<>();
 		File d = new File(path);
-		for(String fname : d.list()){
-			if(!path.endsWith("\\")){
-				path += "\\";
-			}
-			String relativePath = path+fname;
-			File f = new File(relativePath);
-			
-			if(f.isDirectory()){
-				final String currentPkg = pkg+fname+".";
-				classNames.addAll(getAllClassNamesFolder(f.getAbsolutePath(), currentPkg));
-			}else{
-				if(fname.endsWith(".class")){
-					String className = fname.substring(0, fname.length()-".class".length());
-					classNames.add(pkg+className);
+		if(d.isDirectory()){ // If there is single files on classpath they will not be processed
+			for(String fname : d.list()){
+				if(!path.endsWith("\\")){
+					path += "\\";
+				}
+				String relativePath = path+fname;
+				File f = new File(relativePath);
+				
+				if(f.isDirectory()){
+					final String currentPkg = pkg+fname+".";
+					classNames.addAll(getAllClassNamesFolder(f.getAbsolutePath(), currentPkg));
+				}else{
+					if(fname.endsWith(".class")){
+						String className = fname.substring(0, fname.length()-".class".length());
+						classNames.add(pkg+className);
+					}
 				}
 			}
 		}
-		
 		return classNames;
 	}
 }
