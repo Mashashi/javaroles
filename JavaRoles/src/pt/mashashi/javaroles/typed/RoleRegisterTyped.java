@@ -3,6 +3,8 @@ package pt.mashashi.javaroles.typed;
 import java.util.HashMap;
 import java.util.UUID;
 
+import org.apache.log4j.Logger;
+
 import javassist.CannotCompileException;
 import javassist.CtClass;
 import javassist.CtField;
@@ -11,6 +13,7 @@ import javassist.CtNewMethod;
 import javassist.NotFoundException;
 import pt.mashashi.javaroles.ClassUtils;
 import pt.mashashi.javaroles.MissProcessingException;
+import pt.mashashi.javaroles.RoleBus;
 import pt.mashashi.javaroles.RoleRegister;
 
 
@@ -29,6 +32,7 @@ public class RoleRegisterTyped extends RoleRegister{
 	private String srcFolder;
 	
 	public RoleRegisterTyped(String srcFolder) {
+		//System.out.println("Working Directory = " + System.getProperty("user.dir"));
 		this.srcFolder = srcFolder;
 	}
 	
@@ -60,13 +64,14 @@ public class RoleRegisterTyped extends RoleRegister{
 		cn.addMethod(CtNewMethod.copy(method, uuid, cn, null));
 		method.setBody(
 			"{"+
+					Logger.class.getName()+".getLogger("+RoleBus.class.getName()+".class.getName()).debug(\"invoking injected "+roleBusVarName+".resolve() on method: "+name+"\");"+
 					CtMethod.class.getName()+" m = "+ClassUtils.class.getName()+".getExecutingMethod("+
 												"\""+clazzName+"\","+
 												"\""+name+"\","+
 												"\""+sig+"\");"+
 												
 					"try {"+
-						"return ($r) role.resolve(m, $args);"+
+						"return ($r) "+roleBusVarName+".resolve(m, $args);"+
 					"} catch("+MissProcessingException.class.getName()+" e1) {"+
 						invokeMissProcessingCallback+
 					"};"+
@@ -81,7 +86,7 @@ public class RoleRegisterTyped extends RoleRegister{
 
 	@Override
 	protected String getRoleBusDeclaration() {
-		return "private "+RoleBusTyped.class.getName()+" role = new "+RoleBusTyped.class.getName()+"(this,\""+srcFolder+"\");";
+		return "private "+RoleBusTyped.class.getName()+" "+roleBusVarName+" = new "+RoleBusTyped.class.getName()+"(this,\""+srcFolder+"\");";
 	}
 	
 }

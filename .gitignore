@@ -31,3 +31,4 @@ local.properties
 # Folders to ignore
 JavaRoles/notes
 JavaRoles/target
+JavaRoles/log4j

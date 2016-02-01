@@ -21,7 +21,7 @@ import javassist.CtMethod;
  * @see RoleRegister
  */
 public abstract class RoleBus {
-	
+	 
 	protected Object target;
 	
 	// key - rolename
@@ -90,7 +90,6 @@ public abstract class RoleBus {
 		}
 
 		try {
-			
 			Method callback = target.getClass().getMethod("Pre", String.class, CtMethod.class);
 			callback.invoke(target, roleName, methodInvoked);
 		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {

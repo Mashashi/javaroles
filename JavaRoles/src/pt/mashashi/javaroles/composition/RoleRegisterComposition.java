@@ -41,7 +41,7 @@ public class RoleRegisterComposition extends RoleRegister{
 												"\""+sig+"\");"+
 												
 					"try {"+
-						"return ($r) role.resolve(m, $args);"+
+						"return ($r) "+roleBusVarName+".resolve(m, $args);"+
 					"} catch("+MissProcessingException.class.getName()+" e1) {};"+
 					"return ($r) "+ClassUtils.class.getName()+".invokeWithNativeTypes("+
 												"this,"+
@@ -55,7 +55,7 @@ public class RoleRegisterComposition extends RoleRegister{
 
 	@Override
 	protected String getRoleBusDeclaration() {
-		return "private "+RoleBusComposition.class.getName()+" role = new "+RoleBusComposition.class.getName()+"(this);";
+		return "private "+RoleBusComposition.class.getName()+" "+roleBusVarName+" = new "+RoleBusComposition.class.getName()+"(this);";
 	}
 	
 }
