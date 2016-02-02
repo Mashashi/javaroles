@@ -189,12 +189,12 @@ public class ClassUtils {
 		
 		List<String> classNames = new LinkedList<>();
 		File d = new File(path);
+		path = FileUtils.separatorAtEnt(path);
+		
 		if(d.isDirectory()){ 
 			
 			for(String fname : d.list()){
-				if(!path.endsWith("\\")){
-					path += "\\";
-				}
+				
 				String relativePath = path+fname;
 				File f = new File(relativePath);
 				
