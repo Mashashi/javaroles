@@ -174,7 +174,7 @@ public class ClassUtils {
 		while(e.hasMoreElements()){
 			String path = e.nextElement().toString();
 			Logger.getLogger(RoleBus.class).debug("classpath element: "+path);
-			path = path.substring("file:/".length());
+			path = path.substring("file:".length());
 			//System.out.println(path);
 			List<String> found = getAllClassNamesFolder(path);
 			//Logger.getLogger(RoleBus.class).debug("classes found: "+found);

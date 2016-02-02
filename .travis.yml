@@ -2,12 +2,12 @@ language: java
 jdk:
   - oraclejdk8
 ## Run Integration tests
-script: "mvn -f JavaRoles/pom.xml clean"
 
 # All tests that should be run 
-#script: "mvn -f JavaRoles/pom.xml clean && mvn -f JavaRoles/pom.xml -Dtest=pt.mashashi.javaroles.typed.rolemethod.ResolveRoleMethodTest test && mvn -f JavaRoles/pom.xml clean && mvn -f JavaRoles/pom.xml -Dtest=pt.mashashi.javaroles.composition.ResolveRoleMethodTest test && mvn -f JavaRoles/pom.xml clean && mvn -f JavaRoles/pom.xml -Dtest=pt.mashashi.javaroles.typed.role.ResolveRoleTest test && mvn -f JavaRoles/pom.xml clean"
+script: "mvn -f JavaRoles/pom.xml clean && mvn -f JavaRoles/pom.xml -Dtest=pt.mashashi.javaroles.typed.rolemethod.ResolveRoleMethodTest test && mvn -f JavaRoles/pom.xml clean && mvn -f JavaRoles/pom.xml -Dtest=pt.mashashi.javaroles.composition.ResolveRoleMethodTest test && mvn -f JavaRoles/pom.xml clean && mvn -f JavaRoles/pom.xml -Dtest=pt.mashashi.javaroles.typed.role.ResolveRoleTest test && mvn -f JavaRoles/pom.xml clean"
 
 # Reference commands
+#script: "mvn -f JavaRoles/pom.xml clean"
 #mvn compile
 #mvn test
 #script: "mvn -f JavaRoles/pom.xml test && mvn -f JavaRoles/pom.xml verify"
