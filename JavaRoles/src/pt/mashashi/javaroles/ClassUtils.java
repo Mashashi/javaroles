@@ -2,6 +2,7 @@ package pt.mashashi.javaroles;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
@@ -121,7 +122,7 @@ public class ClassUtils {
 		
 		return null;
 	}
-	public static List<CtField> getListFieldAnotated(CtClass target, Class<ObjectForRole> annotation) throws ClassNotFoundException{
+	public static List<CtField> getListFieldAnotated(CtClass target, Class<?> annotation) throws ClassNotFoundException{
 		List<CtField> roleObjects = new LinkedList<>();
 		
 		
@@ -132,12 +133,12 @@ public class ClassUtils {
 		}
 		return roleObjects;
 	}
-	public static List<CtField> getListFieldAnotated(Object target, Class<ObjectForRole> annotation) throws ClassNotFoundException, NotFoundException{
+	public static List<CtField> getListFieldAnotated(Object target, Class<?> annotation) throws ClassNotFoundException, NotFoundException{
 		ClassPool pool = ClassPool.getDefault();
 		CtClass cc = pool.get(target.getClass().getName());
 		return getListFieldAnotated(cc, annotation);
 	}
-	public static HashMap<String, Field> getTypeFieldAnotated(Object target, Class<ObjectForRole> annotation){
+	public static <T extends Annotation> HashMap<String, Field> getTypeFieldAnotatedNative(Object target, Class<T> annotation){
 		HashMap<String, Field> roleObjects = new HashMap<String, Field>();
 		for(Field field : target.getClass().getFields()){
 			if(field.getAnnotation(annotation)!=null){
@@ -146,17 +147,28 @@ public class ClassUtils {
 		}
 		return roleObjects;
 	}
-	public static HashMap<String, CtField> getTypeFieldAnotated(CtClass target, Class<ObjectForRole> annotation) throws ClassNotFoundException, NotFoundException{
+	public static HashMap<String, CtField> getTypeFieldAnotatedAssist(CtClass target, Class<?> annotation) throws ClassNotFoundException, NotFoundException{
+		// Injected fields seem to only appear with target.getDeclaredFields()
 		HashMap<String, CtField> roleObjects = new HashMap<>();
 		for(CtField field : target.getFields()){
 			if(field.getAnnotation(annotation)!=null){
 				roleObjects.put(field.getType().getSimpleName(), field);
 			}
-		}
+		}		
 		return roleObjects;
 	}
 	
 	
+	
+	
+	/*public static void addAnnotation(CtClass cn, CtField newField, String annotation) {
+		// Add annotation so we don't inject the code more than once
+		ConstPool cpool = cn.getClassFile().getConstPool();
+		AnnotationsAttribute attr = new AnnotationsAttribute(cpool, AnnotationsAttribute.visibleTag);
+		javassist.bytecode.annotation.Annotation annot = new javassist.bytecode.annotation.Annotation(annotation, cpool);
+		attr.addAnnotation(annot);
+		newField.getFieldInfo().addAttribute(attr);
+	}*/
 	
 	
 	

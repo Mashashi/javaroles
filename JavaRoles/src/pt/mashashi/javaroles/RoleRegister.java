@@ -70,7 +70,7 @@ public abstract class RoleRegister {
 		try {
 							
 			CtMethod[] methods = cn.getDeclaredMethods();
-			HashMap<String, CtField> objectRoles = ClassUtils.getTypeFieldAnotated(cn, ObjectForRole.class);
+			HashMap<String, CtField> objectRoles = ClassUtils.getTypeFieldAnotatedAssist(cn, ObjectForRole.class);
 			
 			methodInj: for(CtMethod method : methods){
 				CtClass i = ClassUtils.definedOnInterface(method, cn);
@@ -89,11 +89,10 @@ public abstract class RoleRegister {
 							break methodInj;
 						}
 						
-						cn.addField(
-								CtField.make(
-										getRoleBusDeclaration(), cn
-										)
-								);
+						CtField newField = CtField.make(getRoleBusDeclaration(), cn);
+						
+						cn.addField(newField);
+						
 					}
 					
 					injectRoleDependency(cn, method, roleObject);
@@ -110,7 +109,7 @@ public abstract class RoleRegister {
 				cn.writeFile();
 				cn.toClass();
 			}
-		
+			
 		} catch (CannotCompileException | NotFoundException | IOException | ClassNotFoundException e) {
 			e.printStackTrace();
 			throw new RuntimeException();

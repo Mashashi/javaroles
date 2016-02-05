@@ -152,7 +152,7 @@ public class RoleBusTyped extends RoleBus{
 		
 		Object roleReturned = null;
 		
-		HashMap<String, Field> roleObjects = ClassUtils.getTypeFieldAnotated(target, ObjectForRole.class);
+		HashMap<String, Field> roleObjects = ClassUtils.getTypeFieldAnotatedNative(target, ObjectForRole.class);
 		
 		{
 			Field objectRole = roleObjects.get(roleName);

@@ -29,7 +29,8 @@ import org.junit.runners.model.Statement;
  */
 public class ResolveRoleMethodTest {
 	
-	/*public class SingleTestRule implements MethodRule {
+	/*
+	public class SingleTestRule implements MethodRule {
 	    private String applyMethod;
 	    public SingleTestRule(String applyMethod) {
 	        this.applyMethod = applyMethod;
@@ -46,7 +47,8 @@ public class ResolveRoleMethodTest {
 	        };
 	    }
 	}
-	@Rule public SingleTestRule test = new SingleTestRule("");*/
+	@Rule public SingleTestRule test = new SingleTestRule("");
+	*/
 	
 	@BeforeClass
 	public static void setup(){
