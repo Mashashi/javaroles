@@ -58,10 +58,16 @@ public class ResolveRoleMethodTest {
 	
 	@Test
 	public void testMethodRoleObjectMethodCall() {
-		AnimalRoles a = new AnimalRoles();
+		AnimalRoles a = new AnimalRoles(new Portuguese(), new Bonobo());
 		assertEquals("Yap", Portuguese.HALLO, a.hello());
 		AnimalRolesSwaped b = new AnimalRolesSwaped();
 		assertEquals("Yap", Bonobo.HALLO, b.hello());
+	}
+	
+	@Test
+	public void testWithNullRoleObjects() {
+		AnimalRoles a = new AnimalRoles(null, null);
+		assertEquals("Yap", AnimalRoles.HALLO, a.hello());
 	}
 	
 }

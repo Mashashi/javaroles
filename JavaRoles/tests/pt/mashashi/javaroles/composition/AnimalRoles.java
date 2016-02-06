@@ -4,8 +4,6 @@ import pt.mashashi.javaroles.Human;
 import pt.mashashi.javaroles.Monkey;
 import pt.mashashi.javaroles.ObjectForRole;
 import pt.mashashi.javaroles.TurnOffRole;
-import pt.mashashi.javaroles.typed.rolemethod.Bonobo;
-import pt.mashashi.javaroles.typed.rolemethod.Portuguese;
 
 /**
  * 
@@ -22,9 +20,9 @@ public class AnimalRoles implements Human, Monkey{
 	
 	@ObjectForRole public Monkey monkey;
 	
-	public AnimalRoles(){
-		human = new Portuguese();
-		monkey = new Bonobo();
+	public AnimalRoles(Human human, Monkey monkey){
+		this.human = human;
+		this.monkey = monkey;
 	}
 	
 	@Override
