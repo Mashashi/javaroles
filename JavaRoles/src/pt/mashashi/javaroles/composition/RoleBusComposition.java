@@ -38,25 +38,9 @@ public class RoleBusComposition extends RoleBus{
 	    try {
 	    	
 			// invokeLifeCycleCallbacks(roleName, methodInvoked);
-			CtField ctFieldRole = null;
-	    	List<CtField> roleObjects = ClassUtils.getListFieldAnotated(target, ObjectForRole.class);
-	    	roleSearch: for(CtField field: roleObjects){
-	    		
-	    		CtMethod[] fieldMethods = field.getType().getMethods();
-	    		for(CtMethod fieldMethod : fieldMethods){
-	    			boolean useIt = fieldMethod.getName().equals(methodInvoked.getName()) &&  fieldMethod.getSignature().equals(methodInvoked.getSignature());
-	    			if(useIt){
-	    				ctFieldRole = field;
-	    				break roleSearch; 
-	    			}
-	    		}
-	    		
-	    		field.getType().getSimpleName();
-	    	}
-	    	
+			CtField ctFieldRole = getTargetObjectRoleField(methodInvoked);
 	    	String declaringClass = ctFieldRole.getDeclaringClass().getName();
 	    	Field fieldRole = Class.forName(declaringClass).getDeclaredField(ctFieldRole.getName());
-	    	
 			returnByRole = invokeRoleMethod(methodInvoked, params, fieldRole);
 			
 		} catch (NotFoundException | NoSuchFieldException | SecurityException | ClassNotFoundException e) {
@@ -64,6 +48,25 @@ public class RoleBusComposition extends RoleBus{
 		}
 	    	    
 	    return returnByRole;
+	}
+
+	public CtField getTargetObjectRoleField(CtMethod methodInvoked) throws ClassNotFoundException, NotFoundException {
+		CtField ctFieldRole = null;
+		List<CtField> roleObjects = ClassUtils.getListFieldAnotated(target, ObjectForRole.class);
+		roleSearch: for(CtField field: roleObjects){
+			
+			CtMethod[] fieldMethods = field.getType().getMethods();
+			for(CtMethod fieldMethod : fieldMethods){
+				boolean useIt = fieldMethod.getName().equals(methodInvoked.getName()) &&  fieldMethod.getSignature().equals(methodInvoked.getSignature());
+				if(useIt){
+					ctFieldRole = field;
+					break roleSearch; 
+				}
+			}
+			
+			field.getType().getSimpleName();
+		}
+		return ctFieldRole;
 	}
 	
 	private Object invokeRoleMethod(
@@ -78,6 +81,9 @@ public class RoleBusComposition extends RoleBus{
 			try {
 				
 				Object o = FieldUtils.readField(objectRole, target, true);
+				if(o == null){
+					throw new MissProcessingException(methodInvoked.getClass().getSimpleName(), target.getClass().getName(), MissProcessingException.WhyMiss.NULL_OBJECT);
+				}
 				Class<?>[] paramsObjectRole = ClassUtils.getNativeTypes(methodInvoked.getParameterTypes());
 				roleReturned = o.getClass().getMethod(methodInvoked.getName(), paramsObjectRole).invoke(o, params);
 				
@@ -91,7 +97,7 @@ public class RoleBusComposition extends RoleBus{
 				
 			}
 		} else {
-			throw new MissProcessingException(methodInvoked.getClass().getSimpleName(), target.getClass().getName());
+			throw new MissProcessingException(methodInvoked.getClass().getSimpleName(), target.getClass().getName(), MissProcessingException.WhyMiss.NOT_FOUND);
 		}
 		
 		return roleReturned;
