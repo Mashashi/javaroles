@@ -64,8 +64,9 @@ class MethodVisitor extends VoidVisitorAdapter {
 		@Override
         public void visit(MethodCallExpr n, Object arg) {
         	
-            if(n.getBeginLine()<=line && n.getEndLine() >= line){ // This guard deals with methods across several lines
-            	
+            if(n.getBeginLine() <= line && n.getEndLine() >= line){ 
+            	// This guard deals with methods across several lines
+        		
             	if(n.getClass().equals(MethodCallExpr.class)){
             		
             		if(methodResolve.equals(n.getName())){

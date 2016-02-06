@@ -96,7 +96,7 @@ public class RoleBusTyped extends RoleBus{
 			analyser.visit(cu, null);
 			
 			String idCall = sourceFile+methodResolve+line;
-			roleName = computeSeveralLineRoleCalls(analyser, roleName, idCall);
+			roleName = computeSeveralLineRoleCalls(analyser, idCall);
 			
 			if(roleName==null){
 		    	throw new RoleNotFoundExpcetion(sourceFile+"@"+line);
@@ -115,9 +115,9 @@ public class RoleBusTyped extends RoleBus{
 	}
 	
 	private String computeSeveralLineRoleCalls(
-					MethodVisitor analyser, 
-					String roleName, 
+					MethodVisitor analyser,
 					String idCall) {
+		String roleName = null;
 		List<String> roles = analyser.getRoleNames();
 		if(roles.size() != 0){
 			Integer round = ite.get(idCall);

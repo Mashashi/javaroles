@@ -5,11 +5,12 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -48,17 +49,23 @@ public class ClassUtils {
 	 * @return
 	 * @throws NotFoundException
 	 */
-	public static CtClass definedOnInterface(CtMethod method, CtClass clazz) throws NotFoundException{
+	public static CtClass definedOnInterface(CtMethod method, CtClass clazz) {
 		//CtClass declared = method.getDeclaringClass();
 		//if(declared.equals(c)){return c;}
-		CtClass[] interfaces = clazz.getInterfaces();
-		for(CtClass i: interfaces){
-			for(CtMethod m: i.getMethods()){
-				if(method.getSignature().equals(m.getSignature())){
-					return i;
+		CtClass[] interfaces;
+		try {
+			interfaces = clazz.getInterfaces();
+			for(CtClass i: interfaces){
+				for(CtMethod m: i.getMethods()){
+					if(method.getSignature().equals(m.getSignature())){
+						return i;
+					}
 				}
+				
 			}
-			
+		} catch (NotFoundException e) {
+			// This should not be a problem
+			Logger.getLogger(RoleBus.class).debug(clazz.getName()+" not found interfaces: "+e.getMessage());
 		}
 		return null;
 	} 
@@ -176,21 +183,11 @@ public class ClassUtils {
 	
 	public static List<String> getAllClassNames(){
 		List<String> classNames = new LinkedList<>();
-		Enumeration<URL> e;
-		try {
-			e = ClassLoader.getSystemResources("");
-		} catch (IOException e1) {
-			e1.printStackTrace();
-			throw new RuntimeException();
-		}
-		while(e.hasMoreElements()){
-			String path = e.nextElement().toString();
-			Logger.getLogger(RoleBus.class).debug("classpath element: "+path);
-			path = path.substring("file:".length());
-			//System.out.println(path);
-			List<String> found = getAllClassNamesFolder(path);
-			//Logger.getLogger(RoleBus.class).debug("classes found: "+found);
-			classNames.addAll(found);
+		String classpath = System.getProperty("java.class.path");
+		String[] classpathEntries = classpath.split(File.pathSeparator);
+		for(String classPathEntry: classpathEntries){
+			Logger.getLogger(RoleBus.class).debug("classpath element: "+classPathEntry);
+			classNames.addAll( getAllClassNamesFolder(classPathEntry) );
 		}
 		return classNames;
 	}
@@ -228,6 +225,30 @@ public class ClassUtils {
 		if(fName.endsWith(".class")){
 			String className = fName.substring(0, fName.length()-".class".length());
 			results.add(pkg+className);
+		}else if(fName.endsWith(".jar"+File.separator)){
+			
+			try {
+				JarFile jarFile = new JarFile(fName);
+	            Enumeration<JarEntry> allEntries = jarFile.entries();
+	            while (allEntries.hasMoreElements()) {
+	                JarEntry entry = (JarEntry) allEntries.nextElement();
+	                if(entry.getName().endsWith(".class")){
+	        			String pathZip = entry.getName().substring(0, entry.getName().length()-".class".length());
+	        			String clazzName = null;
+	        			{ // We have to brute force because we can not be sure about which file separator is used
+		        			clazzName = pathZip.replace("/", ".");
+		        			if(pathZip.equals(clazzName)){
+		        				clazzName = pathZip.replace("\\", ".");
+		        			}
+	        			}
+	        			results.add(clazzName);
+	        		}
+	            }
+	            jarFile.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
 		}
 	}
 }
