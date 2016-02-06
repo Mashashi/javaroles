@@ -1,10 +1,10 @@
 package pt.mashashi.javaroles;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import javassist.CannotCompileException;
@@ -25,6 +25,7 @@ public abstract class RoleRegister {
 	protected String roleBusVarName;
 	
 	public RoleRegister(){
+		//Logger.getRootLogger().setLevel(Level.OFF); // Suppress console log4j:WARN No appenders could be found for logger... When log4j config file is not set
 		roleBusVarName = "roleBus"+UUID.randomUUID().toString().replace("-", "");
 	}
 	
@@ -106,11 +107,11 @@ public abstract class RoleRegister {
 			}
 			
 			if(wasInjected){
-				cn.writeFile();
+				//cn.writeFile();
 				cn.toClass();
 			}
 			
-		} catch (CannotCompileException | NotFoundException | IOException | ClassNotFoundException e) {
+		} catch (CannotCompileException | NotFoundException | ClassNotFoundException e) {
 			e.printStackTrace();
 			throw new RuntimeException();
 		}

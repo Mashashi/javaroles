@@ -111,6 +111,7 @@ public class ResolveRoleTest {
 	}
 	
 	
+	
 	@Test
 	public void testCallback() {
 		Animal a = new Animal();
