@@ -9,6 +9,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.regex.Matcher;
@@ -57,7 +58,7 @@ public class ClassUtils {
 			interfaces = clazz.getInterfaces();
 			for(CtClass i: interfaces){
 				for(CtMethod m: i.getMethods()){
-					if(method.getSignature().equals(m.getSignature())){
+					if(method.getName().equals(m.getName()) && method.getSignature().equals(m.getSignature())){
 						return i;
 					}
 				}
@@ -251,4 +252,13 @@ public class ClassUtils {
 			
 		}
 	}
+	
+	public static String getExcutingClass(int stackLevel) {
+        return Thread.currentThread().getStackTrace()[stackLevel].getClassName();
+    }
+	
+	public static String generateVarName() {
+        return "var"+UUID.randomUUID().toString().replace("-", "");
+    }
+	
 }

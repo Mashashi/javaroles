@@ -42,5 +42,11 @@ public class AnimalRolesSwaped implements Human, Monkey{
 	public String eat() {
 		return EAT;
 	}
+
+	@Override
+	public String dance() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 }

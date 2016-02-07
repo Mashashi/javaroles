@@ -43,6 +43,7 @@ public class RoleRegisterTyped extends RoleRegister{
 		final String name = method.getMethodInfo().getName();
 		final String sig = method.getSignature();
 		final String uuid = name+UUID.randomUUID().toString();
+		final String varM = ClassUtils.generateVarName();
 		
 		String invokeMissProcessingCallback = "";
 		
@@ -65,20 +66,20 @@ public class RoleRegisterTyped extends RoleRegister{
 		method.setBody(
 			"{"+
 					Logger.class.getName()+".getLogger("+RoleBus.class.getName()+".class.getName()).debug(\"invoking injected "+roleBusVarName+".resolve() on method: "+name+"\");"+
-					CtMethod.class.getName()+" m = "+ClassUtils.class.getName()+".getExecutingMethod("+
+					CtMethod.class.getName()+" "+varM+" = "+ClassUtils.class.getName()+".getExecutingMethod("+
 												"\""+clazzName+"\","+
 												"\""+name+"\","+
 												"\""+sig+"\");"+
 												
 					"try {"+
-						"return ($r) "+roleBusVarName+".resolve(m, $args);"+
+						"return ($r) "+roleBusVarName+".resolve("+varM+", $args);"+
 					"} catch("+MissProcessingException.class.getName()+" e1) {"+
 						invokeMissProcessingCallback+
 					"};"+
 					"return ($r) "+ClassUtils.class.getName()+".invokeWithNativeTypes("+
 												"this,"+
 												"\""+uuid+"\","+
-												"m.getParameterTypes(),"+
+												varM+".getParameterTypes(),"+
 												"$args);"
 			+"}"
 		);

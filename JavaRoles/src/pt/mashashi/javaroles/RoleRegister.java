@@ -25,7 +25,7 @@ public abstract class RoleRegister {
 	protected String roleBusVarName;
 	
 	public RoleRegister(){
-		//Logger.getRootLogger().setLevel(Level.OFF); // Suppress console log4j:WARN No appenders could be found for logger... When log4j config file is not set
+		Logger.getRootLogger().setLevel(Level.OFF); // Suppress console log4j:WARN No appenders could be found for logger... When log4j config file is not set
 		roleBusVarName = "roleBus"+UUID.randomUUID().toString().replace("-", "");
 	}
 	
@@ -74,7 +74,7 @@ public abstract class RoleRegister {
 			HashMap<String, CtField> objectRoles = ClassUtils.getTypeFieldAnotatedAssist(cn, ObjectForRole.class);
 			
 			methodInj: for(CtMethod method : methods){
-				CtClass i = ClassUtils.definedOnInterface(method, cn);
+				CtClass i = ClassUtils.definedOnInterface(method, cn); 
 				CtField roleObject = objectRoles.get(i!=null?i.getSimpleName():"");
 				
 				boolean isTargetInjection = method.getAnnotation(TurnOffRole.class)==null && (method.getAnnotation(TurnOnRole.class)!=null || roleObject!=null);	

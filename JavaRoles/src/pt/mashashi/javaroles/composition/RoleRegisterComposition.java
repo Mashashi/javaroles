@@ -30,23 +30,39 @@ public class RoleRegisterComposition extends RoleRegister{
 		final String name = method.getMethodInfo().getName();
 		final String sig = method.getSignature();
 		final String uuid = name+UUID.randomUUID().toString();
+		final String varAnot = ClassUtils.generateVarName();
+		final String varM = ClassUtils.generateVarName();
 		
 		cn.addMethod(CtNewMethod.copy(method, uuid, cn, null));
-		
+		//cn.getClass().getName()
 		method.setBody(
 			"{"+
-					CtMethod.class.getName()+" m = "+ClassUtils.class.getName()+".getExecutingMethod("+
-												"\""+clazzName+"\","+
-												"\""+name+"\","+
-												"\""+sig+"\");"+
-												
+					CtMethod.class.getName()+" "+varM+" = "+ClassUtils.class.getName()+".getExecutingMethod("+
+																						"\""+clazzName+"\","+
+																						"\""+name+"\","+
+																						"\""+sig+"\");"+	
+					
+					RoleObject.class.getName()+" "+varAnot+" = Class.forName("+ClassUtils.class.getName()+".getExcutingClass(3)).getAnnotation("+RoleObject.class.getName()+".class);" +
+					"if("+varAnot+"!=null){"+
+						"for(int i = 0; i<"+varAnot+".types().length; i++){"+
+						//"System.out.println(fieldName+\" - \"+anot.types()[i].getName());"+
+						"if("+varAnot+".types()[i].getName().equals(\""+cn.getName()+"\"))"+
+								"return ($r) "+ClassUtils.class.getName()+".invokeWithNativeTypes("+
+															"this,"+
+															"\""+uuid+"\","+
+															varM+".getParameterTypes(),"+
+															"$args);"+
+						"}"+
+					"}"+
+									
 					"try {"+
-						"return ($r) "+roleBusVarName+".resolve(m, $args);"+
+						"return ($r) "+roleBusVarName+".resolve("+varM+", $args);"+
 					"} catch("+MissProcessingException.class.getName()+" e1) {};"+
+					
 					"return ($r) "+ClassUtils.class.getName()+".invokeWithNativeTypes("+
 												"this,"+
 												"\""+uuid+"\","+
-												"m.getParameterTypes(),"+
+												varM+".getParameterTypes(),"+
 												"$args);"
 			+"}"
 		);
