@@ -23,6 +23,9 @@ public class AnimalRoles implements Human, Monkey{
 	public AnimalRoles(Human human, Monkey monkey){
 		this.human = human;
 		this.monkey = monkey;
+		if(this.human!=null){
+			((Portuguese)this.human).core = this;
+		}
 	}
 	
 	@Override
@@ -40,5 +43,13 @@ public class AnimalRoles implements Human, Monkey{
 	public String eat() {
 		return EAT;
 	}
+
+	@Override
+	public String dance() {
+		return "Just dance";
+	}
 	
+	public String notInRole(){
+		return "Oh oh";
+	}
 }

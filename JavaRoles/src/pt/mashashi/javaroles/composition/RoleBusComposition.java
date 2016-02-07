@@ -53,7 +53,20 @@ public class RoleBusComposition extends RoleBus{
 	public CtField getTargetObjectRoleField(CtMethod methodInvoked) throws ClassNotFoundException, NotFoundException {
 		CtField ctFieldRole = null;
 		List<CtField> roleObjects = ClassUtils.getListFieldAnotated(target, ObjectForRole.class);
+		
+		/*Class<?> executingClass = Class.forName(ClassUtils.getExcutingClass(4));
+		RoleObject anot = executingClass.getAnnotation(RoleObject.class);*/
+		
 		roleSearch: for(CtField field: roleObjects){
+			
+			/*if(anot!=null){
+				// Check rigid type call from role type
+				String fieldName = field.getType().getName();
+				for(Class<?> c : anot.types()){
+					if(c.getName().equals(fieldName))
+						continue roleSearch;
+				}
+			}*/
 			
 			CtMethod[] fieldMethods = field.getType().getMethods();
 			for(CtMethod fieldMethod : fieldMethods){

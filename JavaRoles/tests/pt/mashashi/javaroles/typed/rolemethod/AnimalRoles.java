@@ -40,6 +40,11 @@ public class AnimalRoles implements Human, Monkey{
 	public String eat() {
 		return EAT;
 	}
+
+	@Override
+	public String dance() {
+		return null;
+	}
 	
 }
 

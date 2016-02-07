@@ -1,4 +1,4 @@
-package pt.mashashi.javaroles.typed.rolemethod;
+package pt.mashashi.javaroles.composition;
 
 import pt.mashashi.javaroles.Human;
 
@@ -7,11 +7,14 @@ import pt.mashashi.javaroles.Human;
  * @author Rafael
  *
  */
+@RoleObject(types = { AnimalRoles.class })
 public class Portuguese implements Human{
 	
 	public static final String HALLO = "Olá moço";
 	public static final String DIE = "Ai matarem-me...";
 	public static final String EAT = "Estou cheio dred";
+	
+	public AnimalRoles core;
 	
 	public Portuguese() {}
 	
@@ -32,8 +35,7 @@ public class Portuguese implements Human{
 
 	@Override
 	public String dance() {
-		// TODO Auto-generated method stub
-		return null;
+		return core.dance()+" modified!";
 	}
 
 }

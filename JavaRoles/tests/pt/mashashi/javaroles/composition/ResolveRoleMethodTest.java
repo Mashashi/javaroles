@@ -12,8 +12,6 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 */
 
-import pt.mashashi.javaroles.typed.rolemethod.Bonobo;
-import pt.mashashi.javaroles.typed.rolemethod.Portuguese;
 
 /*
 import org.junit.Rule;
@@ -68,6 +66,18 @@ public class ResolveRoleMethodTest {
 	public void testWithNullRoleObjects() {
 		AnimalRoles a = new AnimalRoles(null, null);
 		assertEquals("Yap", AnimalRoles.HALLO, a.hello());
+	}
+	
+	@Test
+	public void testRigidCall() {
+		AnimalRoles a = new AnimalRoles(new Portuguese(), null);
+		assertEquals("Yap", "Just dance modified!", a.dance());
+	}
+	
+	@Test
+	public void testNotInRole() {
+		AnimalRoles a = new AnimalRoles(null, null);
+		assertEquals("Yap", "Oh oh", a.notInRole());
 	}
 	
 }
