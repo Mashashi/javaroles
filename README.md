@@ -110,7 +110,7 @@ public class Portuguese implements Human{
 
 }
 ```
-Note: If you wouldn't have used **@RoleObject(types = { AnimalRoles.class })** it was not possible to call the original method on AnimalRoles class.
+Note: If you wouldn't have used **@RoleObject(types = { AnimalRoles.class })** it was not possible to call the original method on AnimalRoles class. And if we tried to do it a ProbablyRigidTypeNotDeclaredException would be thrown.
 
 Putting it all together...
 ```java

@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
+import org.apache.log4j.Logger;
 
 import javassist.CtField;
 import javassist.CtMethod;
@@ -12,6 +13,7 @@ import javassist.NotFoundException;
 import pt.mashashi.javaroles.ClassUtils;
 import pt.mashashi.javaroles.MissProcessingException;
 import pt.mashashi.javaroles.ObjectForRole;
+import pt.mashashi.javaroles.ProbablyRigidTypeNotDeclaredException;
 import pt.mashashi.javaroles.RoleBus;
 
 /**
@@ -47,7 +49,7 @@ public class RoleBusComposition extends RoleBus{
 			returnByRole = invokeRoleMethod(methodInvoked, params, fieldRole);
 			
 		} catch (NotFoundException | NoSuchFieldException | SecurityException | ClassNotFoundException e) {
-			e.printStackTrace();
+			Logger.getLogger(RoleBus.class.getName()).debug("error resolving method: "+methodInvoked.getLongName()+" "+e.getMessage());
 		}
 	    	    
 	    return returnByRole;
@@ -100,11 +102,23 @@ public class RoleBusComposition extends RoleBus{
 				
 			}catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | SecurityException  | ClassNotFoundException e) {
 				
-				if(e.getCause().getClass().equals(MissProcessingException.class)){
-					throw (MissProcessingException) e.getCause();
-				}else{
-					e.printStackTrace();
+				//
+				if(e.getClass().equals(InvocationTargetException.class)){
+					Throwable cause = e.getCause();
+					if(cause.getClass().equals(MissProcessingException.class)){
+						throw (MissProcessingException) e.getCause();
+					}else{
+						if(cause.getClass().equals(StackOverflowError.class) || cause.getClass().equals(ProbablyRigidTypeNotDeclaredException.class)){
+							// throw new MissProcessingException(); // This would cause the method on the rigid type to be called without warning the programmer.
+							throw new ProbablyRigidTypeNotDeclaredException(methodInvoked.getDeclaringClass().getName(), objectRole.getType().getName());
+						}else{
+							Logger.getLogger(RoleBus.class.getName()).debug("error calling "+methodInvoked.getLongName()+" "+cause.getMessage());
+							e.printStackTrace();
+							throw new RuntimeException();
+						}
+					}
 				}
+				
 				
 			}
 		} else {

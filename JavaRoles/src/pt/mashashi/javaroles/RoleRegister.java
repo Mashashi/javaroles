@@ -112,6 +112,7 @@ public abstract class RoleRegister {
 			}
 			
 		} catch (CannotCompileException | NotFoundException | ClassNotFoundException e) {
+			Logger.getLogger(RoleBus.class.getName()).debug("error processing class: "+clazzName+" "+e.getMessage());
 			e.printStackTrace();
 			throw new RuntimeException();
 		}

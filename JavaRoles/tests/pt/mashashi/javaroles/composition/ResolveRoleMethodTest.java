@@ -5,6 +5,8 @@ import static org.junit.Assert.*;
 import org.junit.BeforeClass;
 
 import org.junit.Test;
+
+import pt.mashashi.javaroles.ProbablyRigidTypeNotDeclaredException;
 /*
 import org.junit.Rule;
 import org.junit.rules.MethodRule;
@@ -89,7 +91,10 @@ public class ResolveRoleMethodTest {
 	@Test
 	public void testCallToCoreNotRegistered() {
 		AnimalRoles a = new AnimalRoles(null, new Bonobo());
-		System.out.println(a.eat());
+		try{
+			System.out.println(a.eat());
+			fail("The ProbablyRigidTypeNotDeclaredException should be thrown.");
+		}catch(ProbablyRigidTypeNotDeclaredException e){}
 	}
 	
 }
