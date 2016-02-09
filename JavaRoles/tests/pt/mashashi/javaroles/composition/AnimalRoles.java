@@ -26,6 +26,9 @@ public class AnimalRoles implements Human, Monkey{
 		if(this.human!=null){
 			((Portuguese)this.human).core = this;
 		}
+		if(this.monkey!=null){
+			((Bonobo)this.monkey).core = this;
+		}
 	}
 	
 	@Override
@@ -39,7 +42,7 @@ public class AnimalRoles implements Human, Monkey{
 	}
 
 	@Override
-	@TurnOffRole
+	//@TurnOffRole
 	public String eat() {
 		return EAT;
 	}

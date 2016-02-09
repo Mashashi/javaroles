@@ -39,6 +39,9 @@ public class RoleBusComposition extends RoleBus{
 	    	
 			// invokeLifeCycleCallbacks(roleName, methodInvoked);
 			CtField ctFieldRole = getTargetObjectRoleField(methodInvoked);
+			if(ctFieldRole==null){
+				throw new MissProcessingException(methodInvoked.getClass().getSimpleName(), target.getClass().getName(), MissProcessingException.WhyMiss.NULL_OBJECT);
+			}
 	    	String declaringClass = ctFieldRole.getDeclaringClass().getName();
 	    	Field fieldRole = Class.forName(declaringClass).getDeclaredField(ctFieldRole.getName());
 			returnByRole = invokeRoleMethod(methodInvoked, params, fieldRole);
@@ -54,30 +57,26 @@ public class RoleBusComposition extends RoleBus{
 		CtField ctFieldRole = null;
 		List<CtField> roleObjects = ClassUtils.getListFieldAnotated(target, ObjectForRole.class);
 		
-		/*Class<?> executingClass = Class.forName(ClassUtils.getExcutingClass(4));
-		RoleObject anot = executingClass.getAnnotation(RoleObject.class);*/
-		
 		roleSearch: for(CtField field: roleObjects){
-			
-			/*if(anot!=null){
-				// Check rigid type call from role type
-				String fieldName = field.getType().getName();
-				for(Class<?> c : anot.types()){
-					if(c.getName().equals(fieldName))
-						continue roleSearch;
-				}
-			}*/
 			
 			CtMethod[] fieldMethods = field.getType().getMethods();
 			for(CtMethod fieldMethod : fieldMethods){
 				boolean useIt = fieldMethod.getName().equals(methodInvoked.getName()) &&  fieldMethod.getSignature().equals(methodInvoked.getSignature());
-				if(useIt){
+				{ // check if it is not null
+					Object o = null;
+			    	try {
+			    		String declaringClass = field.getDeclaringClass().getName();
+						Field fieldRole = Class.forName(declaringClass).getDeclaredField(field.getName());
+						o = FieldUtils.readField(fieldRole, target, true);
+					} catch (NoSuchFieldException | SecurityException | IllegalAccessException e) {}
+			    	useIt = useIt && o!=null;
+				}
+				
+				if(useIt){	
 					ctFieldRole = field;
-					break roleSearch; 
+					break roleSearch;
 				}
 			}
-			
-			field.getType().getSimpleName();
 		}
 		return ctFieldRole;
 	}
@@ -88,7 +87,6 @@ public class RoleBusComposition extends RoleBus{
 			Field objectRole) throws NotFoundException {
 		
 		Object roleReturned = null;
-		
 		
 		if(objectRole!=null){
 			try {

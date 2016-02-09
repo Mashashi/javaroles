@@ -95,7 +95,7 @@ public class Portuguese implements Human{
 
 	@Override
 	public String die(String age) {
-	    return They killed me "+age;
+	    return "They killed me "+age;
 	}
 
 	@Override

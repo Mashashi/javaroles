@@ -80,4 +80,16 @@ public class ResolveRoleMethodTest {
 		assertEquals("Yap", "Oh oh", a.notInRole());
 	}
 	
+	@Test
+	public void testToSecondRoleFirstNull() {
+		AnimalRoles a = new AnimalRoles(null, new Bonobo());
+		assertEquals("Yap", Bonobo.HALLO, a.hello());
+	}
+	
+	@Test
+	public void testCallToCoreNotRegistered() {
+		AnimalRoles a = new AnimalRoles(null, new Bonobo());
+		System.out.println(a.eat());
+	}
+	
 }
