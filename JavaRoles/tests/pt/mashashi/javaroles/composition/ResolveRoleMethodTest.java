@@ -89,6 +89,12 @@ public class ResolveRoleMethodTest {
 	}
 	
 	@Test
+	public void testRoleSurpressed() {
+		AnimalRoles a = new AnimalRoles(new Portuguese(), new Bonobo());
+		assertEquals("Yap", AnimalRoles.DIE+"35", a.die("35"));
+	}
+	
+	@Test
 	public void testCallToCoreNotRegistered() {
 		AnimalRoles a = new AnimalRoles(null, new Bonobo());
 		try{
