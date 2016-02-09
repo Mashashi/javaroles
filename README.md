@@ -79,7 +79,26 @@ public class AnimalRoles implements Human, Monkey{
 }
 ```
 
-Defining class role Portuguese in class AnimalRoles...
+Defining class role Monkey...
+```java
+public class Bonobo implements Monkey{
+	
+	public Bonobo() {}
+
+	@Override
+	public String hello(){
+	    return "Ugauga";
+	}
+
+	@Override
+	public String eat() {
+	    return "Nhamnham";
+	}
+
+}
+```
+
+Defining class role Portuguese...
 ```java
 @RoleObject(types = { AnimalRoles.class })
 public class Portuguese implements Human{
