@@ -7,10 +7,13 @@ import pt.mashashi.javaroles.Monkey;
  * @author Rafael
  *
  */
+//@RoleObject(types = { AnimalRoles.class })
 public class Bonobo implements Monkey{
 
 	public static final String HALLO = "Ugauga";
 	public static final String EAT = "Nhamnham";
+	
+	public AnimalRoles core;
 	
 	public Bonobo() {}
 	
@@ -21,7 +24,7 @@ public class Bonobo implements Monkey{
 
 	@Override
 	public String eat() {
-		return EAT;
+		return core.eat()+EAT;
 	}
-
+	
 }
