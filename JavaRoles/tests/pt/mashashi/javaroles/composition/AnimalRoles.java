@@ -37,12 +37,12 @@ public class AnimalRoles implements Human, Monkey{
 	}
 	
 	@Override
+	@TurnOffRole
 	public String die(String age) {
 		return DIE+age;
 	}
 
 	@Override
-	//@TurnOffRole
 	public String eat() {
 		return EAT;
 	}
