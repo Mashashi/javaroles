@@ -247,7 +247,7 @@ public class ClassUtils {
 	            }
 	            jarFile.close();
 			} catch (IOException e) {
-				e.printStackTrace();
+				Logger.getLogger(RoleBus.class).debug("Not processing jar file: "+fName);
 			}
 			
 		}
