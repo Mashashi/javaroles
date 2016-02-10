@@ -43,6 +43,8 @@ public class AnimalRoles implements Human, Monkey{
 
 	@ObjectForRole public Monkey monkey;
 
+	@OriginalRigid public Human original;
+
 	public AnimalRoles(Human human, Monkey monkey){
 	    this.human = human;
 	    this.monkey = monkey;
@@ -81,7 +83,6 @@ public class AnimalRoles implements Human, Monkey{
 
 Defining class role Portuguese in class AnimalRoles...
 ```java
-@RoleObject(types = { AnimalRoles.class })
 public class Portuguese implements Human{
 
 	public AnimalRoles core;
@@ -105,12 +106,12 @@ public class Portuguese implements Human{
 
 	@Override
 	public String dance() {
-	    return core.dance()+" modified!";
+	    return core.original.dance()+" modified!";
 	}
 
 }
 ```
-Note: If you wouldn't have used **@RoleObject(types = { AnimalRoles.class })** it was not possible to call the original method on AnimalRoles class. And if we tried to do it a ProbablyRigidTypeNotDeclaredException would be thrown.
+Note: We can't call the core method directly this would lead to a StackOverFlowException.
 
 Putting it all together...
 ```java
