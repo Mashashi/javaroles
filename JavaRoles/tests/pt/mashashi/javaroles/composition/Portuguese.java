@@ -38,4 +38,10 @@ public class Portuguese implements Human{
 		return core.dance()+" modified!";
 	}
 
+	@Override
+	public String stuffing(String str, Object[] input) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

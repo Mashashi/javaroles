@@ -125,5 +125,10 @@
       <artifactId>log4j</artifactId>
       <version>1.2.17</version>
     </dependency>
+    <dependency>
+    	<groupId>org.reflections</groupId>
+    	<artifactId>reflections-maven</artifactId>
+    	<version>0.9.9-RC2</version>
+    </dependency>
   </dependencies>
 </project>

@@ -68,6 +68,36 @@ public abstract class RoleRegister {
 		CtClass cn = cp.getOrNull(clazzName);
 		boolean wasInjected = false;
 		
+		
+		/*{
+			try {
+				Object a = cn.getAnnotation(RoleObject.class);
+				if(a!=null){
+					CtMethod[] ct = cn.getMethods();
+					for(CtMethod m : ct){
+						try{
+							m.insertBefore(ClassUtils.class.getName()+".submitSignature(\""+m.getName()+"\", $sig);");
+						}catch (CannotCompileException e){
+							// Probably just an abstract
+						}
+					}
+					try {
+						cn.toClass();
+					} catch (CannotCompileException e) {
+						Logger.getLogger(RoleBus.class.getName()).debug("error processing role class: "+clazzName+" "+e.getMessage());
+						e.printStackTrace();
+						throw new RuntimeException();
+					}
+					return ;
+				}
+				
+			} catch (ClassNotFoundException e) {
+				// Do nothing this is not a role object class
+			} 
+		}*/
+		
+		
+		
 		try {
 							
 			CtMethod[] methods = cn.getDeclaredMethods();

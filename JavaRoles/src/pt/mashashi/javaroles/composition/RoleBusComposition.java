@@ -108,9 +108,11 @@ public class RoleBusComposition extends RoleBus{
 					if(cause.getClass().equals(MissProcessingException.class)){
 						throw (MissProcessingException) e.getCause();
 					}else{
-						if(cause.getClass().equals(StackOverflowError.class) || cause.getClass().equals(ProbablyRigidTypeNotDeclaredException.class)){
+						if (cause.getClass().equals(ProbablyRigidTypeNotDeclaredException.class)){
+							throw (RuntimeException) cause;
+						}else if(cause.getClass().equals(StackOverflowError.class)){
 							// throw new MissProcessingException(); // This would cause the method on the rigid type to be called without warning the programmer.
-							throw new ProbablyRigidTypeNotDeclaredException(methodInvoked.getDeclaringClass().getName(), objectRole.getType().getName());
+							throw new ProbablyRigidTypeNotDeclaredException(methodInvoked.getDeclaringClass().getName(), objectRole.getType().getName()); 
 						}else{
 							Logger.getLogger(RoleBus.class.getName()).debug("error calling "+methodInvoked.getLongName()+" "+cause.getMessage());
 							e.printStackTrace();

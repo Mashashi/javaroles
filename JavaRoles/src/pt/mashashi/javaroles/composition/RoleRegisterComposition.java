@@ -32,8 +32,11 @@ public class RoleRegisterComposition extends RoleRegister{
 		final String uuid = name+UUID.randomUUID().toString();
 		final String varAnot = ClassUtils.generateVarName();
 		final String varM = ClassUtils.generateVarName();
-		
-		cn.addMethod(CtNewMethod.copy(method, uuid, cn, null));
+		{
+			CtMethod m = CtNewMethod.copy(method, uuid, cn, null);
+			
+			cn.addMethod(m);
+		}
 		//cn.getClass().getName()
 		method.setBody(
 			"{"+
@@ -42,7 +45,12 @@ public class RoleRegisterComposition extends RoleRegister{
 																						"\""+name+"\","+
 																						"\""+sig+"\");"+	
 					
-					RoleObject.class.getName()+" "+varAnot+" = Class.forName("+ClassUtils.class.getName()+".getExcutingClass(3)).getAnnotation("+RoleObject.class.getName()+".class);" +
+					/*CtMethod.class.getName()+" "+varAnot+" = "+ClassUtils.class.getName()+".getExecutingMethod(3);" +
+					"if("+varAnot+"!=null && "+varAnot+".getName().equals("+varM+".getName()) && "+varAnot+".getSignature().equals("+varM+".getSignature())){"+
+						"throw new MissProcessingException()"+
+					"}"+*/
+					
+					RoleObject.class.getName()+" "+varAnot+" = Class.forName("+ClassUtils.class.getName()+".getExecutingClass(3)).getAnnotation("+RoleObject.class.getName()+".class);" +
 					"if("+varAnot+"!=null){"+
 						"for(int i = 0; i<"+varAnot+".types().length; i++){"+
 						//"System.out.println(fieldName+\" - \"+anot.types()[i].getName());"+

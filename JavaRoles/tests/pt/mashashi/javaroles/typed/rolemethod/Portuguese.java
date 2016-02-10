@@ -36,4 +36,9 @@ public class Portuguese implements Human{
 		return null;
 	}
 
+	@Override
+	public String stuffing(String str, Object[] input) {
+		return "oi";
+	}
+
 }

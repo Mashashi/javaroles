@@ -55,4 +55,10 @@ public class AnimalRoles implements Human, Monkey{
 	public String notInRole(){
 		return "Oh oh";
 	}
+
+	@Override
+	public String stuffing(String str, Object[] input) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

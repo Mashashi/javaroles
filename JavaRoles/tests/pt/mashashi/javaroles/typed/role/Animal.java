@@ -131,6 +131,12 @@ public class Animal implements Human, Monkey{
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public String stuffing(String str, Object[] input) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 }
 
