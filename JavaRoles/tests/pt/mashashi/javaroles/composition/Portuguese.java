@@ -7,7 +7,6 @@ import pt.mashashi.javaroles.Human;
  * @author Rafael
  *
  */
-@RoleObject(types = { AnimalRoles.class })
 public class Portuguese implements Human{
 	
 	public static final String HALLO = "Olá moço";
@@ -35,13 +34,18 @@ public class Portuguese implements Human{
 
 	@Override
 	public String dance() {
-		return core.dance()+" modified!";
+		return core.originalHuman.dance()+" modified!";
 	}
 
 	@Override
 	public String stuffing(String str, Object[] input) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void born() {
+		System.out.println("Portuguese born");
 	}
 
 }

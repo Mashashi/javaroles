@@ -23,21 +23,21 @@ public class RoleRegisterComposition extends RoleRegister{
 	
 	public RoleRegisterComposition() {}
 	
-	protected void injectRoleDependency(CtClass cn, CtMethod method, CtField roleObjectClass) throws CannotCompileException, NotFoundException {
+	protected CtMethod injectRoleDependency(CtClass cn, CtMethod method, CtField roleObjectClass) throws CannotCompileException, NotFoundException {
+		
+		CtMethod methodCreated =null;
 		
 		//int lineNumberStart = method.getMethodInfo().getLineNumber(0);
 		final String clazzName = cn.getName();
 		final String name = method.getMethodInfo().getName();
 		final String sig = method.getSignature();
 		final String uuid = name+UUID.randomUUID().toString();
-		final String varAnot = ClassUtils.generateVarName();
-		final String varM = ClassUtils.generateVarName();
-		{
-			CtMethod m = CtNewMethod.copy(method, uuid, cn, null);
-			
-			cn.addMethod(m);
-		}
-		//cn.getClass().getName()
+		//final String varAnot = ClassUtils.generateIdentifier();
+		final String varM = ClassUtils.generateIdentifier();
+		
+		methodCreated = CtNewMethod.copy(method, uuid, cn, null);
+		cn.addMethod(methodCreated);
+		
 		method.setBody(
 			"{"+
 					CtMethod.class.getName()+" "+varM+" = "+ClassUtils.class.getName()+".getExecutingMethod("+
@@ -45,12 +45,8 @@ public class RoleRegisterComposition extends RoleRegister{
 																						"\""+name+"\","+
 																						"\""+sig+"\");"+	
 					
-					/*CtMethod.class.getName()+" "+varAnot+" = "+ClassUtils.class.getName()+".getExecutingMethod(3);" +
-					"if("+varAnot+"!=null && "+varAnot+".getName().equals("+varM+".getName()) && "+varAnot+".getSignature().equals("+varM+".getSignature())){"+
-						"throw new MissProcessingException()"+
-					"}"+*/
-					
-					RoleObject.class.getName()+" "+varAnot+" = Class.forName("+ClassUtils.class.getName()+".getExecutingClass(3)).getAnnotation("+RoleObject.class.getName()+".class);" +
+					// Old core call
+					/*RoleObject.class.getName()+" "+varAnot+" = Class.forName("+ClassUtils.class.getName()+".getExecutingClass(3)).getAnnotation("+RoleObject.class.getName()+".class);" +
 					"if("+varAnot+"!=null){"+
 						"for(int i = 0; i<"+varAnot+".types().length; i++){"+
 						//"System.out.println(fieldName+\" - \"+anot.types()[i].getName());"+
@@ -61,11 +57,11 @@ public class RoleRegisterComposition extends RoleRegister{
 															varM+".getParameterTypes(),"+
 															"$args);"+
 						"}"+
-					"}"+
+					"}"+*/
 									
 					"try {"+
 						"return ($r) "+roleBusVarName+".resolve("+varM+", $args);"+
-					"} catch("+MissProcessingException.class.getName()+" e1) {};"+
+					"} catch("+MissProcessingException.class.getName()+" e) {};"+
 					
 					"return ($r) "+ClassUtils.class.getName()+".invokeWithNativeTypes("+
 												"this,"+
@@ -74,6 +70,8 @@ public class RoleRegisterComposition extends RoleRegister{
 												"$args);"
 			+"}"
 		);
+		
+		return methodCreated;
 		
 	}
 

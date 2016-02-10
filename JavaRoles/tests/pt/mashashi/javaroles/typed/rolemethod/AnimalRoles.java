@@ -51,6 +51,12 @@ public class AnimalRoles implements Human, Monkey{
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public void born() {
+		// TODO Auto-generated method stub
+		
+	}
 	
 }
 

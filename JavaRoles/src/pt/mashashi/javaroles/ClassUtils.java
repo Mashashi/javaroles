@@ -50,16 +50,17 @@ public class ClassUtils {
 	 * @return
 	 * @throws NotFoundException
 	 */
-	public static CtClass definedOnInterface(CtMethod method, CtClass clazz) {
+	public static List<CtClass> definedOnInterfaces(CtMethod method, CtClass clazz) {
 		//CtClass declared = method.getDeclaringClass();
 		//if(declared.equals(c)){return c;}
+		List<CtClass> returned = new LinkedList<CtClass>();
 		CtClass[] interfaces;
 		try {
 			interfaces = clazz.getInterfaces();
 			for(CtClass i: interfaces){
 				for(CtMethod m: i.getMethods()){
 					if(method.getName().equals(m.getName()) && method.getSignature().equals(m.getSignature())){
-						return i;
+						returned.add(i);
 					}
 				}
 				
@@ -68,8 +69,8 @@ public class ClassUtils {
 			// This should not be a problem
 			Logger.getLogger(RoleBus.class).debug(clazz.getName()+" not found interfaces: "+e.getMessage());
 		}
-		return null;
-	} 
+		return returned;
+	}
 	
 	public static String getMethodNameFromStack(StackTraceElement[] st, int level){
 		
@@ -261,29 +262,8 @@ public class ClassUtils {
         return Thread.currentThread().getStackTrace()[stackLevel].getClassName();
     }
 	
-	
-	
-	/*public static CtMethod getExecutingMethod(int stackLevel) {
-        String className = Thread.currentThread().getStackTrace()[stackLevel].getClassName();
-        if(lastSig!=null){
-        	Thread.currentThread().getStackTrace()[stackLevel].toString();
-        }
-		//Thread.currentThread().getStackTrace()[stackLevel].getMethodName()
-		return null;
-    }
-	private static String lastSig;
-	public static void submitSignature(String name, Object... sig){
-		//System.out.println(name);
-		lastSig = "";
-		for(Object e: sig){
-			System.out.println();
-			lastSig += ((Class<?>)e).getName()+",";
-		}
-	}*/
-	
-	
-	public static String generateVarName() {
-        return "var"+UUID.randomUUID().toString().replace("-", "");
+	public static String generateIdentifier() {
+        return "i"+UUID.randomUUID().toString().replace("-", "");
     }
 	
 }

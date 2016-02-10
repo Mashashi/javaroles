@@ -41,4 +41,10 @@ public class Portuguese implements Human{
 		return "oi";
 	}
 
+	@Override
+	public void born() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
