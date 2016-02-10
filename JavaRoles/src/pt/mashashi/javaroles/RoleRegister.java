@@ -203,6 +203,10 @@ public abstract class RoleRegister {
 			throws ClassNotFoundException, NotFoundException, CannotCompileException {
 		
 		HashMap<String, CtClass> originals = new HashMap<>();
+		if(cn.isFrozen()){
+			// Ignore frozen classes, assume already processed
+			return originals;
+		}
 		ClassPool cp = ClassPool.getDefault();
 		List<CtField> objectOriginal = ClassUtils.getListFieldAnotated(cn, OriginalRigid.class);
 		Iterator<CtField> ite = objectOriginal.iterator();
