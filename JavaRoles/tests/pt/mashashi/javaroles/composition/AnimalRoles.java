@@ -20,6 +20,8 @@ public class AnimalRoles implements Human, Monkey{
 	
 	@ObjectForRole public Monkey monkey;
 	
+	@OriginalRigid public Human originalHuman;
+	
 	public AnimalRoles(Human human, Monkey monkey){
 		this.human = human;
 		this.monkey = monkey;
@@ -60,5 +62,10 @@ public class AnimalRoles implements Human, Monkey{
 	public String stuffing(String str, Object[] input) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void born() {
+		System.out.println("Default born");
 	}
 }

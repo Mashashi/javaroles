@@ -6,7 +6,7 @@ import org.junit.BeforeClass;
 
 import org.junit.Test;
 
-import pt.mashashi.javaroles.ProbablyRigidTypeNotDeclaredException;
+import pt.mashashi.javaroles.Human;
 /*
 import org.junit.Rule;
 import org.junit.rules.MethodRule;
@@ -16,10 +16,12 @@ import org.junit.runners.model.Statement;
 
 
 
+/*
 import org.junit.Rule;
 import org.junit.rules.MethodRule;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
+*/
 
 
 /**
@@ -30,7 +32,7 @@ import org.junit.runners.model.Statement;
 public class ResolveRoleMethodTest {
 	
 
-	public class SingleTestRule implements MethodRule {
+	/*public class SingleTestRule implements MethodRule {
 	    private String applyMethod;
 	    public SingleTestRule(String applyMethod) {
 	        this.applyMethod = applyMethod;
@@ -47,7 +49,7 @@ public class ResolveRoleMethodTest {
 	        };
 	    }
 	}
-	@Rule public SingleTestRule test = new SingleTestRule("testCallMultiInput");
+	@Rule public SingleTestRule test = new SingleTestRule("testCallMultiInput");*/
 
 	
 	@BeforeClass
@@ -95,17 +97,25 @@ public class ResolveRoleMethodTest {
 	}
 	
 	@Test
-	public void testCallToCoreNotRegistered() {
+	public void testCallWrongStackOverflow() {
 		AnimalRoles a = new AnimalRoles(null, new Bonobo());
 		try{
 			System.out.println(a.eat());
 			fail("The ProbablyRigidTypeNotDeclaredException should be thrown.");
-		}catch(ProbablyRigidTypeNotDeclaredException e){}
+		}catch(StackOverflowError e){}
 	}
 	
 	@Test
 	public void testCallMultiInput() {
 		AnimalRoles a = new AnimalRoles(new Portuguese(), new Bonobo());
 		a.stuffing("test", null);
+	}
+	
+	@Test
+	public void testCallCoreVoid() {
+		AnimalRoles a = new AnimalRoles(new Portuguese(), new Bonobo());
+		System.out.println(a.originalHuman.eat());
+		a.born();
+		a.originalHuman.born();
 	}
 }

@@ -1,6 +1,8 @@
 package pt.mashashi.javaroles;
 
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -10,9 +12,13 @@ import org.apache.log4j.Logger;
 import javassist.CannotCompileException;
 import javassist.ClassPool;
 import javassist.CtClass;
+import javassist.CtConstructor;
 import javassist.CtField;
 import javassist.CtMethod;
+import javassist.CtNewConstructor;
+import javassist.CtNewMethod;
 import javassist.NotFoundException;
+import pt.mashashi.javaroles.composition.OriginalRigid;
 
 /**
  * Offers a way to go through all the classes in the class path searching for the points that need code injection
@@ -44,7 +50,7 @@ public abstract class RoleRegister {
 	 * @throws CannotCompileException
 	 * @throws NotFoundException
 	 */
-	protected abstract void injectRoleDependency(CtClass cn, CtMethod method, CtField roleObjectClass) throws CannotCompileException, NotFoundException;
+	protected abstract CtMethod injectRoleDependency(CtClass cn, CtMethod method, CtField roleObjectClass) throws CannotCompileException, NotFoundException;
 	
 	/**
 	 * Returns a string having the RoleBus method field declaration to be injected
@@ -69,7 +75,7 @@ public abstract class RoleRegister {
 		boolean wasInjected = false;
 		
 		
-		/*{
+		/*{ // Insert a method call in every method of a class that has an annotation
 			try {
 				Object a = cn.getAnnotation(RoleObject.class);
 				if(a!=null){
@@ -103,9 +109,14 @@ public abstract class RoleRegister {
 			CtMethod[] methods = cn.getDeclaredMethods();
 			HashMap<String, CtField> objectRoles = ClassUtils.getTypeFieldAnotatedAssist(cn, ObjectForRole.class);
 			
+			HashMap<String, CtClass> originals = getOriginals(cn);
+			
+			//System.out.println(cn.getName()+" "+originals.size());
+			
 			methodInj: for(CtMethod method : methods){
-				CtClass i = ClassUtils.definedOnInterface(method, cn); 
-				CtField roleObject = objectRoles.get(i!=null?i.getSimpleName():"");
+				
+				List<CtClass> inters = ClassUtils.definedOnInterfaces(method, cn); // possible bug hear
+				CtField roleObject = objectRoles.get(inters.size()!=0?inters.get(0).getSimpleName():"");
 				
 				boolean isTargetInjection = method.getAnnotation(TurnOffRole.class)==null && (method.getAnnotation(TurnOnRole.class)!=null || roleObject!=null);	
 				if(isTargetInjection){
@@ -126,7 +137,9 @@ public abstract class RoleRegister {
 						
 					}
 					
-					injectRoleDependency(cn, method, roleObject);
+					CtMethod created = injectRoleDependency(cn, method, roleObject);
+					
+					applyIndirect(method, created, originals, inters);
 					
 					wasInjected = true;
 					
@@ -141,12 +154,86 @@ public abstract class RoleRegister {
 				cn.toClass();
 			}
 			
+			{ // freeze originals
+				for(CtClass o : originals.values()){
+					o.toClass();
+				}
+			}
+			
 		} catch (CannotCompileException | NotFoundException | ClassNotFoundException e) {
 			Logger.getLogger(RoleBus.class.getName()).debug("error processing class: "+clazzName+" "+e.getMessage());
 			e.printStackTrace();
 			throw new RuntimeException();
 		}
+		
+		
+		
+		
+	}
+
+	public void applyIndirect(CtMethod method, CtMethod created, HashMap<String, CtClass> originals,
+			List<CtClass> inters) throws CannotCompileException {
+		for(CtClass i:inters){
+			CtClass o = originals.get(i.getName());
+			if(o!=null){
+				for(CtMethod mo: o.getMethods()){
+					if(method.getName().equals(mo.getName()) && method.getSignature().equals(mo.getSignature())){
+						final String varM = ClassUtils.generateIdentifier();
+						mo.setBody(
+							"{"+
+								CtMethod.class.getName()+" "+varM+" = "+ClassUtils.class.getName()+".getExecutingMethod("+
+																			"\""+o.getName()+"\","+
+																			"\""+method.getName()+"\","+
+																			"\""+method.getSignature()+"\");"+
+								"return ($r) "+ClassUtils.class.getName()+".invokeWithNativeTypes("+
+								"core,"+
+								"\""+created.getName()+"\","+
+								varM+".getParameterTypes(),"+
+								"$args);"+
+							"}"		
+						);
+						
+					}
+				}
+			}
+		}
+	}
+
+	public HashMap<String, CtClass> getOriginals(CtClass cn)
+			throws ClassNotFoundException, NotFoundException, CannotCompileException {
+		
+		HashMap<String, CtClass> originals = new HashMap<>();
+		ClassPool cp = ClassPool.getDefault();
+		List<CtField> objectOriginal = ClassUtils.getListFieldAnotated(cn, OriginalRigid.class);
+		Iterator<CtField> ite = objectOriginal.iterator();
+		while(ite.hasNext()){
+			CtField n = ite.next();
+			CtClass evalClass = cp.makeClass(ClassUtils.generateIdentifier());
+			CtClass i = cp.getOrNull(n.getType().getName());
+			evalClass.addInterface(i);
+			originals.put(i.getName(), evalClass);
+			evalClass.addField(CtField.make("public "+i.getName()+" core;", evalClass));
+			for(CtMethod method : evalClass.getMethods()){
+				if(Modifier.isAbstract(method.getModifiers())){
+					CtMethod m = CtNewMethod.make(method.getModifiers() & ~Modifier.ABSTRACT & Modifier.PUBLIC, 
+							method.getReturnType(), 
+							method.getName(), 
+							method.getParameterTypes(), 
+							method.getExceptionTypes(), 
+							"{return null;}", 
+							evalClass
+					);
+					evalClass.addMethod(m);
+				}
+			}
+			evalClass.addConstructor(CtNewConstructor.make("public " + evalClass.getSimpleName() + "("+i.getName()+" core) {this.core = core;}", evalClass));
+			//evalClass.toClass();
+			for(CtConstructor con : n.getDeclaringClass().getConstructors()){
+				con.insertAfter("this."+n.getName()+" = new "+evalClass.getName()+"(this);");
+			}
 			
+		}
+		return originals;
 	}
 	
 	public void registerRools(){

@@ -6,7 +6,5 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface RoleObject {
-	Class<?>[] types();
-}
+@Target(ElementType.FIELD)
+public @interface OriginalRigid {}

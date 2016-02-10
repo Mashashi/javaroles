@@ -36,14 +36,14 @@ public class RoleRegisterTyped extends RoleRegister{
 		this.srcFolder = srcFolder;
 	}
 	
-	protected void injectRoleDependency(CtClass cn, CtMethod method, CtField roleObjectClass) throws CannotCompileException, NotFoundException {
+	protected CtMethod injectRoleDependency(CtClass cn, CtMethod method, CtField roleObjectClass) throws CannotCompileException, NotFoundException {
 		
 		//int lineNumberStart = method.getMethodInfo().getLineNumber(0);
 		final String clazzName = cn.getName();
 		final String name = method.getMethodInfo().getName();
 		final String sig = method.getSignature();
 		final String uuid = name+UUID.randomUUID().toString();
-		final String varM = ClassUtils.generateVarName();
+		final String varM = ClassUtils.generateIdentifier();
 		
 		String invokeMissProcessingCallback = "";
 		
@@ -83,6 +83,8 @@ public class RoleRegisterTyped extends RoleRegister{
 												"$args);"
 			+"}"
 		);
+		
+		return null;
 	}
 
 	@Override

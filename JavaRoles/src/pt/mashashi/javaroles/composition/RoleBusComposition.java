@@ -13,7 +13,6 @@ import javassist.NotFoundException;
 import pt.mashashi.javaroles.ClassUtils;
 import pt.mashashi.javaroles.MissProcessingException;
 import pt.mashashi.javaroles.ObjectForRole;
-import pt.mashashi.javaroles.ProbablyRigidTypeNotDeclaredException;
 import pt.mashashi.javaroles.RoleBus;
 
 /**
@@ -108,11 +107,8 @@ public class RoleBusComposition extends RoleBus{
 					if(cause.getClass().equals(MissProcessingException.class)){
 						throw (MissProcessingException) e.getCause();
 					}else{
-						if (cause.getClass().equals(ProbablyRigidTypeNotDeclaredException.class)){
-							throw (RuntimeException) cause;
-						}else if(cause.getClass().equals(StackOverflowError.class)){
-							// throw new MissProcessingException(); // This would cause the method on the rigid type to be called without warning the programmer.
-							throw new ProbablyRigidTypeNotDeclaredException(methodInvoked.getDeclaringClass().getName(), objectRole.getType().getName()); 
+						 if(cause.getClass().equals(StackOverflowError.class)){
+							throw (StackOverflowError) cause; 
 						}else{
 							Logger.getLogger(RoleBus.class.getName()).debug("error calling "+methodInvoked.getLongName()+" "+cause.getMessage());
 							e.printStackTrace();
