@@ -62,7 +62,9 @@ public class RoleRegisterTyped extends RoleRegister{
 			"}";
 		}
 		
-		cn.addMethod(CtNewMethod.copy(method, uuid, cn, null));
+		CtMethod newMethod = CtNewMethod.copy(method, uuid, cn, null);
+		cn.addMethod(newMethod);
+		
 		method.setBody(
 			"{"+
 					Logger.class.getName()+".getLogger("+RoleBus.class.getName()+".class.getName()).debug(\"invoking injected "+roleBusVarName+".resolve() on method: "+name+"\");"+
@@ -84,7 +86,7 @@ public class RoleRegisterTyped extends RoleRegister{
 			+"}"
 		);
 		
-		return null;
+		return newMethod;
 	}
 
 	@Override
