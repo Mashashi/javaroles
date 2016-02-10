@@ -6,7 +6,6 @@ import org.junit.BeforeClass;
 
 import org.junit.Test;
 
-import pt.mashashi.javaroles.Human;
 /*
 import org.junit.Rule;
 import org.junit.rules.MethodRule;
