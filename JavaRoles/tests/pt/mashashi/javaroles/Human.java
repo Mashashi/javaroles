@@ -10,4 +10,5 @@ public interface Human {
 	String die(String age);  
 	String eat();
 	String dance();
+	String stuffing(String str, Object[] input);
 }

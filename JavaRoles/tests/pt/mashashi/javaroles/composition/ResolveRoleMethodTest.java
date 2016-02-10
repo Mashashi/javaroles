@@ -15,12 +15,12 @@ import org.junit.runners.model.Statement;
 */
 
 
-/*
+
 import org.junit.Rule;
 import org.junit.rules.MethodRule;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
-*/
+
 
 /**
  * 
@@ -29,7 +29,7 @@ import org.junit.runners.model.Statement;
  */
 public class ResolveRoleMethodTest {
 	
-	/*
+
 	public class SingleTestRule implements MethodRule {
 	    private String applyMethod;
 	    public SingleTestRule(String applyMethod) {
@@ -47,8 +47,8 @@ public class ResolveRoleMethodTest {
 	        };
 	    }
 	}
-	@Rule public SingleTestRule test = new SingleTestRule("");
-	*/
+	@Rule public SingleTestRule test = new SingleTestRule("testCallMultiInput");
+
 	
 	@BeforeClass
 	public static void setup(){
@@ -103,4 +103,9 @@ public class ResolveRoleMethodTest {
 		}catch(ProbablyRigidTypeNotDeclaredException e){}
 	}
 	
+	@Test
+	public void testCallMultiInput() {
+		AnimalRoles a = new AnimalRoles(new Portuguese(), new Bonobo());
+		a.stuffing("test", null);
+	}
 }

@@ -102,7 +102,11 @@ public class ClassUtils {
 	public static Class<?>[] getNativeTypes(CtClass[] jaTypes) throws ClassNotFoundException{
 		Class<?>[] nativeTypes = new Class[jaTypes.length];
 		for(int i =0; i < jaTypes.length; i++){
-			nativeTypes[i] = Class.forName(jaTypes[i].getName());
+			String name = jaTypes[i].getName();
+			if(jaTypes[i].isArray()){
+				name = "[L"+name.substring(0, name.length()-2)+";";
+			}
+			nativeTypes[i] = Class.forName(name);
 		}
 		return nativeTypes;
 	}
@@ -122,8 +126,8 @@ public class ClassUtils {
 		
 		for(CtMethod clazzMethod: c.getDeclaredMethods()){
 			String nameProcessing = clazzMethod.getName();
-			String sigPRocessing = clazzMethod.getSignature();
-			if(nameProcessing.equals(name) && sigPRocessing.equals(sig)){
+			String sigProcessing = clazzMethod.getSignature();
+			if(nameProcessing.equals(name) && sigProcessing.equals(sig)){
 				return clazzMethod;
 			}
 		}
@@ -253,9 +257,30 @@ public class ClassUtils {
 		}
 	}
 	
-	public static String getExcutingClass(int stackLevel) {
+	public static String getExecutingClass(int stackLevel) {
         return Thread.currentThread().getStackTrace()[stackLevel].getClassName();
     }
+	
+	
+	
+	/*public static CtMethod getExecutingMethod(int stackLevel) {
+        String className = Thread.currentThread().getStackTrace()[stackLevel].getClassName();
+        if(lastSig!=null){
+        	Thread.currentThread().getStackTrace()[stackLevel].toString();
+        }
+		//Thread.currentThread().getStackTrace()[stackLevel].getMethodName()
+		return null;
+    }
+	private static String lastSig;
+	public static void submitSignature(String name, Object... sig){
+		//System.out.println(name);
+		lastSig = "";
+		for(Object e: sig){
+			System.out.println();
+			lastSig += ((Class<?>)e).getName()+",";
+		}
+	}*/
+	
 	
 	public static String generateVarName() {
         return "var"+UUID.randomUUID().toString().replace("-", "");
