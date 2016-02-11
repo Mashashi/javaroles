@@ -1,9 +1,11 @@
 package pt.mashashi.javaroles.composition;
 
+import java.util.HashMap;
 import java.util.UUID;
 
 import javassist.CannotCompileException;
 import javassist.CtClass;
+import javassist.CtField;
 import javassist.CtMethod;
 import javassist.CtNewMethod;
 import javassist.NotFoundException;
@@ -83,6 +85,11 @@ public class RoleRegisterComposition extends RoleRegister{
 	@Override
 	protected String getRoleBusDeclaration() {
 		return "private "+RoleBusComposition.class.getName()+" "+roleBusVarName+" = new "+RoleBusComposition.class.getName()+"(this);";
+	}
+
+	@Override
+	protected boolean isToInject(CtMethod method, HashMap<String,CtField> objectRoles) throws ClassNotFoundException {
+		return  objectRoles.size()!=0 && method.getAnnotation(TurnOffRole.class)==null;
 	}
 	
 }
