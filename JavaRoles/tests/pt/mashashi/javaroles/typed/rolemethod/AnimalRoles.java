@@ -3,7 +3,9 @@ package pt.mashashi.javaroles.typed.rolemethod;
 import pt.mashashi.javaroles.Human;
 import pt.mashashi.javaroles.Monkey;
 import pt.mashashi.javaroles.ObjectForRole;
+import pt.mashashi.javaroles.composition.OriginalRigid;
 import pt.mashashi.javaroles.composition.TurnOffRole;
+import pt.mashashi.javaroles.typed.TurnOnRole;
 
 /**
  * 
@@ -26,6 +28,7 @@ public class AnimalRoles implements Human, Monkey{
 	}
 	
 	@Override
+	@TurnOnRole
 	public String hello() {
 		return HALLO;
 	}
