@@ -100,12 +100,7 @@ public class ResolveRoleTest {
 		Animal b = new Animal();
 		Human h = ((Human) a);
 		Monkey m = ((Monkey) b);
-		System.out.println(
-				m.hello()
-				+
-				" "
-				+
-				h.hello());
+		System.out.println(m.hello()+" "+h.hello());
 		
 		assertEquals("Yap", "Human", a.ret);
 		assertEquals("Yap", "Monkey", b.ret);
