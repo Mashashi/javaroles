@@ -1,13 +1,11 @@
 package pt.mashashi.javaroles.typed;
 
-import java.util.HashMap;
 import java.util.UUID;
 
 import org.apache.log4j.Logger;
 
 import javassist.CannotCompileException;
 import javassist.CtClass;
-import javassist.CtField;
 import javassist.CtMethod;
 import javassist.CtNewMethod;
 import javassist.NotFoundException;
@@ -36,7 +34,7 @@ public class RoleRegisterTyped extends RoleRegister{
 		this.srcFolder = srcFolder;
 	}
 	
-	protected CtMethod injectRoleDependency(CtClass cn, CtMethod method, CtField roleObjectClass) throws CannotCompileException, NotFoundException {
+	protected CtMethod injectRoleDependency(CtClass cn, CtMethod method) throws CannotCompileException, NotFoundException {
 		
 		//int lineNumberStart = method.getMethodInfo().getLineNumber(0);
 		final String clazzName = cn.getName();
@@ -47,7 +45,12 @@ public class RoleRegisterTyped extends RoleRegister{
 		
 		String invokeMissProcessingCallback = "";
 		
-		if(roleObjectClass!=null){
+		// OLDFEAT [TYPED] #1 This feature was dropped because it contained a bug
+		/*
+		 When a rigid object implemented several interfaces we could not really be sure if the one received as the parameter
+		 roleObjectClass was the one that missed the processing
+		 */
+		/*if(roleObjectClass!=null){
 			// We just want to invoke the method _MissProcessing if it was thrown by a role hence the guard
 			invokeMissProcessingCallback =
 			"try{"+
@@ -57,10 +60,10 @@ public class RoleRegisterTyped extends RoleRegister{
 												"new Class[]{"+String.class.getName()+".class,"+HashMap.class.getName()+".class},"+
 												"new Object[]{\""+roleObjectClass.getType().getSimpleName()+"\",e1.getDetails()});"+	
 			"}catch("+NoSuchMethodException.class.getName()+" e2){"+
-				"/*Method not implemented. No problem. Do nothing.*/"+
+				//Method not implemented. No problem. Do nothing.
 				//"System.out.println(e2.getMessage());"+ // Print the method that was no found
 			"}";
-		}
+		}*/
 		
 		CtMethod newMethod = CtNewMethod.copy(method, uuid, cn, null);
 		cn.addMethod(newMethod);

@@ -6,10 +6,7 @@ package pt.mashashi.javaroles;
  *
  */
 public interface Human {
-	void born();
 	String hello(); 
 	String die(String age);  
 	String eat();
-	String dance();
-	String stuffing(String str, Object[] input);
 }

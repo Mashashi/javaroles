@@ -30,21 +30,4 @@ public class Portuguese implements Human{
 		return EAT;
 	}
 
-	@Override
-	public String dance() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String stuffing(String str, Object[] input) {
-		return "oi";
-	}
-
-	@Override
-	public void born() {
-		// TODO Auto-generated method stub
-		
-	}
-
 }

@@ -125,24 +125,6 @@ public class Animal implements Human, Monkey{
 	public String eat() {
 		return null;
 	}
-
-	@Override
-	public String dance() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String stuffing(String str, Object[] input) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void born() {
-		// TODO Auto-generated method stub
-		
-	}
 	
 }
 

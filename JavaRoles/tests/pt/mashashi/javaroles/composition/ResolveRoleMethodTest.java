@@ -6,6 +6,9 @@ import org.junit.BeforeClass;
 
 import org.junit.Test;
 
+import pt.mashashi.javaroles.AnotationException;
+import pt.mashashi.javaroles.MissUseAnnotationExceptionException;
+
 /*
 import org.junit.Rule;
 import org.junit.rules.MethodRule;
@@ -53,72 +56,91 @@ public class ResolveRoleMethodTest {
 	
 	@BeforeClass
 	public static void setup(){
-		new RoleRegisterComposition().registerRools();
+		//new RoleRegisterComposition().registerRools();
+		new RoleRegisterComposition().registerRoolsExcludeGiven(TestRigidObjectExceptions.class);
 	}
 	
 	
 	@Test
 	public void testMethodRoleObjectMethodCall() {
-		AnimalRoles a = new AnimalRoles(new Portuguese(), new Bonobo());
-		assertEquals("Yap", Portuguese.HALLO, a.hello());
-		AnimalRolesSwaped b = new AnimalRolesSwaped();
-		assertEquals("Yap", Bonobo.HALLO, b.hello());
+		TestMethodRoleObjectMethodCall.test();
 	}
 	
 	@Test
 	public void testWithNullRoleObjects() {
-		AnimalRoles a = new AnimalRoles(null, null);
-		assertEquals("Yap", AnimalRoles.HALLO, a.hello());
+		TestWithNullRoleObjects.test();
+	}
+	
+	@Test
+	public void testWithNotAccessibleClasses() {
+		try{
+			TestWithNotAccessibleClasses.test();
+			fail("Should throw "+IllegalAccessException.class.getName());
+		}catch(IllegalAccessException e){}
 	}
 	
 	@Test
 	public void testRigidCall() {
-		AnimalRoles a = new AnimalRoles(new Portuguese(), null);
-		assertEquals("Yap", "Just dance modified!", a.dance());
+		TestRigidCall.test();
 	}
 	
 	@Test
 	public void testNotInRole() {
-		AnimalRoles a = new AnimalRoles(null, null);
-		assertEquals("Yap", "Oh oh", a.notInRole());
+		TestNotInRole.test();
 	}
 	
 	@Test
 	public void testToSecondRoleFirstNull() {
-		AnimalRoles a = new AnimalRoles(null, new Bonobo());
-		assertEquals("Yap", Bonobo.HALLO, a.hello());
+		TestToSecondRoleFirstNull.test();
 	}
 	
 	@Test
 	public void testRoleSurpressed() {
-		AnimalRoles a = new AnimalRoles(new Portuguese(), new Bonobo());
-		assertEquals("Yap", AnimalRoles.DIE+"35", a.die("35"));
+		TestRoleSurpressed.test();
 	}
 	
 	@Test
-	public void testCallWrongStackOverflow() {
-		AnimalRoles a = new AnimalRoles(null, new Bonobo());
-		try{
-			System.out.println(a.eat());
-			fail("StackOverflowError should be thrown.");
-		}catch(StackOverflowError e){}
+	public void testRigidCallMadeWrong() {
+		TestRigidCallMadeWrong.test();
 	}
 	
 	@Test
 	public void testCallMultiInput() {
-		AnimalRoles a = new AnimalRoles(new Portuguese(), new Bonobo());
-		a.stuffing("test", null);
+		TestCallMultipleInput.test();
 	}
 	
-	@Test
-	public void testCallCore() {
-		AnimalRoles a = new AnimalRoles(new Portuguese(), new Bonobo());
-		assertEquals("Yap", AnimalRoles.EAT, a.originalHuman1.eat());
-		assertEquals("Yap", AnimalRoles.EAT, a.originalHuman2.eat());
-		assertEquals("Yap", Portuguese.EAT, a.eat());
-		assertEquals("Yap", AnimalRoles.EAT, a.originalMonkey.eat());
-		a.born();
-		a.originalHuman1.born();
+	
+	@Test 
+	public void testRigidObjectExceptions(){
+		
+		try{
+			new RoleRegisterComposition().registerRools(TestRigidObjectExceptions.AnimalRoles.class);
+		}catch(MissUseAnnotationExceptionException e){
+			if(	
+					!e.getAnotation().equals(OriginalRigid.class)
+					||
+					e.getAnotationException() != AnotationException.MISS_USE
+					){
+				fail("exception was not thrown correctly");
+			}
+		}
+		
+		try{
+			new RoleRegisterComposition().registerRools(TestRigidObjectExceptions.AnimalRoles2.class);
+		}catch(MissUseAnnotationExceptionException e){
+			if(		
+					!e.getAnotation().equals(OriginalRigid.class) 
+					|| 
+					e.getAnotationException() != AnotationException.NOT_IMPLEMENTED
+					){
+				fail("exception was not thrown correctly");
+			}
+		}
+	
 	}
+	
+	
+	
+	
 	
 }

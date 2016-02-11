@@ -4,7 +4,6 @@ import java.util.UUID;
 
 import javassist.CannotCompileException;
 import javassist.CtClass;
-import javassist.CtField;
 import javassist.CtMethod;
 import javassist.CtNewMethod;
 import javassist.NotFoundException;
@@ -23,7 +22,7 @@ public class RoleRegisterComposition extends RoleRegister{
 	
 	public RoleRegisterComposition() {}
 	
-	protected CtMethod injectRoleDependency(CtClass cn, CtMethod method, CtField roleObjectClass) throws CannotCompileException, NotFoundException {
+	protected CtMethod injectRoleDependency(CtClass cn, CtMethod method) throws CannotCompileException, NotFoundException {
 		
 		CtMethod methodCreated =null;
 		
@@ -45,7 +44,13 @@ public class RoleRegisterComposition extends RoleRegister{
 																						"\""+name+"\","+
 																						"\""+sig+"\");"+	
 					
-					// Old core call
+					// OLDFEAT #1 Old code to call rigid type method
+					/*
+					Logic if the method call was made from a class that has the RoleObject annotation 
+					and in its attribute is the name of where the code is injected call the rigid
+					type method
+					*/
+					
 					/*RoleObject.class.getName()+" "+varAnot+" = Class.forName("+ClassUtils.class.getName()+".getExecutingClass(3)).getAnnotation("+RoleObject.class.getName()+".class);" +
 					"if("+varAnot+"!=null){"+
 						"for(int i = 0; i<"+varAnot+".types().length; i++){"+
