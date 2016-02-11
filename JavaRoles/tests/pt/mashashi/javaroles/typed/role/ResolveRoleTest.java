@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import pt.mashashi.javaroles.Human;
 import pt.mashashi.javaroles.Monkey;
+import pt.mashashi.javaroles.composition.TestRigidObjectExceptions;
 import pt.mashashi.javaroles.typed.ConditionalExprNotSupportedByRoleSystemException;
 import pt.mashashi.javaroles.typed.RoleRegisterTyped;
 
@@ -60,7 +61,7 @@ public class ResolveRoleTest {
 	@BeforeClass
 	public static void setup(){
 		//Role.registerRool("Animal");
-		new RoleRegisterTyped("tests/").registerRools();
+		new RoleRegisterTyped("tests/").registerRoolsExcludeGiven(TestRigidObjectExceptions.AnimalRoles.class);
 	}
 	
 	
