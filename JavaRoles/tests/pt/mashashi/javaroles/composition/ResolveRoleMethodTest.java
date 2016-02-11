@@ -100,7 +100,7 @@ public class ResolveRoleMethodTest {
 		AnimalRoles a = new AnimalRoles(null, new Bonobo());
 		try{
 			System.out.println(a.eat());
-			fail("The ProbablyRigidTypeNotDeclaredException should be thrown.");
+			fail("StackOverflowError should be thrown.");
 		}catch(StackOverflowError e){}
 	}
 	
@@ -111,10 +111,14 @@ public class ResolveRoleMethodTest {
 	}
 	
 	@Test
-	public void testCallCoreVoid() {
+	public void testCallCore() {
 		AnimalRoles a = new AnimalRoles(new Portuguese(), new Bonobo());
-		System.out.println(a.originalHuman.eat());
+		assertEquals("Yap", AnimalRoles.EAT, a.originalHuman1.eat());
+		assertEquals("Yap", AnimalRoles.EAT, a.originalHuman2.eat());
+		assertEquals("Yap", Portuguese.EAT, a.eat());
+		assertEquals("Yap", AnimalRoles.EAT, a.originalMonkey.eat());
 		a.born();
-		a.originalHuman.born();
+		a.originalHuman1.born();
 	}
+	
 }
