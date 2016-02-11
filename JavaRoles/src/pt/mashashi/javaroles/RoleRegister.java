@@ -126,17 +126,17 @@ public abstract class RoleRegister {
 				boolean isTargetInjection = method.getAnnotation(TurnOffRole.class)==null && objectRoles.size()!=0;	
 				if(isTargetInjection){
 					
+					if(cn.isFrozen()){
+						/* BLOCK If the class was already loaded don't patch it
+						 Maybe it was already processed
+						 This happens when running multiple test cases via "mvn test"
+						 The registerRool method will be called multiple times
+						*/
+						Logger.getLogger(RoleBus.class.getName()).debug(cn.getName()+" is frozen");
+						break methodInj;
+					}
+					
 					if(!wasInjected){
-						
-						if(cn.isFrozen()){
-							/* BLOCK If the class was already loaded don't patch it
-							 Maybe it was already processed
-							 This happens when running multiple test cases via "mvn test"
-							 The registerRool method will be called multiple times
-							*/
-							Logger.getLogger(RoleBus.class.getName()).debug(cn.getName()+" is frozen");
-							break methodInj;
-						}
 						
 						CtField newField = CtField.make(getRoleBusDeclaration(), cn);
 						
