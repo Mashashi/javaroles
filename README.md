@@ -126,5 +126,5 @@ public static void Main(String[] args){
 Results in the output...
 ```java
 "Hey there"
-"Dance modified!"
+"Just dance modified!"
 ```
