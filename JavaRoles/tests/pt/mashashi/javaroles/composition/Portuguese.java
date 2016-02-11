@@ -34,7 +34,7 @@ public class Portuguese implements Human{
 
 	@Override
 	public String dance() {
-		return core.originalHuman.dance()+" modified!";
+		return core.originalHuman1.dance()+" modified!";
 	}
 
 	@Override

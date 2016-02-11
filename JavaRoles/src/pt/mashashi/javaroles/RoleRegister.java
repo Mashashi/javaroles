@@ -212,25 +212,39 @@ public abstract class RoleRegister {
 		Iterator<CtField> ite = objectOriginal.iterator();
 		while(ite.hasNext()){
 			CtField n = ite.next();
-			CtClass evalClass = cp.makeClass(ClassUtils.generateIdentifier());
 			CtClass i = cp.getOrNull(n.getType().getName());
-			evalClass.addInterface(i);
-			originals.put(i.getName(), evalClass);
-			evalClass.addField(CtField.make("public "+i.getName()+" core;", evalClass));
-			for(CtMethod method : evalClass.getMethods()){
-				if(Modifier.isAbstract(method.getModifiers())){
-					CtMethod m = CtNewMethod.make(method.getModifiers() & ~Modifier.ABSTRACT & Modifier.PUBLIC, 
-							method.getReturnType(), 
-							method.getName(), 
-							method.getParameterTypes(), 
-							method.getExceptionTypes(), 
-							"{return null;}", 
-							evalClass
-					);
-					evalClass.addMethod(m);
-				}
+			
+			if(!i.isInterface()){
+				throw new MissUseAnnotationExceptionException(OriginalRigid.class, AnotationException.MISS_USE, cn.getName(), n.getName(), cn.getSimpleName());
 			}
-			evalClass.addConstructor(CtNewConstructor.make("public " + evalClass.getSimpleName() + "("+i.getName()+" core) {this.core = core;}", evalClass));
+			
+			if(!ClassUtils.classImplementsInterface(cn, i)){
+				throw new MissUseAnnotationExceptionException(OriginalRigid.class, AnotationException.NOT_IMPLEMENTED, cn.getName(), n.getName(), cn.getSimpleName());
+			}		
+					
+			CtClass evalClass = originals.get(i.getName());
+			
+			if(evalClass==null){
+				evalClass = cp.makeClass(ClassUtils.generateIdentifier());	
+				evalClass.addInterface(i);
+				originals.put(i.getName(), evalClass);
+				evalClass.addField(CtField.make("public "+i.getName()+" core;", evalClass));
+				for(CtMethod method : evalClass.getMethods()){
+					if(Modifier.isAbstract(method.getModifiers())){
+						CtMethod m = CtNewMethod.make(method.getModifiers() & ~Modifier.ABSTRACT & Modifier.PUBLIC, 
+								method.getReturnType(), 
+								method.getName(), 
+								method.getParameterTypes(), 
+								method.getExceptionTypes(), 
+								"{return null;}", 
+								evalClass
+						);
+						evalClass.addMethod(m);
+					}
+				}
+				evalClass.addConstructor(CtNewConstructor.make("public " + evalClass.getSimpleName() + "("+i.getName()+" core) {this.core = core;}", evalClass));
+			}
+			
 			//evalClass.toClass();
 			for(CtConstructor con : n.getDeclaringClass().getConstructors()){
 				con.insertAfter("this."+n.getName()+" = new "+evalClass.getName()+"(this);");

@@ -20,7 +20,10 @@ public class AnimalRoles implements Human, Monkey{
 	
 	@ObjectForRole public Monkey monkey;
 	
-	@OriginalRigid public Human originalHuman;
+	@OriginalRigid public Human originalHuman1;
+	@OriginalRigid public Human originalHuman2;
+	@OriginalRigid public Monkey originalMonkey;
+	@OriginalRigid public Object missUse;
 	
 	public AnimalRoles(Human human, Monkey monkey){
 		this.human = human;

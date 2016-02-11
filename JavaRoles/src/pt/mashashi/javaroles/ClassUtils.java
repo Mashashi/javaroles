@@ -266,4 +266,12 @@ public class ClassUtils {
         return "i"+UUID.randomUUID().toString().replace("-", "");
     }
 	
+	public static boolean classImplementsInterface(CtClass clazz, CtClass interfaze) throws NotFoundException{
+		for(CtClass i : clazz.getInterfaces()){
+			if(interfaze.equals(i))
+				return true;
+		}
+		return false;
+	}
+	
 }
