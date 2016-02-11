@@ -16,8 +16,22 @@ public class MissUseAnnotationExceptionException extends RuntimeException{
 		messages.put(OriginalRigid.class.getName()+AnotationException.MISS_USE, "The annotation @"+OriginalRigid.class.getSimpleName()+" was used incorrectly.\n The field \"%s.%s\" should be an interface and implemented on the class %s.");
 	}
 	
+	private Class<? extends Annotation> a;
+	private AnotationException e;
+	
 	public MissUseAnnotationExceptionException(Class<? extends Annotation> annot, AnotationException exception, Object... args){
 		super(String.format(messages.get(annot.getName()+exception), args));
+		a = annot;
+		e = exception;
 	}
+	
+	public Class<? extends Annotation> getAnotation(){
+		return a;
+	}
+	
+	public AnotationException getAnotationException(){
+		return e;
+	}
+	
 	
 }

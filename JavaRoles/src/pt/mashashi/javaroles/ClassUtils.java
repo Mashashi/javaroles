@@ -66,7 +66,7 @@ public class ClassUtils {
 				
 			}
 		} catch (NotFoundException e) {
-			// This should not be a problem
+			// This should not be a problem. Happens when going through all the class path for some internal java classes.
 			Logger.getLogger(RoleBus.class).debug(clazz.getName()+" not found interfaces: "+e.getMessage());
 		}
 		return returned;

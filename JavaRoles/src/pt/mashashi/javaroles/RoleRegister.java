@@ -29,10 +29,18 @@ import pt.mashashi.javaroles.composition.OriginalRigid;
 public abstract class RoleRegister {
 	
 	protected String roleBusVarName;
+	private ClassPool cp;
 	
 	public RoleRegister(){
-		Logger.getRootLogger().setLevel(Level.OFF); // Suppress console log4j:WARN No appenders could be found for logger... When log4j config file is not set
+		
+		{
+			// CONFIG Suppress console output from log4j missing config file 
+			// log4j:WARN No appenders could be found for logger... When log4j config file is not set
+			Logger.getRootLogger().setLevel(Level.OFF); 
+		}
+		
 		roleBusVarName = "roleBus"+UUID.randomUUID().toString().replace("-", "");
+		cp = ClassPool.getDefault();
 	}
 	
 	/**
@@ -50,7 +58,7 @@ public abstract class RoleRegister {
 	 * @throws CannotCompileException
 	 * @throws NotFoundException
 	 */
-	protected abstract CtMethod injectRoleDependency(CtClass cn, CtMethod method, CtField roleObjectClass) throws CannotCompileException, NotFoundException;
+	protected abstract CtMethod injectRoleDependency(CtClass cn, CtMethod method) throws CannotCompileException, NotFoundException;
 	
 	/**
 	 * Returns a string having the RoleBus method field declaration to be injected
@@ -70,12 +78,14 @@ public abstract class RoleRegister {
 	 */
 	public void registerRool(String clazzName){
 		
-		ClassPool cp = ClassPool.getDefault();
 		CtClass cn = cp.getOrNull(clazzName);
 		boolean wasInjected = false;
 		
-		
-		/*{ // Insert a method call in every method of a class that has an annotation
+		 // SNIPPET Insert a method call in every method of a class that has an annotation
+		 /*
+		 This was made to register the signature of a function because it is not possible to get it from the stack trace
+		 */
+		 /*{
 			try {
 				Object a = cn.getAnnotation(RoleObject.class);
 				if(a!=null){
@@ -96,12 +106,10 @@ public abstract class RoleRegister {
 					}
 					return ;
 				}
-				
 			} catch (ClassNotFoundException e) {
 				// Do nothing this is not a role object class
-			} 
+			}
 		}*/
-		
 		
 		
 		try {
@@ -111,11 +119,9 @@ public abstract class RoleRegister {
 			
 			HashMap<String, CtClass> originals = getOriginals(cn);
 			
-			//System.out.println(cn.getName()+" "+originals.size());
-			
 			methodInj: for(CtMethod method : methods){
 				
-				List<CtClass> inters = ClassUtils.definedOnInterfaces(method, cn); // possible bug hear
+				List<CtClass> inters = ClassUtils.definedOnInterfaces(method, cn); // TODO check for a possible bug hear
 				CtField roleObject = objectRoles.get(inters.size()!=0?inters.get(0).getSimpleName():"");
 				
 				boolean isTargetInjection = method.getAnnotation(TurnOffRole.class)==null && (method.getAnnotation(TurnOnRole.class)!=null || roleObject!=null);	
@@ -124,9 +130,11 @@ public abstract class RoleRegister {
 					if(!wasInjected){
 						
 						if(cn.isFrozen()){
-							// If the class was already loaded don't patch it. Maybe it was already processed
-							// This happens when running multiple test cases via "mvn test"
-							// The registerRool method will be called multiple times
+							/* BLOCK If the class was already loaded don't patch it
+							 Maybe it was already processed
+							 This happens when running multiple test cases via "mvn test"
+							 The registerRool method will be called multiple times
+							*/
 							Logger.getLogger(RoleBus.class.getName()).debug(cn.getName()+" is frozen");
 							break methodInj;
 						}
@@ -137,7 +145,7 @@ public abstract class RoleRegister {
 						
 					}
 					
-					CtMethod created = injectRoleDependency(cn, method, roleObject);
+					CtMethod created = injectRoleDependency(cn, method);
 					
 					applyIndirect(method, created, originals, inters);
 					
@@ -150,7 +158,7 @@ public abstract class RoleRegister {
 			}
 			
 			if(wasInjected){
-				//cn.writeFile();
+				// COMMENT // cn.writeFile(); - Writing to file will create a new .class file. Just use .toClass(); to place the class available on the class path
 				cn.toClass();
 			}
 			
@@ -179,6 +187,11 @@ public abstract class RoleRegister {
 				for(CtMethod mo: o.getMethods()){
 					if(method.getName().equals(mo.getName()) && method.getSignature().equals(mo.getSignature())){
 						final String varM = ClassUtils.generateIdentifier();
+						
+						// COMMENT #1.1 Hear we complete with the code for each method
+						/*
+						 We can only do it hear because only hear we have injected the methods on the rigid type
+						 */
 						mo.setBody(
 							"{"+
 								CtMethod.class.getName()+" "+varM+" = "+ClassUtils.class.getName()+".getExecutingMethod("+
@@ -204,7 +217,7 @@ public abstract class RoleRegister {
 		
 		HashMap<String, CtClass> originals = new HashMap<>();
 		if(cn.isFrozen()){
-			// Ignore frozen classes, assume already processed
+			// BLOCK Ignore frozen classes, assume already processed
 			return originals;
 		}
 		ClassPool cp = ClassPool.getDefault();
@@ -245,7 +258,7 @@ public abstract class RoleRegister {
 				evalClass.addConstructor(CtNewConstructor.make("public " + evalClass.getSimpleName() + "("+i.getName()+" core) {this.core = core;}", evalClass));
 			}
 			
-			//evalClass.toClass();
+			// COMMENT #1.0 //evalClass.toClass(); - Was commented out because we just want to created the structure of the class hear 
 			for(CtConstructor con : n.getDeclaringClass().getConstructors()){
 				con.insertAfter("this."+n.getName()+" = new "+evalClass.getName()+"(this);");
 			}
@@ -257,6 +270,28 @@ public abstract class RoleRegister {
 	public void registerRools(){
 		List<String> c = ClassUtils.getAllClassNames();
 		for(String className : c){
+			registerRool(className);
+		}
+	}
+	
+	public void registerRools(Class<?>... clazzes){
+		for(Class<?> clazz :clazzes){
+			for(Class<?> i : clazz.getDeclaredClasses()){
+				registerRool(i.getName());
+			}
+			registerRool(clazz.getName());
+		}
+	}
+	
+	public void registerRoolsExcludeGiven(Class<?>... clazzes){
+		List<String> c = ClassUtils.getAllClassNames();
+		classProcessing: for(String className : c){
+			for(Class<?> clazz :clazzes){
+				if(className.startsWith(clazz.getName())){ 
+					// BLOCK The condition is with .startsWith because we want to stop registration of inner classes
+					continue classProcessing;
+				}
+			}
 			registerRool(className);
 		}
 	}

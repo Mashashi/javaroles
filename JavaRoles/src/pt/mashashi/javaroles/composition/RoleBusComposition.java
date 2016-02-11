@@ -38,7 +38,6 @@ public class RoleBusComposition extends RoleBus{
 		
 	    try {
 	    	
-			// invokeLifeCycleCallbacks(roleName, methodInvoked);
 			CtField ctFieldRole = getTargetObjectRoleField(methodInvoked);
 			if(ctFieldRole==null){
 				throw new MissProcessingException(methodInvoked.getClass().getSimpleName(), target.getClass().getName(), MissProcessingException.WhyMiss.NULL_OBJECT);
@@ -107,6 +106,7 @@ public class RoleBusComposition extends RoleBus{
 					if(cause.getClass().equals(MissProcessingException.class)){
 						throw (MissProcessingException) e.getCause();
 					}else{
+						
 						 if(cause.getClass().equals(StackOverflowError.class)){
 							throw (StackOverflowError) cause; 
 						}else{

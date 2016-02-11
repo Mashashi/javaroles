@@ -40,23 +40,6 @@ public class AnimalRoles implements Human, Monkey{
 	public String eat() {
 		return EAT;
 	}
-
-	@Override
-	public String dance() {
-		return null;
-	}
-
-	@Override
-	public String stuffing(String str, Object[] input) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void born() {
-		// TODO Auto-generated method stub
-		
-	}
 	
 }
 
