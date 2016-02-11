@@ -121,10 +121,9 @@ public abstract class RoleRegister {
 			
 			methodInj: for(CtMethod method : methods){
 				
-				List<CtClass> inters = ClassUtils.definedOnInterfaces(method, cn); // TODO check for a possible bug hear
-				CtField roleObject = objectRoles.get(inters.size()!=0?inters.get(0).getSimpleName():"");
 				
-				boolean isTargetInjection = method.getAnnotation(TurnOffRole.class)==null && (method.getAnnotation(TurnOnRole.class)!=null || roleObject!=null);	
+				
+				boolean isTargetInjection = method.getAnnotation(TurnOffRole.class)==null && objectRoles.size()!=0;	
 				if(isTargetInjection){
 					
 					if(!wasInjected){
@@ -147,6 +146,7 @@ public abstract class RoleRegister {
 					
 					CtMethod created = injectRoleDependency(cn, method);
 					
+					List<CtClass> inters = ClassUtils.definedOnInterfaces(method, cn);
 					applyIndirect(method, created, originals, inters);
 					
 					wasInjected = true;
