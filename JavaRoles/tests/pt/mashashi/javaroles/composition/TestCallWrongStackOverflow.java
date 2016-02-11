@@ -3,7 +3,6 @@ package pt.mashashi.javaroles.composition;
 import static org.junit.Assert.assertEquals;
 
 import pt.mashashi.javaroles.ObjectForRole;
-import pt.mashashi.javaroles.TurnOffRole;
 
 public class TestCallWrongStackOverflow {
 	

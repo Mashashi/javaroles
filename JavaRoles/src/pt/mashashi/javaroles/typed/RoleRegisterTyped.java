@@ -1,11 +1,13 @@
 package pt.mashashi.javaroles.typed;
 
+import java.util.HashMap;
 import java.util.UUID;
 
 import org.apache.log4j.Logger;
 
 import javassist.CannotCompileException;
 import javassist.CtClass;
+import javassist.CtField;
 import javassist.CtMethod;
 import javassist.CtNewMethod;
 import javassist.NotFoundException;
@@ -95,6 +97,11 @@ public class RoleRegisterTyped extends RoleRegister{
 	@Override
 	protected String getRoleBusDeclaration() {
 		return "private "+RoleBusTyped.class.getName()+" "+roleBusVarName+" = new "+RoleBusTyped.class.getName()+"(this,\""+srcFolder+"\");";
+	}
+
+	@Override
+	protected boolean isToInject(CtMethod method, HashMap<String,CtField> objectRoles) throws ClassNotFoundException {
+		return method.getAnnotation(TurnOnRole.class)!=null;
 	}
 	
 }

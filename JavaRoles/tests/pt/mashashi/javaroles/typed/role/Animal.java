@@ -3,6 +3,7 @@ package pt.mashashi.javaroles.typed.role;
 import javassist.CtMethod;
 import pt.mashashi.javaroles.Human;
 import pt.mashashi.javaroles.Monkey;
+import pt.mashashi.javaroles.typed.TurnOnRole;
 /**
  * We can than use other patterns to implement all the roles.
  * 
@@ -109,16 +110,19 @@ public class Animal implements Human, Monkey{
 	
 	
 	@Override
+	@TurnOnRole
 	public String hello() {
 		return ret;
 	}
 	
 	@Override
+	@TurnOnRole
 	public String die(String age) {
 		return "Mar";
 	}
 
 	@Override
+	@TurnOnRole
 	public String eat() {
 		return null;
 	}

@@ -68,6 +68,15 @@ public abstract class RoleRegister {
 	protected abstract String getRoleBusDeclaration();
 	
 	/**
+	 * If the method being processed is to be injected with the code for enhancement
+	 *  
+	 * @param method
+	 * @param objectRoles 
+	 * @return
+	 */
+	protected abstract boolean isToInject(CtMethod method, HashMap<String,CtField> objectRoles) throws ClassNotFoundException;
+	
+	/**
 	 * 
 	 * If through this code it was uses the native class object instead of {@link CtClass} 
 	 * we would get an error for trying to modify an already loaded class.
@@ -121,7 +130,7 @@ public abstract class RoleRegister {
 			
 			methodInj: for(CtMethod method : methods){
 				
-				boolean isTargetInjection = method.getAnnotation(TurnOffRole.class)==null && objectRoles.size()!=0;	
+				boolean isTargetInjection = isToInject(method, objectRoles);	
 				if(isTargetInjection){
 					
 					if(cn.isFrozen()){
