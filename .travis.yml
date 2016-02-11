@@ -1,6 +1,6 @@
 language: java
 jdk:
-  - oraclejdk8
+  - oraclejdk7
 ## Run Integration tests
 
 # All tests that should be run 

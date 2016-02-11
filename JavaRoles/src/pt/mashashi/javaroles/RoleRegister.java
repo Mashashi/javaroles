@@ -121,8 +121,6 @@ public abstract class RoleRegister {
 			
 			methodInj: for(CtMethod method : methods){
 				
-				
-				
 				boolean isTargetInjection = method.getAnnotation(TurnOffRole.class)==null && objectRoles.size()!=0;	
 				if(isTargetInjection){
 					
@@ -136,12 +134,9 @@ public abstract class RoleRegister {
 						break methodInj;
 					}
 					
-					if(!wasInjected){
-						
+					if(!wasInjected){						
 						CtField newField = CtField.make(getRoleBusDeclaration(), cn);
-						
 						cn.addField(newField);
-						
 					}
 					
 					CtMethod created = injectRoleDependency(cn, method);
