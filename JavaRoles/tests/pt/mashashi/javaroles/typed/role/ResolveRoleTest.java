@@ -61,7 +61,7 @@ public class ResolveRoleTest {
 	@BeforeClass
 	public static void setup(){
 		//Role.registerRool("Animal");
-		new RoleRegisterTyped("tests/").registerRoolsExcludeGiven(TestRigidObjectExceptions.AnimalRoles.class);
+		new RoleRegisterTyped("tests/").registerRoolsExcludeGiven("pt.mashashi.javaroles.composition.TestRigidObjectExceptions.AnimalRoles");
 	}
 	
 	

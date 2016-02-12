@@ -161,8 +161,12 @@ public abstract class RoleRegister {
 				
 			}
 			
-			if(wasInjected){
+			if(wasInjected || originals.size()!=0){
 				// COMMENT // cn.writeFile(); - Writing to file will create a new .class file. Just use .toClass(); to place the class available on the class path
+				/*
+				 We want to put the class on the class path after modifications if it was injected with new methods or if 
+				 it was some fields annotated with original. In the later case we change the constructor.
+				 */
 				cn.toClass();
 			}
 			
@@ -183,14 +187,16 @@ public abstract class RoleRegister {
 		
 	}
 
-	public void applyIndirect(CtMethod method, CtMethod created, HashMap<String, CtClass> originals,
-			List<CtClass> inters) throws CannotCompileException {
+	public void applyIndirect(CtMethod method, 
+								CtMethod created, 
+								HashMap<String, CtClass> originals,
+								List<CtClass> inters) throws CannotCompileException {
 		for(CtClass i:inters){
 			CtClass o = originals.get(i.getName());
 			if(o!=null){
 				for(CtMethod mo: o.getMethods()){
 					if(method.getName().equals(mo.getName()) && method.getSignature().equals(mo.getSignature())){
-						final String varM = ClassUtils.generateIdentifier();
+						final String varLocal = ClassUtils.generateIdentifier();
 						
 						// COMMENT #1.1 Hear we complete with the code for each method
 						/*
@@ -198,14 +204,14 @@ public abstract class RoleRegister {
 						 */
 						mo.setBody(
 							"{"+
-								CtMethod.class.getName()+" "+varM+" = "+ClassUtils.class.getName()+".getExecutingMethod("+
+								CtMethod.class.getName()+" "+varLocal+" = "+ClassUtils.class.getName()+".getExecutingMethod("+
 																			"\""+o.getName()+"\","+
 																			"\""+method.getName()+"\","+
 																			"\""+method.getSignature()+"\");"+
 								"return ($r) "+ClassUtils.class.getName()+".invokeWithNativeTypes("+
 								"core,"+
 								"\""+created.getName()+"\","+
-								varM+".getParameterTypes(),"+
+								varLocal+".getParameterTypes(),"+
 								"$args);"+
 							"}"		
 						);
@@ -256,6 +262,22 @@ public abstract class RoleRegister {
 								"{return null;}", 
 								evalClass
 						);
+						final String var = ClassUtils.generateIdentifier();
+						{
+							m.setBody(
+								"{"+
+									CtMethod.class.getName()+" "+var+" = "+ClassUtils.class.getName()+".getExecutingMethod("+
+																				"\""+evalClass.getName()+"\","+
+																				"\""+method.getName()+"\","+
+																				"\""+method.getSignature()+"\");"+
+									"return ($r) "+ClassUtils.class.getName()+".invokeWithNativeTypes("+
+									"core,"+
+									"\""+method.getName()+"\","+
+									var+".getParameterTypes(),"+
+									"$args);"+
+								"}"
+							);
+						}
 						evalClass.addMethod(m);
 					}
 				}
@@ -278,20 +300,38 @@ public abstract class RoleRegister {
 		}
 	}
 	
-	public void registerRools(Class<?>... clazzes){
-		for(Class<?> clazz :clazzes){
-			for(Class<?> i : clazz.getDeclaredClasses()){
-				registerRool(i.getName());
+	public void registerRools(String... clazzes){
+		for(String clazz :clazzes){
+			CtClass c = null;
+			try {
+				c = cp.get(clazz);
+			} catch (NotFoundException e) {
+				throw new RuntimeException(e.getMessage());
 			}
-			registerRool(clazz.getName());
+			
+			try {
+				for(CtClass i : c.getDeclaredClasses()){
+					registerRool(i.getName());
+				}
+			} catch (NotFoundException e) {
+				throw new RuntimeException(e.getMessage());
+			}
+			registerRool(clazz);
 		}
 	}
 	
-	public void registerRoolsExcludeGiven(Class<?>... clazzes){
+	public void registerRoolsExcludeGiven(String... clazzes){
 		List<String> c = ClassUtils.getAllClassNames();
 		classProcessing: for(String className : c){
-			for(Class<?> clazz :clazzes){
-				if(className.startsWith(clazz.getName())){ 
+			for(String clazz :clazzes){
+				CtClass clazzCt = null;
+				try {
+					clazzCt = cp.get(clazz);
+				} catch (NotFoundException e) {
+					throw new RuntimeException(e.getMessage());
+				}
+					
+				if(className.startsWith(clazzCt.getName())){ 
 					// BLOCK The condition is with .startsWith because we want to stop registration of inner classes
 					continue classProcessing;
 				}
