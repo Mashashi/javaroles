@@ -173,4 +173,9 @@ public class ResolveRoleMethodTest {
 		fail("Exception was not caught");
 	}
 	
+	@Test
+	public void testMissProcessing() {
+		TestOriginalRigidVoidMethod.test();
+	}
+	
 }

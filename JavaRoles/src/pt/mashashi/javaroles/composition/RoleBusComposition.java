@@ -2,6 +2,7 @@ package pt.mashashi.javaroles.composition;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
@@ -37,15 +38,23 @@ public class RoleBusComposition extends RoleBus{
 		Object returnByRole = null;
 		
 	    try {
-	    	
-			CtField ctFieldRole = getTargetObjectRoleField(methodInvoked);
-			if(ctFieldRole==null){
-				throw new MissProcessingException(methodInvoked.getClass().getSimpleName(), target.getClass().getName(), MissProcessingException.WhyMiss.NULL_OBJECT);
-			}
-	    	String declaringClass = ctFieldRole.getDeclaringClass().getName();
-	    	Field fieldRole = Class.forName(declaringClass).getDeclaredField(ctFieldRole.getName());
-			returnByRole = invokeRoleMethod(methodInvoked, params, fieldRole);
-			
+	    	boolean done = false;
+	    	List<CtField> fieldsTried = new LinkedList<>();
+	    	do{
+				CtField ctFieldRole = getTargetObjectRoleField(methodInvoked,fieldsTried.toArray(new CtField[fieldsTried.size()]));
+				if(ctFieldRole==null){
+					throw new MissProcessingException(methodInvoked.getClass().getSimpleName(), target.getClass().getName(), MissProcessingException.WhyMiss.NULL_OBJECT);
+				}
+		    	String declaringClass = ctFieldRole.getDeclaringClass().getName();
+		    	Field fieldRole = Class.forName(declaringClass).getDeclaredField(ctFieldRole.getName());
+		    	try{
+		    		returnByRole = invokeRoleMethod(methodInvoked, params, fieldRole);
+		    		done=true;
+		    	}catch(MissProcessingException e){
+		    		// TODO Pass hashmap parameter
+		    		fieldsTried.add(ctFieldRole);
+		    	}
+	    	}while(!done);
 		} catch (NotFoundException | NoSuchFieldException | SecurityException | ClassNotFoundException e) {
 			Logger.getLogger(RoleBus.class.getName()).debug("error resolving method: "+methodInvoked.getLongName()+" "+e.getMessage());
 			e.printStackTrace();
@@ -55,7 +64,7 @@ public class RoleBusComposition extends RoleBus{
 	    return returnByRole;
 	}
 
-	public CtField getTargetObjectRoleField(CtMethod methodInvoked) throws ClassNotFoundException, NotFoundException {
+	public CtField getTargetObjectRoleField(CtMethod methodInvoked, CtField... exclude) throws ClassNotFoundException, NotFoundException {
 		CtField ctFieldRole = null;
 		List<CtField> roleObjects = ClassUtils.getListFieldAnotated(target, ObjectForRole.class);
 		
@@ -64,14 +73,25 @@ public class RoleBusComposition extends RoleBus{
 			CtMethod[] fieldMethods = field.getType().getMethods();
 			for(CtMethod fieldMethod : fieldMethods){
 				boolean useIt = fieldMethod.getName().equals(methodInvoked.getName()) &&  fieldMethod.getSignature().equals(methodInvoked.getSignature());
+				Field fieldRole = null;
 				{ // check if it is not null
 					Object o = null;
 			    	try {
 			    		String declaringClass = field.getDeclaringClass().getName();
-						Field fieldRole = Class.forName(declaringClass).getDeclaredField(field.getName());
+						fieldRole = Class.forName(declaringClass).getDeclaredField(field.getName());
 						o = FieldUtils.readField(fieldRole, target, true);
 					} catch (NoSuchFieldException | SecurityException | IllegalAccessException e) {}
 			    	useIt = useIt && o!=null;
+				}
+				
+				if(fieldRole!=null){
+					// Exclude fields given has parameter
+					for(CtField e:exclude){
+						if(e.getName().equals(fieldRole.getName())){
+							useIt = false;
+							break;
+						}
+					}
 				}
 				
 				if(useIt){	
@@ -119,7 +139,7 @@ public class RoleBusComposition extends RoleBus{
 						}
 					}
 				}else{
-					// Unkown error
+					// Unknown error
 					Logger.getLogger(RoleBus.class.getName()).debug("error calling "+methodInvoked.getLongName()+" "+e.getMessage());
 					e.printStackTrace();
 					throw new RuntimeException();
