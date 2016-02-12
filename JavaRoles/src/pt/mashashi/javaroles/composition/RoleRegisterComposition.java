@@ -79,7 +79,13 @@ public class RoleRegisterComposition extends RoleRegister{
 						HashMap.class.getName()+" tmsg = "+ClassUtils.class.getName()+".getTypeFieldAnotatedNative(this, "+MissMsgReceptor.class.getName()+".class);"+
 						Iterator.class.getName()+" i = tmsg.values().iterator();"+
 						"while(i.hasNext()){"+
-							"(("+Field.class.getName()+")i.next()).set(this, e.getDetails());"+
+							Field.class.getName()+" f = (("+Field.class.getName()+")i.next());"+
+							/*"if(f.getType().equals("+HashMap.class.getName()+".class)){"+
+								"throw new "+MissUseAnnotationExceptionException.class.getName()+"("+MissMsgReceptor.class+","+AnnotationException.BAD_TYPE+","+);"+
+							"}"+*/
+							/*new Field().getType()
+							HashMap*/
+							"f.set(this, e.getDetails());"+
 						"}"+
 					"};"+
 					

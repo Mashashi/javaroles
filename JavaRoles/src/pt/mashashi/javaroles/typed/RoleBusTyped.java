@@ -161,8 +161,8 @@ public class RoleBusTyped extends RoleBus{
 					Object o = FieldUtils.readField(objectRole, target, true);
 					Class<?>[] paramsObjectRole = ClassUtils.getNativeTypes(methodInvoked.getParameterTypes());
 					roleReturned = o.getClass().getMethod(methodInvoked.getName(), paramsObjectRole).invoke(o, params);
-				}catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | SecurityException  | ClassNotFoundException e) {
-					
+				}catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+					// TODO
 					if(e.getCause().getClass().equals(MissProcessingException.class)){
 						throw (MissProcessingException) e.getCause();
 					}else{
