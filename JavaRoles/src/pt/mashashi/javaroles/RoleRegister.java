@@ -163,7 +163,7 @@ public abstract class RoleRegister {
 			HashMap<String, CtField> objectRoles = ClassUtils.getTypeFieldAnotatedAssist(cn, ObjectForRole.class);
 			
 			StringBuffer injectionCode = new StringBuffer("");
-			{ // injection code for methods
+			if(!cn.isFrozen()){ // injection code for methods
 				try {
 					boolean setUpInjection = cn.getAnnotation(RigidType.class)!=null;
 					if(setUpInjection){
