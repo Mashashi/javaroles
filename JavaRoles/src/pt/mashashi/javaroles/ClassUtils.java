@@ -100,16 +100,23 @@ public class ClassUtils {
 		
 	}
 	
-	public static Class<?>[] getNativeTypes(CtClass[] jaTypes) throws ClassNotFoundException{
+	public static Class<?>[] getNativeTypes(CtClass[] jaTypes){
 		Class<?>[] nativeTypes = new Class[jaTypes.length];
 		for(int i =0; i < jaTypes.length; i++){
-			String name = jaTypes[i].getName();
-			if(jaTypes[i].isArray()){
-				name = "[L"+name.substring(0, name.length()-2)+";";
-			}
-			nativeTypes[i] = Class.forName(name);
+			nativeTypes[i] = getNativeType(jaTypes[i]);
 		}
 		return nativeTypes;
+	}
+	
+	public static Class<?> getNativeType(CtClass jaType){
+		String name = jaType.getName();
+		if(jaType.isArray()){
+			name = "[L"+name.substring(0, name.length()-2)+";";
+		}
+		try{
+			return Class.forName(name);
+		}catch(ClassNotFoundException e){}
+		throw new RuntimeException();
 	}
 	
 	public static Object invokeWithNativeTypes(Object target, String methodName, CtClass[] jaTypes, Object[] args) throws ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException{
@@ -272,6 +279,24 @@ public class ClassUtils {
 				return true;
 		}
 		return false;
+	}
+	
+	public static final HashMap<String,Object> missMsgReceptor = null;
+	public static final CtClass getMissMsgReceptorType(){
+		try {
+			return ClassPool.getDefault().getOrNull(ClassUtils.class.getName()).getField("missMsgReceptor").getType();
+		} catch (NotFoundException e) {
+			// TODO
+			throw new RuntimeException(e.getMessage());
+		}
+	}
+	public static final String getMissMsgReceptorSigGen(){
+		try {
+			return ClassPool.getDefault().getOrNull(ClassUtils.class.getName()).getField("missMsgReceptor").getType().getGenericSignature();
+		} catch (NotFoundException e) {
+			// TODO
+			throw new RuntimeException(e.getMessage());
+		}
 	}
 	
 }

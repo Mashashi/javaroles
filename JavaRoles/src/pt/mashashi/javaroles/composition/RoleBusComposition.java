@@ -129,9 +129,9 @@ public class RoleBusComposition extends RoleBus{
 				Class<?>[] paramsObjectRole = ClassUtils.getNativeTypes(methodInvoked.getParameterTypes());
 				roleReturned = o.getClass().getMethod(methodInvoked.getName(), paramsObjectRole).invoke(o, params);
 				
-			}catch (NotFoundException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | SecurityException  | ClassNotFoundException e) {
+			}catch (NotFoundException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
 				
-				//
+				// TODO
 				
 				if(e.getClass().equals(InvocationTargetException.class)){
 					Throwable cause = e.getCause();

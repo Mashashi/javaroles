@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.UUID;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -19,6 +18,7 @@ import javassist.CtMethod;
 import javassist.CtNewConstructor;
 import javassist.CtNewMethod;
 import javassist.NotFoundException;
+import pt.mashashi.javaroles.composition.MissMsgReceptor;
 import pt.mashashi.javaroles.composition.OriginalRigid;
 
 /**
@@ -41,7 +41,7 @@ public abstract class RoleRegister {
 			Logger.getRootLogger().setLevel(Level.OFF); 
 		}
 		
-		roleBusVarName = "roleBus"+UUID.randomUUID().toString().replace("-", "");
+		roleBusVarName = ClassUtils.generateIdentifier();
 		cp = ClassPool.getDefault();
 	}
 	
@@ -133,8 +133,26 @@ public abstract class RoleRegister {
 		}*/
 		
 		
+		
 		try {
-							
+			
+			{ // BLOCK Check type @MissMsgReceptor
+				List<CtField> objectRoles = ClassUtils.getListFieldAnotated(cn, MissMsgReceptor.class);
+				if(objectRoles!=null){
+					for(CtField o:objectRoles){
+						if(
+								!o.getType().equals((ClassUtils.getMissMsgReceptorType())) && 
+								(
+								o.getType().getGenericSignature()==null ||
+								!o.getType().getGenericSignature().equals(ClassUtils.getMissMsgReceptorSigGen())
+								)
+										){
+							throw new MissUseAnnotationExceptionException(MissMsgReceptor.class, AnnotationException.BAD_TYPE, cn.getName(), o.getName());
+						}
+					}
+				}
+			}
+			
 			CtMethod[] methods = cn.getDeclaredMethods();
 			HashMap<String, CtField> objectRoles = ClassUtils.getTypeFieldAnotatedAssist(cn, ObjectForRole.class);
 			
@@ -251,11 +269,11 @@ public abstract class RoleRegister {
 			CtClass i = cp.getOrNull(n.getType().getName());
 			
 			if(!i.isInterface()){
-				throw new MissUseAnnotationExceptionException(OriginalRigid.class, AnotationException.MISS_USE, cn.getName(), n.getName(), cn.getSimpleName());
+				throw new MissUseAnnotationExceptionException(OriginalRigid.class, AnnotationException.MISS_USE, cn.getName(), n.getName(), cn.getSimpleName());
 			}
 			
 			if(!ClassUtils.classImplementsInterface(cn, i)){
-				throw new MissUseAnnotationExceptionException(OriginalRigid.class, AnotationException.NOT_IMPLEMENTED, cn.getName(), n.getName(), cn.getSimpleName());
+				throw new MissUseAnnotationExceptionException(OriginalRigid.class, AnnotationException.NOT_IMPLEMENTED, cn.getName(), n.getName(), cn.getSimpleName());
 			}		
 					
 			CtClass evalClass = originals.get(i.getName());

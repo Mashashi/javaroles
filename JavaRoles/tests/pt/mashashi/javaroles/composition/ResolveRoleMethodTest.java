@@ -6,7 +6,7 @@ import org.junit.BeforeClass;
 
 import org.junit.Test;
 
-import pt.mashashi.javaroles.AnotationException;
+import pt.mashashi.javaroles.AnnotationException;
 import pt.mashashi.javaroles.MissUseAnnotationExceptionException;
 
 /*
@@ -65,7 +65,8 @@ public class ResolveRoleMethodTest {
 		*/
 		new RoleRegisterComposition().registerRoolsExcludeGiven(
 				TestRigidObjectExceptions.class,
-				TestOriginalRigidTurnOffRoleMethod.class
+				TestOriginalRigidTurnOffRoleMethod.class,
+				TestMissProcessingWrongObjectType.class
 		);
 	}
 	
@@ -124,11 +125,12 @@ public class ResolveRoleMethodTest {
 		
 		try{
 			new RoleRegisterComposition(TestRigidObjectExceptions.AnimalRoles.class).registerRools();
+			fail("no exception thrown");
 		}catch(MissUseAnnotationExceptionException e){
 			if(	
 					!e.getAnotation().equals(OriginalRigid.class)
 					||
-					e.getAnotationException() != AnotationException.MISS_USE
+					e.getAnotationException() != AnnotationException.MISS_USE
 					){
 				fail("exception was not thrown correctly");
 			}
@@ -136,11 +138,12 @@ public class ResolveRoleMethodTest {
 		
 		try{
 			new RoleRegisterComposition(TestRigidObjectExceptions.AnimalRoles2.class).registerRools();
+			fail("no exception thrown");
 		}catch(MissUseAnnotationExceptionException e){
 			if(		
 					!e.getAnotation().equals(OriginalRigid.class) 
 					|| 
-					e.getAnotationException() != AnotationException.NOT_IMPLEMENTED
+					e.getAnotationException() != AnnotationException.NOT_IMPLEMENTED
 					){
 				fail("exception was not thrown correctly");
 			}
@@ -165,6 +168,7 @@ public class ResolveRoleMethodTest {
 	public void testOriginalRigidVoidMethodException() {
 		try {
 			TestOriginalRigidVoidMethodException.test();
+			fail("no exception thrown");
 		} catch (TestOriginalRigidVoidMethodException.SpecificException e) {
 			if(!e.getMessage().equals("test")){
 				fail("Error message is not what is supposed");
@@ -177,6 +181,23 @@ public class ResolveRoleMethodTest {
 	@Test
 	public void testMissProcessing() {
 		TestMissProcessing.test();
+	}
+	
+	@Test
+	public void testMissProcessingWrongObjectType() {
+		// TODO Deal with this exception
+		try {
+			new RoleRegisterComposition(TestMissProcessingWrongObjectType.class).registerRools();
+			fail("no exception thrown");
+		} catch (MissUseAnnotationExceptionException e) {
+			if(
+					!e.getAnotation().equals(MissMsgReceptor.class) 
+					|| 
+					e.getAnotationException() != AnnotationException.BAD_TYPE
+					){
+				fail("exception was not thrown correctly");
+			}
+		}
 	}
 	
 }
