@@ -1,6 +1,8 @@
 package pt.mashashi.javaroles.composition;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -73,7 +75,13 @@ public class RoleRegisterComposition extends RoleRegister{
 									
 					"try {"+
 						"return ($r) "+roleBusVarName+".resolve("+varM+", $args);"+
-					"} catch("+MissProcessingException.class.getName()+" e) {};"+
+					"} catch("+MissProcessingException.class.getName()+" e) {"+
+						HashMap.class.getName()+" tmsg = "+ClassUtils.class.getName()+".getTypeFieldAnotatedNative(this, "+MissMsgReceptor.class.getName()+".class);"+
+						Iterator.class.getName()+" i = tmsg.values().iterator();"+
+						"while(i.hasNext()){"+
+							"(("+Field.class.getName()+")i.next()).set(this, e.getDetails());"+
+						"}"+
+					"};"+
 					
 					"return ($r) "+ClassUtils.class.getName()+".invokeWithNativeTypes("+
 												"this,"+

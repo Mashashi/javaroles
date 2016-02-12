@@ -43,7 +43,7 @@ public abstract class RoleBus {
 	 * @return The output of the selected object role method
 	 * @throws MissProcessingException If no object role method was found
 	 */
-	public abstract Object resolve(CtMethod methodInvoked, Object[] params) throws MissProcessingException, Exception;
+	public abstract Object resolve(CtMethod methodInvoked, Object[] params) throws MissProcessingException, Throwable;
 	
 	protected void invokeLifeCycleCallbacks(String roleName, CtMethod methodInvoked) {
 		Boolean roleNameFirstCall = rollCallMade.get(roleName);

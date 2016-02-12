@@ -16,18 +16,21 @@ public class MissProcessingException extends RuntimeException {
 	
 	private HashMap<String, Object> details;
 	
-	@SuppressWarnings("unused")
-	private MissProcessingException(){}
+	public MissProcessingException(){
+		details = new HashMap<>();
+	}
 	
 	public MissProcessingException(HashMap<String, Object> details){
 		this.details = details;
 	}
-	
-	public enum WhyMiss{ NOT_FOUND, NULL_OBJECT; }
-	
-	public MissProcessingException(String roleName, String clazz, WhyMiss why) {
-		super("Object role for role name "+roleName+" in class "+clazz+": "+why);
+	public MissProcessingException(Object... params){
+		details = new HashMap<>();
+		int paramNumber = 0;
+		for(Object p:params){
+			details.put(Integer.toString(paramNumber), p);
+		}
 	}
+	
 	
 	public HashMap<String, Object> getDetails(){
 		return details;

@@ -2,6 +2,7 @@ package pt.mashashi.javaroles.composition;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -33,26 +34,28 @@ public class RoleBusComposition extends RoleBus{
 		this.target = target;
 	}
 	
-	public Object resolve(CtMethod methodInvoked, Object[] params) throws MissProcessingException, Exception{
+	public Object resolve(CtMethod methodInvoked, Object[] params) throws MissProcessingException, Throwable{
 		
 		Object returnByRole = null;
 		
 	    try {
 	    	boolean done = false;
 	    	List<CtField> fieldsTried = new LinkedList<>();
+	    	HashMap<String, Object> details = new HashMap<>();
 	    	do{
 				CtField ctFieldRole = getTargetObjectRoleField(methodInvoked,fieldsTried.toArray(new CtField[fieldsTried.size()]));
 				if(ctFieldRole==null){
-					throw new MissProcessingException(methodInvoked.getClass().getSimpleName(), target.getClass().getName(), MissProcessingException.WhyMiss.NULL_OBJECT);
+					throw new MissProcessingException(details);
 				}
 		    	String declaringClass = ctFieldRole.getDeclaringClass().getName();
 		    	Field fieldRole = Class.forName(declaringClass).getDeclaredField(ctFieldRole.getName());
 		    	try{
-		    		returnByRole = invokeRoleMethod(methodInvoked, params, fieldRole);
+		    		returnByRole = invokeRoleMethod(methodInvoked, params, fieldRole, details);
 		    		done=true;
 		    	}catch(MissProcessingException e){
 		    		// TODO Pass hashmap parameter
 		    		fieldsTried.add(ctFieldRole);
+		    		details = e.getDetails();
 		    	}
 	    	}while(!done);
 		} catch (NotFoundException | NoSuchFieldException | SecurityException | ClassNotFoundException e) {
@@ -106,17 +109,23 @@ public class RoleBusComposition extends RoleBus{
 	private Object invokeRoleMethod(
 			CtMethod methodInvoked,
 			Object[] params, 
-			Field objectRole) throws Exception{
+			Field objectRole, 
+			HashMap<String, Object> details) throws Throwable{
 		
 		Object roleReturned = null;
 		
 		if(objectRole!=null){
 			try {
-				
 				Object o = FieldUtils.readField(objectRole, target, true);
-				if(o == null){
-					throw new MissProcessingException(methodInvoked.getClass().getSimpleName(), target.getClass().getName(), MissProcessingException.WhyMiss.NULL_OBJECT);
+								
+				{// Set miss msg receptor
+					HashMap<String, Field> tmsg = ClassUtils.getTypeFieldAnotatedNative(o, MissMsgReceptor.class);
+					// Set
+					for(Field v : tmsg.values()){
+						v.set(o, details);
+					}
 				}
+				
 				Class<?>[] paramsObjectRole = ClassUtils.getNativeTypes(methodInvoked.getParameterTypes());
 				roleReturned = o.getClass().getMethod(methodInvoked.getName(), paramsObjectRole).invoke(o, params);
 				
@@ -135,7 +144,7 @@ public class RoleBusComposition extends RoleBus{
 							throw (StackOverflowError) cause; 
 						}else{
 							// Error thrown by programmer method
-							throw (Exception) cause; 
+							throw (Throwable) cause;
 						}
 					}
 				}else{
@@ -147,8 +156,6 @@ public class RoleBusComposition extends RoleBus{
 				
 				
 			}
-		} else {
-			throw new MissProcessingException(methodInvoked.getClass().getSimpleName(), target.getClass().getName(), MissProcessingException.WhyMiss.NOT_FOUND);
 		}
 		
 		return roleReturned;
