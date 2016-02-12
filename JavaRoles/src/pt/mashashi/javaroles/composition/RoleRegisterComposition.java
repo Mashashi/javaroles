@@ -1,6 +1,7 @@
 package pt.mashashi.javaroles.composition;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 import javassist.CannotCompileException;
@@ -89,7 +90,16 @@ public class RoleRegisterComposition extends RoleRegister{
 
 	@Override
 	protected boolean isToInject(CtMethod method, HashMap<String,CtField> objectRoles) throws ClassNotFoundException {
-		return  objectRoles.size()!=0 && method.getAnnotation(TurnOffRole.class)==null;
+		List<CtClass> i = ClassUtils.definedOnInterfaces(method, method.getDeclaringClass());
+		boolean isOnRole = false;
+		for(CtClass clazz: i){
+			if(objectRoles.get(clazz.getSimpleName())!=null){
+				isOnRole = true;
+				break;
+			}
+		}
+		//objectRoles.size()!=0
+		return isOnRole && method.getAnnotation(TurnOffRole.class)==null;
 	}
 	
 }

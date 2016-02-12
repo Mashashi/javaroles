@@ -6,6 +6,7 @@ import org.junit.BeforeClass;
 
 import org.junit.Test;
 
+import javassist.ClassPool;
 import pt.mashashi.javaroles.AnotationException;
 import pt.mashashi.javaroles.MissUseAnnotationExceptionException;
 
@@ -57,7 +58,11 @@ public class ResolveRoleMethodTest {
 	@BeforeClass
 	public static void setup(){
 		//new RoleRegisterComposition().registerRools();
-		new RoleRegisterComposition().registerRoolsExcludeGiven(TestRigidObjectExceptions.class);
+		new RoleRegisterComposition().registerRoolsExcludeGiven(
+				"pt.mashashi.javaroles.composition.TestRigidObjectExceptions",
+				"pt.mashashi.javaroles.composition.TestOriginalRigidTurnOffRoleMethod"
+		);
+		
 	}
 	
 	
@@ -114,7 +119,7 @@ public class ResolveRoleMethodTest {
 	public void testRigidObjectExceptions(){
 		
 		try{
-			new RoleRegisterComposition().registerRools(TestRigidObjectExceptions.AnimalRoles.class);
+			new RoleRegisterComposition().registerRools("pt.mashashi.javaroles.composition.TestRigidObjectExceptions$AnimalRoles");
 		}catch(MissUseAnnotationExceptionException e){
 			if(	
 					!e.getAnotation().equals(OriginalRigid.class)
@@ -126,7 +131,7 @@ public class ResolveRoleMethodTest {
 		}
 		
 		try{
-			new RoleRegisterComposition().registerRools(TestRigidObjectExceptions.AnimalRoles2.class);
+			new RoleRegisterComposition().registerRools("pt.mashashi.javaroles.composition.TestRigidObjectExceptions$AnimalRoles2");
 		}catch(MissUseAnnotationExceptionException e){
 			if(		
 					!e.getAnotation().equals(OriginalRigid.class) 
@@ -139,7 +144,13 @@ public class ResolveRoleMethodTest {
 	
 	}
 	
-	
+	@Test
+	public void testOriginalRigidTurnOffRoleMethod() {
+		new RoleRegisterComposition().registerRools(
+				"pt.mashashi.javaroles.composition.TestOriginalRigidTurnOffRoleMethod"
+		);
+		TestOriginalRigidTurnOffRoleMethod.test();
+	}
 	
 	
 	
