@@ -62,7 +62,8 @@ public abstract class RoleBus {
 			}
 		}
 		
-		{	String oldRole = (String) callHistory.get();
+		{	
+			String oldRole = (String) callHistory.get();
 			if(!roleName.equals(oldRole)){
 				try {
 					Method callback = target.getClass().getMethod(oldRole+"Stop", String.class);

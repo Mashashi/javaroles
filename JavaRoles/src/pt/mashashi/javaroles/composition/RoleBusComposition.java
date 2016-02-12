@@ -13,6 +13,7 @@ import javassist.CtField;
 import javassist.CtMethod;
 import javassist.NotFoundException;
 import pt.mashashi.javaroles.ClassUtils;
+import pt.mashashi.javaroles.MissMsgReceptor;
 import pt.mashashi.javaroles.MissProcessingException;
 import pt.mashashi.javaroles.ObjectForRole;
 import pt.mashashi.javaroles.RoleBus;

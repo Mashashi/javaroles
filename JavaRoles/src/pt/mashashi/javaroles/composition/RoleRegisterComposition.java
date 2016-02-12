@@ -13,6 +13,7 @@ import javassist.CtMethod;
 import javassist.CtNewMethod;
 import javassist.NotFoundException;
 import pt.mashashi.javaroles.ClassUtils;
+import pt.mashashi.javaroles.MissMsgReceptor;
 import pt.mashashi.javaroles.MissProcessingException;
 import pt.mashashi.javaroles.RoleRegister;
 
@@ -80,11 +81,6 @@ public class RoleRegisterComposition extends RoleRegister{
 						Iterator.class.getName()+" i = tmsg.values().iterator();"+
 						"while(i.hasNext()){"+
 							Field.class.getName()+" f = (("+Field.class.getName()+")i.next());"+
-							/*"if(f.getType().equals("+HashMap.class.getName()+".class)){"+
-								"throw new "+MissUseAnnotationExceptionException.class.getName()+"("+MissMsgReceptor.class+","+AnnotationException.BAD_TYPE+","+);"+
-							"}"+*/
-							/*new Field().getType()
-							HashMap*/
 							"f.set(this, e.getDetails());"+
 						"}"+
 					"};"+

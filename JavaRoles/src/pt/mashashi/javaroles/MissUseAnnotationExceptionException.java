@@ -3,7 +3,6 @@ package pt.mashashi.javaroles;
 import java.lang.annotation.Annotation;
 import java.util.HashMap;
 
-import pt.mashashi.javaroles.composition.MissMsgReceptor;
 import pt.mashashi.javaroles.composition.OriginalRigid;
 
 @SuppressWarnings("serial")
