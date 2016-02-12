@@ -189,6 +189,9 @@ public abstract class RoleRegister {
 				} catch (SecurityException e) {
 					throw new RuntimeException(e.getMessage());
 				}
+				for(CtConstructor c: cn.getConstructors()){
+					c.insertAfter(injectionCode.toString());
+				}
 			}
 			
 			HashMap<String, CtClass> originals = getOriginals(cn);
