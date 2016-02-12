@@ -158,6 +158,7 @@ public class ResolveRoleMethodTest {
 	@Test
 	public void testOriginalRigidVoidMethod() {
 		TestOriginalRigidVoidMethod.test();
+		
 	}
 	
 	@Test
@@ -175,7 +176,7 @@ public class ResolveRoleMethodTest {
 	
 	@Test
 	public void testMissProcessing() {
-		TestOriginalRigidVoidMethod.test();
+		TestMissProcessing.test();
 	}
 	
 }

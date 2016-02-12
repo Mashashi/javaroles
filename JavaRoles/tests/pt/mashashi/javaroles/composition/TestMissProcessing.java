@@ -1,7 +1,10 @@
 package pt.mashashi.javaroles.composition;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
+import java.util.HashMap;
+
+import pt.mashashi.javaroles.MissProcessingException;
 import pt.mashashi.javaroles.ObjectForRole;
 
 public class TestMissProcessing {
@@ -10,47 +13,56 @@ public class TestMissProcessing {
 	public interface Monkey{ void hello(); }
 	
 	public static class Portuguese implements Human{
-		private AnimalRoles a;
-		public Portuguese(AnimalRoles a){
-			this.a=a;
+		public Portuguese(){
 		}
 		@Override
 		public void hello(){
-			this.a.out="Role Portuguese";
+			throw new MissProcessingException("test");
 		}
 	}
 	public static class Bonobo implements Monkey{
 		private AnimalRoles a;
+		public boolean missIt;
+		@MissMsgReceptor public HashMap<String, Object> receptor;
 		public Bonobo(AnimalRoles a){
 			this.a=a;
+			missIt = false;
 		}
 		@Override public void hello() {
+			assertEquals("Yap", "test",receptor.get("0"));
+			if(missIt){
+				throw new MissProcessingException(receptor); 
+			}
 			this.a.out="Role Bonobo";
 		} 
 	}
 	public static class AnimalRoles implements Human, Monkey{		
+		
 		@ObjectForRole public Human human;
 		@ObjectForRole public Monkey monkey;
 		@OriginalRigid public Human original;
+		@MissMsgReceptor public HashMap<String, Object> receptor;
+		
 		public String out;
 		public AnimalRoles(){
-			human = new Portuguese(this);
+			human = new Portuguese();
 			monkey = new Bonobo(this);
 		}
+		
 		@Override
 		public void hello() {
+			assertEquals("Yap", "test", receptor.get("0"));
 			out = "Rigid";
 		}
+		
 	}
 	public static void test(){
 		AnimalRoles a = new AnimalRoles();
-		a.original.hello();
-		assertEquals("Yap", "Rigid", a.out);
-		a.hello();
-		assertEquals("Yap", "Role Portuguese", a.out);
-		a.human = null;
 		a.hello();
 		assertEquals("Yap", "Role Bonobo", a.out);
+		((Bonobo)a.monkey).missIt = true;
+		a.hello();
+		assertEquals("Yap", "Rigid", a.out);
 	}
 	
 }
