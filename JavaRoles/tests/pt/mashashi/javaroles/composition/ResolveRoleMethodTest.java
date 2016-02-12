@@ -155,5 +155,22 @@ public class ResolveRoleMethodTest {
 	}
 	
 	
+	@Test
+	public void testOriginalRigidVoidMethod() {
+		TestOriginalRigidVoidMethod.test();
+	}
+	
+	@Test
+	public void testOriginalRigidVoidMethodException() {
+		try {
+			TestOriginalRigidVoidMethodException.test();
+		} catch (TestOriginalRigidVoidMethodException.SpecificException e) {
+			if(!e.getMessage().equals("test")){
+				fail("Error message is not what is supposed");
+			}
+			return;
+		}
+		fail("Exception was not caught");
+	}
 	
 }

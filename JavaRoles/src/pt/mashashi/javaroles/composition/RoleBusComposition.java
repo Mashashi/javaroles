@@ -32,7 +32,7 @@ public class RoleBusComposition extends RoleBus{
 		this.target = target;
 	}
 	
-	public Object resolve(CtMethod methodInvoked, Object[] params) throws MissProcessingException{
+	public Object resolve(CtMethod methodInvoked, Object[] params) throws MissProcessingException, Exception{
 		
 		Object returnByRole = null;
 		
@@ -48,6 +48,8 @@ public class RoleBusComposition extends RoleBus{
 			
 		} catch (NotFoundException | NoSuchFieldException | SecurityException | ClassNotFoundException e) {
 			Logger.getLogger(RoleBus.class.getName()).debug("error resolving method: "+methodInvoked.getLongName()+" "+e.getMessage());
+			e.printStackTrace();
+			throw new RuntimeException();
 		}
 	    	    
 	    return returnByRole;
@@ -84,7 +86,7 @@ public class RoleBusComposition extends RoleBus{
 	private Object invokeRoleMethod(
 			CtMethod methodInvoked,
 			Object[] params, 
-			Field objectRole) throws NotFoundException {
+			Field objectRole) throws Exception{
 		
 		Object roleReturned = null;
 		
@@ -98,23 +100,29 @@ public class RoleBusComposition extends RoleBus{
 				Class<?>[] paramsObjectRole = ClassUtils.getNativeTypes(methodInvoked.getParameterTypes());
 				roleReturned = o.getClass().getMethod(methodInvoked.getName(), paramsObjectRole).invoke(o, params);
 				
-			}catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | SecurityException  | ClassNotFoundException e) {
+			}catch (NotFoundException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | SecurityException  | ClassNotFoundException e) {
 				
 				//
+				
 				if(e.getClass().equals(InvocationTargetException.class)){
 					Throwable cause = e.getCause();
 					if(cause.getClass().equals(MissProcessingException.class)){
+						// Programmer method doesn't wish to process
 						throw (MissProcessingException) e.getCause();
 					}else{
-						
 						 if(cause.getClass().equals(StackOverflowError.class)){
+							 // Miss use of rigid type
 							throw (StackOverflowError) cause; 
 						}else{
-							Logger.getLogger(RoleBus.class.getName()).debug("error calling "+methodInvoked.getLongName()+" "+cause.getMessage());
-							e.printStackTrace();
-							throw new RuntimeException();
+							// Error thrown by programmer method
+							throw (Exception) cause; 
 						}
 					}
+				}else{
+					// Unkown error
+					Logger.getLogger(RoleBus.class.getName()).debug("error calling "+methodInvoked.getLongName()+" "+e.getMessage());
+					e.printStackTrace();
+					throw new RuntimeException();
 				}
 				
 				
