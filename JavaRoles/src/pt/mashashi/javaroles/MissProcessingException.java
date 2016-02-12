@@ -16,6 +16,8 @@ public class MissProcessingException extends RuntimeException {
 	
 	private HashMap<String, Object> details;
 	
+	public enum WhyMiss{ NOT_FOUND_ROLE; }
+	
 	public MissProcessingException(){
 		details = new HashMap<>();
 	}
@@ -31,6 +33,9 @@ public class MissProcessingException extends RuntimeException {
 		}
 	}
 	
+	public MissProcessingException(String roleName, String clazz, WhyMiss why) {
+		super("Object role for role name "+roleName+" in class "+clazz+": "+why);
+	}
 	
 	public HashMap<String, Object> getDetails(){
 		return details;

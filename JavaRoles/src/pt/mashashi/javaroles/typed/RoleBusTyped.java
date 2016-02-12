@@ -170,6 +170,8 @@ public class RoleBusTyped extends RoleBus{
 					}
 					
 				}
+			} else {
+				throw new MissProcessingException(roleName, target.getClass().getName(), MissProcessingException.WhyMiss.NOT_FOUND_ROLE);
 			}
 		}
 		
