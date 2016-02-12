@@ -115,48 +115,46 @@ public class RoleBusComposition extends RoleBus{
 		
 		Object roleReturned = null;
 		
-		if(objectRole!=null){
-			try {
-				Object o = FieldUtils.readField(objectRole, target, true);
-								
-				{// Set miss msg receptor
-					HashMap<String, Field> tmsg = ClassUtils.getTypeFieldAnotatedNative(o, MissMsgReceptor.class);
-					// Set
-					for(Field v : tmsg.values()){
-						v.set(o, details);
-					}
+		try {
+			Object o = FieldUtils.readField(objectRole, target, true);
+							
+			{// Set miss msg receptor
+				HashMap<String, Field> tmsg = ClassUtils.getTypeFieldAnotatedNative(o, MissMsgReceptor.class);
+				// Set
+				for(Field v : tmsg.values()){
+					v.set(o, details);
 				}
-				
-				Class<?>[] paramsObjectRole = ClassUtils.getNativeTypes(methodInvoked.getParameterTypes());
-				roleReturned = o.getClass().getMethod(methodInvoked.getName(), paramsObjectRole).invoke(o, params);
-				
-			}catch (NotFoundException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
-				
-				// TODO
-				
-				if(e.getClass().equals(InvocationTargetException.class)){
-					Throwable cause = e.getCause();
-					if(cause.getClass().equals(MissProcessingException.class)){
-						// Programmer method doesn't wish to process
-						throw (MissProcessingException) e.getCause();
-					}else{
-						 if(cause.getClass().equals(StackOverflowError.class)){
-							 // Miss use of rigid type
-							throw (StackOverflowError) cause; 
-						}else{
-							// Error thrown by programmer method
-							throw (Throwable) cause;
-						}
-					}
-				}else{
-					// Unknown error
-					Logger.getLogger(RoleBus.class.getName()).debug("error calling "+methodInvoked.getLongName()+" "+e.getMessage());
-					e.printStackTrace();
-					throw new RuntimeException();
-				}
-				
-				
 			}
+			
+			Class<?>[] paramsObjectRole = ClassUtils.getNativeTypes(methodInvoked.getParameterTypes());
+			roleReturned = o.getClass().getMethod(methodInvoked.getName(), paramsObjectRole).invoke(o, params);
+			
+		}catch (NotFoundException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+			
+			// TODO Enhance error handling
+			
+			if(e.getClass().equals(InvocationTargetException.class)){
+				Throwable cause = e.getCause();
+				if(cause.getClass().equals(MissProcessingException.class)){
+					// Programmer method doesn't wish to process
+					throw (MissProcessingException) e.getCause();
+				}else{
+					 if(cause.getClass().equals(StackOverflowError.class)){
+						 // Miss use of rigid type
+						throw (StackOverflowError) cause; 
+					}else{
+						// Error thrown by programmer method
+						throw (Throwable) cause;
+					}
+				}
+			}else{
+				// Unknown error
+				Logger.getLogger(RoleBus.class.getName()).debug("error calling "+methodInvoked.getLongName()+" "+e.getMessage());
+				e.printStackTrace();
+				throw new RuntimeException();
+			}
+			
+			
 		}
 		
 		return roleReturned;
