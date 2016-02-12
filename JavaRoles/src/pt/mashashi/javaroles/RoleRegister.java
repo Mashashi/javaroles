@@ -3,6 +3,7 @@ package pt.mashashi.javaroles;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,6 +31,7 @@ public abstract class RoleRegister {
 	
 	protected String roleBusVarName;
 	private ClassPool cp;
+	private String[] onlyFor;
 	
 	public RoleRegister(){
 		
@@ -42,6 +44,16 @@ public abstract class RoleRegister {
 		roleBusVarName = "roleBus"+UUID.randomUUID().toString().replace("-", "");
 		cp = ClassPool.getDefault();
 	}
+	
+	public RoleRegister(Class<?>... clazzes){
+		this();
+		List<String> onlyFor = new LinkedList<String>();
+		for(Class<?> clazz : clazzes){
+			onlyFor.add(clazz.getName());
+		}
+		this.onlyFor = onlyFor.toArray(new String [onlyFor.size()]);
+	}
+	
 	
 	/**
 	 * 
@@ -160,6 +172,7 @@ public abstract class RoleRegister {
 				}
 				
 			}
+			
 			
 			if(wasInjected || originals.size()!=0){
 				// COMMENT // cn.writeFile(); - Writing to file will create a new .class file. Just use .toClass(); to place the class available on the class path
@@ -293,7 +306,7 @@ public abstract class RoleRegister {
 		return originals;
 	}
 	
-	public void registerRools(){
+	/*public void registerRools(){
 		List<String> c = ClassUtils.getAllClassNames();
 		for(String className : c){
 			registerRool(className);
@@ -338,6 +351,65 @@ public abstract class RoleRegister {
 			}
 			registerRool(className);
 		}
+	}*/
+	
+	/**
+	 * Before invoking this method be sure that:
+	 * - Any instances for the referenced classes are freed.
+	 * - Their owning classloader has still instances in existence (has not been GC-ed).
+	 * - The java.lang.Class object is not referenced from anywhere (same goes for reflective access to their members).
+	 * 
+	 */
+	public void registerRools(){
+		{ // BLOCK Free up reference in the class loader
+		  /*
+		   This will unload the classes from the class loader if the roles for unloading a class are verified
+		   */
+			System.gc(); 
+		}
+		if(onlyFor!=null){
+			registerRools(onlyFor);
+		}else{
+			List<String> c = ClassUtils.getAllClassNames();
+			for(String className : c){
+				registerRool(className);
+			}
+		}
 	}
+	
+	private void registerRools(String... clazzes){
+		for(String clazz :clazzes){
+			CtClass c = null;
+			try {
+				c = cp.get(clazz);
+			} catch (NotFoundException e) {
+				throw new RuntimeException(e.getMessage());
+			}
+			
+			try {
+				for(CtClass i : c.getDeclaredClasses()){
+					registerRool(i.getName());
+				}
+			} catch (NotFoundException e) {
+				throw new RuntimeException(e.getMessage());
+			}
+			registerRool(clazz);
+		}
+	}
+	
+	public void registerRoolsExcludeGiven(Class<?>... clazzes){
+		List<String> c = ClassUtils.getAllClassNames();
+		classProcessing: for(String className : c){
+			for(Class<?> clazz :clazzes){
+				if(className.startsWith(clazz.getName())){ 
+					// BLOCK The condition is with .startsWith because we want to stop registration of inner classes
+					continue classProcessing;
+				}
+			}
+			registerRool(className);
+		}
+		
+	}
+
 	
 }

@@ -25,6 +25,10 @@ public class RoleRegisterComposition extends RoleRegister{
 	
 	public RoleRegisterComposition() {}
 	
+	public RoleRegisterComposition(Class<?>... onlyFor) {
+		super(onlyFor);
+	}
+	
 	protected CtMethod injectRoleDependency(CtClass cn, CtMethod method) throws CannotCompileException, NotFoundException {
 		
 		CtMethod methodCreated =null;
