@@ -16,6 +16,7 @@ import org.junit.runners.model.Statement;
 
 import pt.mashashi.javaroles.Human;
 import pt.mashashi.javaroles.Monkey;
+import pt.mashashi.javaroles.composition.TestMissProcessingWrongObjectType;
 import pt.mashashi.javaroles.composition.TestRigidObjectExceptions;
 import pt.mashashi.javaroles.typed.RoleRegisterTyped;
 
@@ -54,7 +55,7 @@ public class ResolveRoleMethodTest {
 	
 	@BeforeClass
 	public static void setup(){
-		new RoleRegisterTyped("tests/").registerRoolsExcludeGiven(TestRigidObjectExceptions.class);
+		new RoleRegisterTyped("tests/").registerRoolsExcludeGiven(TestRigidObjectExceptions.class, TestMissProcessingWrongObjectType.class);
 	}
 	
 	

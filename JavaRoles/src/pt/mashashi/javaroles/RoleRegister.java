@@ -18,7 +18,6 @@ import javassist.CtMethod;
 import javassist.CtNewConstructor;
 import javassist.CtNewMethod;
 import javassist.NotFoundException;
-import pt.mashashi.javaroles.composition.MissMsgReceptor;
 import pt.mashashi.javaroles.composition.OriginalRigid;
 
 /**
@@ -136,7 +135,15 @@ public abstract class RoleRegister {
 		
 		try {
 			
-			{ // BLOCK Check type @MissMsgReceptor
+			{
+				//
+				
+				
+			}
+			
+			
+			
+			{ // BLOCK Check type for @MissMsgReceptor attributes
 				List<CtField> objectRoles = ClassUtils.getListFieldAnotated(cn, MissMsgReceptor.class);
 				if(objectRoles!=null){
 					for(CtField o:objectRoles){

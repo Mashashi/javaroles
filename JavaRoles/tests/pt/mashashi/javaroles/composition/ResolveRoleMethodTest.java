@@ -7,6 +7,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import pt.mashashi.javaroles.AnnotationException;
+import pt.mashashi.javaroles.MissMsgReceptor;
 import pt.mashashi.javaroles.MissUseAnnotationExceptionException;
 
 /*
@@ -185,7 +186,6 @@ public class ResolveRoleMethodTest {
 	
 	@Test
 	public void testMissProcessingWrongObjectType() {
-		// TODO Deal with this exception
 		try {
 			new RoleRegisterComposition(TestMissProcessingWrongObjectType.class).registerRools();
 			fail("no exception thrown");
