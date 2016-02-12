@@ -200,4 +200,9 @@ public class ResolveRoleMethodTest {
 		}
 	}
 	
+	@Test
+	public void testRigidAnnotation() {
+		TestRigidAnnotation.test();
+	}
+	
 }

@@ -1,11 +1,13 @@
 package pt.mashashi.javaroles;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -64,12 +66,13 @@ public abstract class RoleRegister {
 	 * 
 	 * @param cn The class that contains the method target of the code injection
 	 * @param method The method in which the code is to be injected 
+	 * @param preCode 
 	 * @param roleObjectClass This is the object in the rigid type with an annotation {@link ObjectForRole} 
 	 * 							that has a method with the same signature than the parameter {@code method}
 	 * @throws CannotCompileException
 	 * @throws NotFoundException
 	 */
-	protected abstract CtMethod injectRoleDependency(CtClass cn, CtMethod method) throws CannotCompileException, NotFoundException;
+	protected abstract CtMethod injectRoleDependency(CtClass cn, CtMethod method, StringBuffer preCode) throws CannotCompileException, NotFoundException;
 	
 	/**
 	 * Returns a string having the RoleBus method field declaration to be injected
@@ -135,11 +138,7 @@ public abstract class RoleRegister {
 		
 		try {
 			
-			{
-				//
-				
-				
-			}
+			
 			
 			
 			
@@ -163,6 +162,35 @@ public abstract class RoleRegister {
 			CtMethod[] methods = cn.getDeclaredMethods();
 			HashMap<String, CtField> objectRoles = ClassUtils.getTypeFieldAnotatedAssist(cn, ObjectForRole.class);
 			
+			StringBuffer injectionCode = new StringBuffer("");
+			{ // injection code for methods
+				try {
+					boolean setUpInjection = cn.getAnnotation(RigidType.class)!=null;
+					if(setUpInjection){
+						//for(CtField obj: objectRoles.values()){
+							//Object objf = FieldUtils.readField(objf, cn, true);}
+							injectionCode.append(Field.class.getName()+"[] fs=this.getClass().getFields();");
+							injectionCode.append("for(int i=0;i<fs.length;i++){");
+								injectionCode.append("Object o = "+FieldUtils.class.getName()+".readField(fs[i], this, true);");
+								injectionCode.append("if(o!=null){");
+									//injectionCode.append("System.out.println(o.getClass());");
+									injectionCode.append(List.class.getName()+" l = "+ClassUtils.class.getName()+".getListFieldAnotated(");
+										injectionCode.append("o, "+InjectRigidType.class.getName()+".class");
+									injectionCode.append(");");
+									injectionCode.append("for(int i2=0;i2<l.size();i2++){");
+									injectionCode.append("String rigidName = (("+CtField.class.getName()+")l.get(i2)).getName();");
+									injectionCode.append("try{");
+										injectionCode.append("Class.forName(o.getClass().getName()).getField(rigidName).set(o, this);");
+									injectionCode.append("}catch("+IllegalArgumentException.class.getName()+" e){/*Do nothing - Just a cast error*/}");
+									injectionCode.append("}");
+								injectionCode.append("}");
+							injectionCode.append("}");		
+					}
+				} catch (SecurityException e) {
+					throw new RuntimeException(e.getMessage());
+				}
+			}
+			
 			HashMap<String, CtClass> originals = getOriginals(cn);
 			
 			methodInj: for(CtMethod method : methods){
@@ -185,7 +213,7 @@ public abstract class RoleRegister {
 						cn.addField(newField);
 					}
 					
-					CtMethod created = injectRoleDependency(cn, method);
+					CtMethod created = injectRoleDependency(cn, method, injectionCode);
 					
 					List<CtClass> inters = ClassUtils.definedOnInterfaces(method, cn);
 					applyIndirect(method, created, originals, inters);

@@ -72,6 +72,7 @@ public class ClassUtils {
 		return returned;
 	}
 	
+	
 	public static String getMethodNameFromStack(StackTraceElement[] st, int level){
 		
 		String methodResolv = null;
@@ -142,18 +143,16 @@ public class ClassUtils {
 		
 		return null;
 	}
-	public static List<CtField> getListFieldAnotated(CtClass target, Class<?> annotation) throws ClassNotFoundException{
+	public static List<CtField> getListFieldAnotated(CtClass target, Class<? extends Annotation> annotation) throws ClassNotFoundException{
 		List<CtField> roleObjects = new LinkedList<>();
-		
-		
-		for(CtField field : target.getFields()){
+		for(CtField field : target.getFields()){//Class.forName(target.getName()).getFields();
 			if(field.getAnnotation(annotation)!=null){
 				roleObjects.add(field);
 			}
 		}
 		return roleObjects;
 	}
-	public static List<CtField> getListFieldAnotated(Object target, Class<?> annotation) throws ClassNotFoundException, NotFoundException{
+	public static List<CtField> getListFieldAnotated(Object target, Class<? extends Annotation> annotation) throws ClassNotFoundException, NotFoundException{
 		ClassPool pool = ClassPool.getDefault();
 		CtClass cc = pool.get(target.getClass().getName());
 		return getListFieldAnotated(cc, annotation);
@@ -298,5 +297,7 @@ public class ClassUtils {
 			throw new RuntimeException(e.getMessage());
 		}
 	}
+
+
 	
 }
