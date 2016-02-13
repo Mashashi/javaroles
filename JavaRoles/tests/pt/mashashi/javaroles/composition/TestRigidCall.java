@@ -2,7 +2,7 @@ package pt.mashashi.javaroles.composition;
 
 import static org.junit.Assert.assertEquals;
 
-import pt.mashashi.javaroles.ObjectForRole;
+import pt.mashashi.javaroles.ObjRole;
 
 public class TestRigidCall {
 	
@@ -19,12 +19,12 @@ public class TestRigidCall {
 		@Override public String hello() { return "Ugauga"; } 
 	}
 	public static class AnimalRoles implements Human, Monkey{
-		@ObjectForRole public Human human;
-		@ObjectForRole public Monkey monkey;
+		@ObjRole public Human human;
+		@ObjRole public Monkey monkey;
 		
-		@OriginalRigid public Monkey rigidMonkey1;
-		@OriginalRigid public Monkey rigidMonkey2;
-		@OriginalRigid public Human rigidHuman;
+		@ObjRigid public Monkey rigidMonkey1;
+		@ObjRigid public Monkey rigidMonkey2;
+		@ObjRigid public Human rigidHuman;
 		
 		public AnimalRoles(){
 			this.human = new Portuguese();

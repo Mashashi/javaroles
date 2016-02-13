@@ -4,9 +4,9 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
-import pt.mashashi.javaroles.InjectRigidType;
-import pt.mashashi.javaroles.ObjectForRole;
-import pt.mashashi.javaroles.RigidType;
+import pt.mashashi.javaroles.InjObjRigid;
+import pt.mashashi.javaroles.ObjRole;
+import pt.mashashi.javaroles.Rigid;
 
 public class TestRigidAnnotation {
 	
@@ -14,10 +14,10 @@ public class TestRigidAnnotation {
 	public interface Monkey{String hello1();String hello2();String hello3();String hello4();}
 	
 	public static class Portuguese implements Human{
-		@InjectRigidType public AnimalRoles rigid1;
-		@InjectRigidType public Object rigid2;
-		@InjectRigidType public List rigid3;
-		@InjectRigidType private AnimalRoles rigid4;
+		@InjObjRigid public AnimalRoles rigid1;
+		@InjObjRigid public Object rigid2;
+		@InjObjRigid public List rigid3;
+		@InjObjRigid private AnimalRoles rigid4;
 		@Override public String hello1() { return rigid1!=null?"Was setup":"Fails"; }
 		@Override public String hello2() { return rigid2!=null?"Was setup":"Fails"; }
 		@Override public String hello3() { return rigid3!=null?"Was setup":"Fails"; }
@@ -30,10 +30,10 @@ public class TestRigidAnnotation {
 		@Override public String hello4() { return "Ugauga"; }
 	}
 	
-	@RigidType
+	@Rigid
 	public static class AnimalRoles implements Human, Monkey{
-		@ObjectForRole public Human human = new Portuguese();
-		@ObjectForRole public Monkey monkey;
+		@ObjRole public Human human = new Portuguese();
+		@ObjRole public Monkey monkey;
 		
 		public AnimalRoles(){}
 		

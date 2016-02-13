@@ -129,7 +129,7 @@ public class ResolveRoleMethodTest {
 			fail("no exception thrown");
 		}catch(MissUseAnnotationExceptionException e){
 			if(	
-					!e.getAnotation().equals(OriginalRigid.class)
+					!e.getAnotation().equals(ObjRigid.class)
 					||
 					e.getAnotationException() != AnnotationException.MISS_USE
 					){
@@ -142,7 +142,7 @@ public class ResolveRoleMethodTest {
 			fail("no exception thrown");
 		}catch(MissUseAnnotationExceptionException e){
 			if(		
-					!e.getAnotation().equals(OriginalRigid.class) 
+					!e.getAnotation().equals(ObjRigid.class) 
 					|| 
 					e.getAnotationException() != AnnotationException.NOT_IMPLEMENTED
 					){

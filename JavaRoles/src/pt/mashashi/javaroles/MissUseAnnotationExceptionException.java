@@ -3,7 +3,7 @@ package pt.mashashi.javaroles;
 import java.lang.annotation.Annotation;
 import java.util.HashMap;
 
-import pt.mashashi.javaroles.composition.OriginalRigid;
+import pt.mashashi.javaroles.composition.ObjRigid;
 
 @SuppressWarnings("serial")
 public class MissUseAnnotationExceptionException extends RuntimeException{
@@ -12,8 +12,8 @@ public class MissUseAnnotationExceptionException extends RuntimeException{
 	
 	static{
 		messages = new HashMap<>();
-		messages.put(OriginalRigid.class.getName()+AnnotationException.NOT_IMPLEMENTED, "The type interface of \"%s.%s\" is not implemented in the class %s.\n Remove the @"+OriginalRigid.class.getSimpleName()+" annotation or implement it.");
-		messages.put(OriginalRigid.class.getName()+AnnotationException.MISS_USE, "The annotation @"+OriginalRigid.class.getSimpleName()+" was used incorrectly.\n The field \"%s.%s\" should be an interface and implemented on the class %s.");
+		messages.put(ObjRigid.class.getName()+AnnotationException.NOT_IMPLEMENTED, "The type interface of \"%s.%s\" is not implemented in the class %s.\n Remove the @"+ObjRigid.class.getSimpleName()+" annotation or implement it.");
+		messages.put(ObjRigid.class.getName()+AnnotationException.MISS_USE, "The annotation @"+ObjRigid.class.getSimpleName()+" was used incorrectly.\n The field \"%s.%s\" should be an interface and implemented on the class %s.");
 		messages.put(MissMsgReceptor.class.getName()+AnnotationException.BAD_TYPE, "The annotation @"+MissMsgReceptor.class.getSimpleName()+" was used incorrectly.\n The field \"%s.%s\" should be of type HashTable<String, Object>.");
 	}
 	

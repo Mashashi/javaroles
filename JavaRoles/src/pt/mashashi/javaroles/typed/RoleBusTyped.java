@@ -23,7 +23,7 @@ import javassist.CtMethod;
 import javassist.NotFoundException;
 import pt.mashashi.javaroles.ClassUtils;
 import pt.mashashi.javaroles.MissProcessingException;
-import pt.mashashi.javaroles.ObjectForRole;
+import pt.mashashi.javaroles.ObjRole;
 import pt.mashashi.javaroles.RoleBus;
 import pt.mashashi.javaroles.typed.role.ResolveRoleTest;
 
@@ -152,7 +152,7 @@ public class RoleBusTyped extends RoleBus{
 		
 		Object roleReturned = null;
 		
-		HashMap<String, Field> roleObjects = ClassUtils.getTypeFieldAnotatedNative(target, ObjectForRole.class);
+		HashMap<String, Field> roleObjects = ClassUtils.getTypeFieldAnotatedNative(target, ObjRole.class);
 		
 		{
 			Field objectRole = roleObjects.get(roleName);

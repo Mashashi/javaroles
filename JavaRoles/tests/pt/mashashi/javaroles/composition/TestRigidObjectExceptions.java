@@ -1,6 +1,6 @@
 package pt.mashashi.javaroles.composition;
 
-import pt.mashashi.javaroles.ObjectForRole;
+import pt.mashashi.javaroles.ObjRole;
 
 public class TestRigidObjectExceptions {
 	
@@ -16,18 +16,18 @@ public class TestRigidObjectExceptions {
 		@Override public String hello() { return "Ugauga"; } 
 	}
 	public static class AnimalRoles implements Human, Monkey{
-		@ObjectForRole public Human human;
-		@ObjectForRole public Monkey monkey;
-		@OriginalRigid public Object original;
+		@ObjRole public Human human;
+		@ObjRole public Monkey monkey;
+		@ObjRigid public Object original;
 		public AnimalRoles(){}
 		@Override
 		public String hello() { return "Default hello "+this.getClass().getName(); }
 		public String notInRole(){ return "Not in role";}
 	}
 	public static class AnimalRoles2 implements Human, Monkey{
-		@ObjectForRole public Human human;
-		@ObjectForRole public Monkey monkey;
-		@OriginalRigid public Subject original;
+		@ObjRole public Human human;
+		@ObjRole public Monkey monkey;
+		@ObjRigid public Subject original;
 		public AnimalRoles2(){}
 		@Override
 		public String hello() { return "Default hello "+this.getClass().getName(); }
