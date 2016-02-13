@@ -26,9 +26,11 @@ import pt.mashashi.javaroles.RoleRegister;
  */
 public class RoleRegisterComposition extends RoleRegister{
 	
-	//public RoleRegisterComposition(String[] pkgs) {super(pkgs);}
+	public RoleRegisterComposition(String[] pkgs) {
+		super(pkgs);
+	}
 	
-	public RoleRegisterComposition(String[] pkgs, Class<?>... onlyFor) {
+	public RoleRegisterComposition(String[] pkgs, Class<?>[] onlyFor) {
 		super(pkgs, onlyFor);
 	}
 	
