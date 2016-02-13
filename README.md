@@ -39,9 +39,9 @@ public class AnimalRoles implements Human, Monkey{
 	public AnimalRoles(Human human, Monkey monkey){
 	    this.human = human;
 	    this.monkey = monkey;
-	    if(this.human!=null){
-	        ((Portuguese)this.human).core = this;
-	    }
+	    //if(this.human!=null){
+	    //    ((Portuguese)this.human).core = this;
+	    //}
 	}
 
 	@Override
@@ -76,7 +76,7 @@ Defining class role Portuguese in class AnimalRoles...
 ```java
 public class Portuguese implements Human{
 
-	public AnimalRoles core;
+	@InjObjRigid public AnimalRoles core;
 
 	public Portuguese() {}
 

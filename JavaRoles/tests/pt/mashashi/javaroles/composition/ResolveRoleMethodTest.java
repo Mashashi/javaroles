@@ -205,4 +205,9 @@ public class ResolveRoleMethodTest {
 		TestRigidAnnotation.test();
 	}
 	
+	@Test
+	public void testXmlAdapterAnnotation() {
+		TestXmlAdapterAnnotation.test();
+	}
+	
 }
