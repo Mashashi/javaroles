@@ -113,8 +113,7 @@ public class Portuguese implements Human{
 Note: We can't call the core method directly this would lead to a StackOverFlowException.
 
 Defining a class role Bonobo...
-```
-java
+```java
 public class Bonobo implements Monkey{
 
 	public static final String HALLO = "Ugauga";
