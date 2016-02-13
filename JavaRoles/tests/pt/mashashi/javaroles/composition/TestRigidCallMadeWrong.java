@@ -2,7 +2,7 @@ package pt.mashashi.javaroles.composition;
 
 import static org.junit.Assert.fail;
 
-import pt.mashashi.javaroles.ObjectForRole;
+import pt.mashashi.javaroles.ObjRole;
 
 public class TestRigidCallMadeWrong {
 	
@@ -22,8 +22,8 @@ public class TestRigidCallMadeWrong {
 		} 
 	}
 	public static class AnimalRoles implements Human, Monkey{
-		@ObjectForRole public Human human;
-		@ObjectForRole public Monkey monkey;
+		@ObjRole public Human human;
+		@ObjRole public Monkey monkey;
 		
 		public AnimalRoles(){
 			Bonobo b = new Bonobo();

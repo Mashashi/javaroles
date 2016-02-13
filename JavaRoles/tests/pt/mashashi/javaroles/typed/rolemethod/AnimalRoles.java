@@ -2,7 +2,7 @@ package pt.mashashi.javaroles.typed.rolemethod;
 
 import pt.mashashi.javaroles.Human;
 import pt.mashashi.javaroles.Monkey;
-import pt.mashashi.javaroles.ObjectForRole;
+import pt.mashashi.javaroles.ObjRole;
 import pt.mashashi.javaroles.composition.TurnOffRole;
 import pt.mashashi.javaroles.typed.TurnOnRole;
 
@@ -17,9 +17,9 @@ public class AnimalRoles implements Human, Monkey{
 	public static final String DIE = "Default they kill me...";
 	public static final String EAT = "Default eat...";
 	
-	@ObjectForRole public Human human;
+	@ObjRole public Human human;
 	
-	@ObjectForRole public Monkey monkey;
+	@ObjRole public Monkey monkey;
 	
 	public AnimalRoles(){
 		human = new Portuguese();

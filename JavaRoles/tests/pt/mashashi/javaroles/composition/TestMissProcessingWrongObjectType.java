@@ -6,7 +6,7 @@ import java.util.HashMap;
 
 import pt.mashashi.javaroles.MissMsgReceptor;
 import pt.mashashi.javaroles.MissProcessingException;
-import pt.mashashi.javaroles.ObjectForRole;
+import pt.mashashi.javaroles.ObjRole;
 
 public class TestMissProcessingWrongObjectType {
 	
@@ -39,9 +39,9 @@ public class TestMissProcessingWrongObjectType {
 	}
 	public static class AnimalRoles implements Human, Monkey{		
 		
-		@ObjectForRole public Human human;
-		@ObjectForRole public Monkey monkey;
-		@OriginalRigid public Human original;
+		@ObjRole public Human human;
+		@ObjRole public Monkey monkey;
+		@ObjRigid public Human original;
 		@MissMsgReceptor public int receptor;
 		
 		public String out;

@@ -2,7 +2,7 @@ package pt.mashashi.javaroles.composition;
 
 import static org.junit.Assert.assertEquals;
 
-import pt.mashashi.javaroles.ObjectForRole;
+import pt.mashashi.javaroles.ObjRole;
 
 public class TestToSecondRoleFirstNull {
 	
@@ -19,9 +19,9 @@ public class TestToSecondRoleFirstNull {
 		@Override public String hello() { return "Ugauga"; } 
 	}
 	public static class AnimalRoles implements Human, Monkey{
-		@ObjectForRole public Human human;
-		@ObjectForRole public Monkey monkey;
-		@OriginalRigid public Monkey rigidHuman;
+		@ObjRole public Human human;
+		@ObjRole public Monkey monkey;
+		@ObjRigid public Monkey rigidHuman;
 		public AnimalRoles(){
 			monkey = new Bonobo();
 		}

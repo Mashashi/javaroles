@@ -15,7 +15,7 @@ import javassist.NotFoundException;
 import pt.mashashi.javaroles.ClassUtils;
 import pt.mashashi.javaroles.MissMsgReceptor;
 import pt.mashashi.javaroles.MissProcessingException;
-import pt.mashashi.javaroles.ObjectForRole;
+import pt.mashashi.javaroles.ObjRole;
 import pt.mashashi.javaroles.RoleBus;
 
 /**
@@ -70,7 +70,7 @@ public class RoleBusComposition extends RoleBus{
 
 	public CtField getTargetObjectRoleField(CtMethod methodInvoked, CtField... exclude) throws ClassNotFoundException, NotFoundException {
 		CtField ctFieldRole = null;
-		List<CtField> roleObjects = ClassUtils.getListFieldAnotated(target, ObjectForRole.class);
+		List<CtField> roleObjects = ClassUtils.getListFieldAnotated(target, ObjRole.class);
 		
 		roleSearch: for(CtField field: roleObjects){
 			

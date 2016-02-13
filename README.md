@@ -68,11 +68,11 @@ Defining rigid type AnimalRoles...
 ```java
 public class AnimalRoles implements Human, Monkey{
 
-	@ObjectForRole public Human human;
+	@ObjRole public Human human;
 
-	@ObjectForRole public Monkey monkey;
+	@ObjRole public Monkey monkey;
 
-	@OriginalRigid public Human original;
+	@ObjRigid public Human original;
 
 	public AnimalRoles(Human human, Monkey monkey){
 	    this.human = human;

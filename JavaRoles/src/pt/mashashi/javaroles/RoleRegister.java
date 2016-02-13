@@ -20,7 +20,7 @@ import javassist.CtMethod;
 import javassist.CtNewConstructor;
 import javassist.CtNewMethod;
 import javassist.NotFoundException;
-import pt.mashashi.javaroles.composition.OriginalRigid;
+import pt.mashashi.javaroles.composition.ObjRigid;
 
 /**
  * Offers a way to go through all the classes in the class path searching for the points that need code injection
@@ -67,7 +67,7 @@ public abstract class RoleRegister {
 	 * @param cn The class that contains the method target of the code injection
 	 * @param method The method in which the code is to be injected 
 	 * @param preCode 
-	 * @param roleObjectClass This is the object in the rigid type with an annotation {@link ObjectForRole} 
+	 * @param roleObjectClass This is the object in the rigid type with an annotation {@link ObjRole} 
 	 * 							that has a method with the same signature than the parameter {@code method}
 	 * @throws CannotCompileException
 	 * @throws NotFoundException
@@ -109,7 +109,7 @@ public abstract class RoleRegister {
 			checkMsgReceptorTypes(cn);
 			
 			CtMethod[] methods = cn.getDeclaredMethods();
-			HashMap<String, CtField> objectRoles = ClassUtils.getTypeFieldAnotatedAssist(cn, ObjectForRole.class);
+			HashMap<String, CtField> objectRoles = ClassUtils.getTypeFieldAnotatedAssist(cn, ObjRole.class);
 			
 			String injectCode = applyInjectionOnRoles(cn);
 			
@@ -203,7 +203,7 @@ public abstract class RoleRegister {
 		StringBuffer injectionCode = new StringBuffer("");
 		if(!cn.isFrozen()){
 			try {
-				boolean setUpInjection = cn.getAnnotation(RigidType.class)!=null;
+				boolean setUpInjection = cn.getAnnotation(Rigid.class)!=null;
 				
 				if(setUpInjection){
 						injectionCode.append(Field.class.getName()+"[] fs=this.getClass().getFields();");
@@ -211,7 +211,7 @@ public abstract class RoleRegister {
 							injectionCode.append("Object o = "+FieldUtils.class.getName()+".readField(fs[i], this, true);");
 							injectionCode.append("if(o!=null){");
 								injectionCode.append(List.class.getName()+" l = "+ClassUtils.class.getName()+".getListFieldAnotated(");
-									injectionCode.append("o.getClass(), "+InjectRigidType.class.getName()+".class");
+									injectionCode.append("o.getClass(), "+InjObjRigid.class.getName()+".class");
 								injectionCode.append(");");
 								injectionCode.append("for(int i2=0;i2<l.size();i2++){");
 									injectionCode.append(Field.class.getName()+" f = (("+Field.class.getName()+")l.get(i2));");
@@ -308,18 +308,18 @@ public abstract class RoleRegister {
 			return originals;
 		}
 		ClassPool cp = ClassPool.getDefault();
-		List<CtField> objectOriginal = ClassUtils.getListFieldAnotated(cn, OriginalRigid.class);
+		List<CtField> objectOriginal = ClassUtils.getListFieldAnotated(cn, ObjRigid.class);
 		Iterator<CtField> ite = objectOriginal.iterator();
 		while(ite.hasNext()){
 			CtField n = ite.next();
 			CtClass i = cp.getOrNull(n.getType().getName());
 			
 			if(!i.isInterface()){
-				throw new MissUseAnnotationExceptionException(OriginalRigid.class, AnnotationException.MISS_USE, cn.getName(), n.getName(), cn.getSimpleName());
+				throw new MissUseAnnotationExceptionException(ObjRigid.class, AnnotationException.MISS_USE, cn.getName(), n.getName(), cn.getSimpleName());
 			}
 			
 			if(!ClassUtils.classImplementsInterface(cn, i)){
-				throw new MissUseAnnotationExceptionException(OriginalRigid.class, AnnotationException.NOT_IMPLEMENTED, cn.getName(), n.getName(), cn.getSimpleName());
+				throw new MissUseAnnotationExceptionException(ObjRigid.class, AnnotationException.NOT_IMPLEMENTED, cn.getName(), n.getName(), cn.getSimpleName());
 			}		
 					
 			CtClass evalClass = originals.get(i.getName());

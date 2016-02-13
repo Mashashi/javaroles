@@ -2,7 +2,7 @@ package pt.mashashi.javaroles.composition;
 
 import static org.junit.Assert.*;
 
-import pt.mashashi.javaroles.ObjectForRole;
+import pt.mashashi.javaroles.ObjRole;
 
 public class TestOriginalRigidVoidMethodException {
 	
@@ -30,9 +30,9 @@ public class TestOriginalRigidVoidMethodException {
 		@Override public void hello() {} 
 	}
 	public static class AnimalRoles implements Human, Monkey{		
-		@ObjectForRole public Human human;
-		@ObjectForRole public Monkey monkey;
-		@OriginalRigid public Human original;
+		@ObjRole public Human human;
+		@ObjRole public Monkey monkey;
+		@ObjRigid public Human original;
 		public String out;
 		public AnimalRoles(){
 			human = new Portuguese();

@@ -2,7 +2,7 @@ package pt.mashashi.javaroles.composition;
 
 import static org.junit.Assert.assertEquals;
 
-import pt.mashashi.javaroles.ObjectForRole;
+import pt.mashashi.javaroles.ObjRole;
 
 public class TestOriginalRigidTurnOffRoleMethod {
 	
@@ -25,9 +25,9 @@ public class TestOriginalRigidTurnOffRoleMethod {
 		//@Override public String die() {return null;}
 	}
 	public static class AnimalRoles implements Human, Monkey{
-		@ObjectForRole public Human human;
-		@ObjectForRole public Monkey monkey;
-		@OriginalRigid public Human original;
+		@ObjRole public Human human;
+		@ObjRole public Monkey monkey;
+		@ObjRigid public Human original;
 		public AnimalRoles(){}
 		@Override
 		@TurnOffRole

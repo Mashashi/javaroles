@@ -1,4 +1,4 @@
-package pt.mashashi.javaroles.composition;
+package pt.mashashi.javaroles;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,4 +7,4 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface OriginalRigid {}
+public @interface InjObjRigid {}
