@@ -72,7 +72,7 @@ public abstract class RoleRegister {
 	 * @throws CannotCompileException
 	 * @throws NotFoundException
 	 */
-	protected abstract CtMethod injectRoleDependency(CtClass cn, CtMethod method) throws CannotCompileException, NotFoundException;
+	protected abstract CtMethod injectRoleDependency(CtClass cn, CtMethod method, String beforeCode) throws CannotCompileException, NotFoundException;
 	
 	/**
 	 * Returns a string having the RoleBus method field declaration to be injected
@@ -111,7 +111,7 @@ public abstract class RoleRegister {
 			CtMethod[] methods = cn.getDeclaredMethods();
 			HashMap<String, CtField> objectRoles = ClassUtils.getTypeFieldAnotatedAssist(cn, ObjectForRole.class);
 			
-			applyInjectionOnRoles(cn);
+			String injectCode = applyInjectionOnRoles(cn);
 			
 			HashMap<String, CtClass> originals = getOriginals(cn);
 			
@@ -135,7 +135,7 @@ public abstract class RoleRegister {
 						cn.addField(newField);
 					}
 					
-					CtMethod created = injectRoleDependency(cn, method);
+					CtMethod created = injectRoleDependency(cn, method, injectCode);
 					
 					List<CtClass> inters = ClassUtils.definedOnInterfaces(method, cn);
 					applyIndirect(method, created, originals, inters);
@@ -199,9 +199,9 @@ public abstract class RoleRegister {
 		}
 	}
 
-	public void applyInjectionOnRoles(CtClass cn) throws ClassNotFoundException {
+	public String applyInjectionOnRoles(CtClass cn) throws ClassNotFoundException {
+		StringBuffer injectionCode = new StringBuffer("");
 		if(!cn.isFrozen()){
-			StringBuffer injectionCode = new StringBuffer("");
 			try {
 				boolean setUpInjection = cn.getAnnotation(RigidType.class)!=null;
 				
@@ -211,13 +211,17 @@ public abstract class RoleRegister {
 							injectionCode.append("Object o = "+FieldUtils.class.getName()+".readField(fs[i], this, true);");
 							injectionCode.append("if(o!=null){");
 								injectionCode.append(List.class.getName()+" l = "+ClassUtils.class.getName()+".getListFieldAnotated(");
-									injectionCode.append("o, "+InjectRigidType.class.getName()+".class");
+									injectionCode.append("o.getClass(), "+InjectRigidType.class.getName()+".class");
 								injectionCode.append(");");
 								injectionCode.append("for(int i2=0;i2<l.size();i2++){");
-								injectionCode.append("String rigidName = (("+CtField.class.getName()+")l.get(i2)).getName();");
-								injectionCode.append("try{");
-									injectionCode.append("Class.forName(o.getClass().getName()).getField(rigidName).set(o, this);");
-								injectionCode.append("}catch("+IllegalArgumentException.class.getName()+" e){/*Do nothing - Just a cast error*/}");
+									injectionCode.append(Field.class.getName()+" f = (("+Field.class.getName()+")l.get(i2));");
+									injectionCode.append("boolean accesibilityOriginal = f.isAccessible();");
+									injectionCode.append("f.setAccessible(true);");
+									//injectionCode.append("String rigidName = f.getName();");
+									injectionCode.append("try{");
+										injectionCode.append("f.set(o, this);");
+										injectionCode.append("f.setAccessible(accesibilityOriginal);");	
+									injectionCode.append("}catch("+IllegalArgumentException.class.getName()+" e){/*Do nothing - Just a cast error*/}");
 								injectionCode.append("}");
 							injectionCode.append("}");
 						injectionCode.append("}");		
@@ -257,6 +261,7 @@ public abstract class RoleRegister {
 				}
 			}
 		}
+		return injectionCode.toString();
 	}
 
 	public void applyIndirect(CtMethod method, 

@@ -145,7 +145,16 @@ public class ClassUtils {
 	}
 	public static List<CtField> getListFieldAnotated(CtClass target, Class<? extends Annotation> annotation) throws ClassNotFoundException{
 		List<CtField> roleObjects = new LinkedList<>();
-		for(CtField field : target.getFields()){//Class.forName(target.getName()).getFields();
+		for(CtField field : target.getDeclaredFields()){//Class.forName(target.getName()).getFields();
+			if(field.getAnnotation(annotation)!=null){
+				roleObjects.add(field);
+			}
+		}
+		return roleObjects;
+	}
+	public static List<Field> getListFieldAnotated(Class<?> target, Class<? extends Annotation> annotation) throws ClassNotFoundException{
+		List<Field> roleObjects = new LinkedList<>();
+		for(Field field : target.getDeclaredFields()){//Class.forName(target.getName()).getFields();
 			if(field.getAnnotation(annotation)!=null){
 				roleObjects.add(field);
 			}

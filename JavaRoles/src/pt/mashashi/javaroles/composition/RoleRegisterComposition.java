@@ -32,7 +32,7 @@ public class RoleRegisterComposition extends RoleRegister{
 		super(onlyFor);
 	}
 	
-	protected CtMethod injectRoleDependency(CtClass cn, CtMethod method) throws CannotCompileException, NotFoundException {
+	protected CtMethod injectRoleDependency(CtClass cn, CtMethod method, String beforeCode) throws CannotCompileException, NotFoundException {
 		
 		CtMethod methodCreated =null;
 		
@@ -49,6 +49,7 @@ public class RoleRegisterComposition extends RoleRegister{
 		
 		method.setBody(
 			"{"+
+					beforeCode+
 					CtMethod.class.getName()+" "+varM+" = "+ClassUtils.class.getName()+".getExecutingMethod("+
 																						"\""+clazzName+"\","+
 																						"\""+name+"\","+
