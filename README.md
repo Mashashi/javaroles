@@ -17,6 +17,27 @@ The main implementation. Hopefully reliable. (See test cases)
 ### typed
 This implementation is purely academic and highly unstable. It relies on source code analysis to resolve the type currently assigned to the rigid object, in order to resolve the object for which the method call should be dispatched. It does not work under every circumstance. (See test cases)
 
+## Use it
+
+If you use maven, gradel or other build tool you can easily add this library to any project via `jipack.io`
+
+For maven just add the following to your `pom.xml`
+```xml
+	<repositories>
+		<repository>
+		    <id>jitpack.io</id>
+		    <url>https://jitpack.io</url>
+		</repository>
+	</repositories>
+	<dependencies>
+		<dependency>
+			<groupId>com.github.Mashashi</groupId>
+			<artifactId>javaroles</artifactId>
+			<version>vX.X.X</version> <!-- Replace with the appropriate version.-->
+		</dependency>
+	</dependencies>
+```
+
 ## examples
 
 ### composite 
