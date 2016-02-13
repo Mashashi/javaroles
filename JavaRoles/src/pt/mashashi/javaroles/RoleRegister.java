@@ -33,6 +33,8 @@ public abstract class RoleRegister {
 	private ClassPool cp;
 	private String[] onlyFor;
 	
+	private String selfPackageToExcludeFromRegister;
+	
 	public RoleRegister(){
 		
 		{
@@ -43,6 +45,7 @@ public abstract class RoleRegister {
 		
 		roleBusVarName = ClassUtils.generateIdentifier();
 		cp = ClassPool.getDefault();
+		selfPackageToExcludeFromRegister = this.getClass().getPackage().getName();
 	}
 	
 	public RoleRegister(Class<?>... clazzes){
@@ -99,6 +102,11 @@ public abstract class RoleRegister {
 	 * @param clazzName The qualified class name. It is a string because we can not use {@link Class} at this point. 
 	 */
 	public void registerRool(String clazzName){
+		
+		{ // BLOCK we don't want to register classes belonging to the library jar it self
+			if(clazzName.startsWith(selfPackageToExcludeFromRegister))
+				return;
+		}
 		
 		CtClass cn = cp.getOrNull(clazzName);
 		boolean wasInjected = false;
@@ -183,17 +191,15 @@ public abstract class RoleRegister {
 	 */
 	public void checkMsgReceptorTypes(CtClass cn) throws ClassNotFoundException, NotFoundException {
 		List<CtField> objectRoles = ClassUtils.getListFieldAnotated(cn, MissMsgReceptor.class);
-		if(objectRoles!=null){
-			for(CtField o:objectRoles){
-				if(
-						!o.getType().equals((ClassUtils.getMissMsgReceptorType())) && 
-						(
-						o.getType().getGenericSignature()==null ||
-						!o.getType().getGenericSignature().equals(ClassUtils.getMissMsgReceptorSigGen())
-						)
-								){
-					throw new MissUseAnnotationExceptionException(MissMsgReceptor.class, AnnotationException.BAD_TYPE, cn.getName(), o.getName());
-				}
+		for(CtField o:objectRoles){
+			if(
+					!o.getType().equals((ClassUtils.getMissMsgReceptorType())) && 
+					(
+					o.getType().getGenericSignature()==null ||
+					!o.getType().getGenericSignature().equals(ClassUtils.getMissMsgReceptorSigGen())
+					)
+							){
+				throw new MissUseAnnotationExceptionException(MissMsgReceptor.class, AnnotationException.BAD_TYPE, cn.getName(), o.getName());
 			}
 		}
 	}
