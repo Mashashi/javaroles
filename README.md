@@ -19,9 +19,10 @@ This implementation is purely academic and highly unstable. It relies on source 
 
 ## Use it
 
-If you use maven, gradel or other build tool you can easily add this library to any project via `jipack.io`
+If you use maven, gradel or other build tool you can easily add this library to any project via `jipack.io`.
 
-For maven just add the following to your `pom.xml`
+For maven just add the following to your `pom.xml`.
+
 ```xml
 	<repositories>
 		<repository>
@@ -33,10 +34,12 @@ For maven just add the following to your `pom.xml`
 		<dependency>
 			<groupId>com.github.Mashashi</groupId>
 			<artifactId>javaroles</artifactId>
-			<version>vX.X.X</version> <!-- Replace with the appropriate version.-->
+			<version>vX.X.X</version> <!-- Replace with the appropriate version -->
 		</dependency>
 	</dependencies>
 ```
+
+Look through the tags to pick a version any that as the format `vX.X.X` will work.
 
 ## examples
 
