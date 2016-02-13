@@ -41,7 +41,7 @@ public abstract class RoleRegister {
 		throw new NotImplementedException("This shouldn't be used");
 	}
 	
-	public RoleRegister(String... pkgs){
+	public RoleRegister(String[] pkgs){
 		{
 			// CONFIG Suppress console output from log4j missing config file 
 			// log4j:WARN No appenders could be found for logger... When log4j config file is not set
@@ -54,12 +54,12 @@ public abstract class RoleRegister {
 			this.pkgs = new String[0];
 		}
 		if(this.pkgs.length==0){
-			throw new IllegalArgumentException("Supply at least one package perfix");
+			throw new IllegalArgumentException("Supply at least one package perfix.");
 		}
 	}
 	
 	public RoleRegister(Class<?>... clazzes){
-		this(new String[]{});
+		this(new String[]{""});
 		List<String> onlyFor = new LinkedList<String>();
 		for(Class<?> clazz : clazzes){
 			onlyFor.add(clazz.getName());
@@ -435,6 +435,9 @@ public abstract class RoleRegister {
 	}
 	
 	public void registerRoolsExcludeGiven(Class<?>... clazzes){
+		if(onlyFor!=null){
+			throw new IllegalStateException("The register configuration does not allow for this method to be called.\n Supply at least one pkg prefix when building the object.");
+		}
 		List<String> c = getAllClassesForPkgs();
 		classProcessing: for(String className : c){
 			for(Class<?> clazz :clazzes){
@@ -445,7 +448,6 @@ public abstract class RoleRegister {
 			}
 			registerRool(className);
 		}
-		
 	}
 	
 	public List<String> getAllClassesForPkgs(){
