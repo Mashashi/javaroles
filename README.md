@@ -78,7 +78,7 @@ public class AnimalRoles implements Human, Monkey{
 }
 ```
 
-Defining class role Portuguese in class AnimalRoles...
+Defining class role Portuguese with injected AnimalRoles rigid type...
 ```java
 import pt.mashashi.javaroles.InjObjRigid;
 
@@ -111,6 +111,29 @@ public class Portuguese implements Human{
 }
 ```
 Note: We can't call the core method directly this would lead to a StackOverFlowException.
+
+Defining a class role Bonobo...
+```
+java
+public class Bonobo implements Monkey{
+
+	public static final String HALLO = "Ugauga";
+	public static final String EAT = "Nhamnham";
+	
+	public Bonobo() {}
+	
+	@Override
+	public String hello(){
+		return "Ugauga";
+	}
+
+	@Override
+	public String eat() {
+		return EAT;
+	}
+
+}
+```
 
 Putting it all together...
 ```java
