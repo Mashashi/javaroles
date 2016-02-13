@@ -8,44 +8,6 @@ Main features are:
 
 See the in code documentation and test cases to get the felling on how it works.
 
-## Use it
-
-### Standalone
-
-Check the [releases](https://github.com/Mashashi/javaroles)
-
-### Via `jipack.io`
-If you use maven, gradel or other build tool you can easily add this library to any project via `jipack.io`.
-
-For maven just add the following to your `pom.xml`.
-
-```xml
-	<repositories>
-		<repository>
-		    <id>jitpack.io</id>
-		    <url>https://jitpack.io</url>
-		</repository>
-	</repositories>
-	<dependencies>
-		<dependency>
-			<groupId>com.github.Mashashi</groupId>
-			<artifactId>javaroles</artifactId>
-			<version>vX.X.X</version> <!-- Replace with the appropriate version -->
-		</dependency>
-	</dependencies>
-```
-
-Look through the tags to pick a version. Any that as the format `vX.X.X` will work.
-
-## implementations
-These are the two operation modes available.
-
-### composite
-The main implementation. Hopefully reliable. (See test cases)
-
-### typed
-This implementation is purely academic and highly unstable. It relies on source code analysis to resolve the type currently assigned to the rigid object, in order to resolve the object for which the method call should be dispatched. It does not work under every circumstance. (See test cases)
-
 ## examples
 
 ### composite 
@@ -157,3 +119,44 @@ Results in the output...
 "Hey there"
 "Just dance modified!"
 ```
+
+## use it
+
+### standalone
+
+Check the [releases](https://github.com/Mashashi/javaroles)
+
+### via `jipack.io`
+If you use maven, gradel or other build tool you can easily add this library to any project via `jipack.io`.
+
+For maven just add the following to your `pom.xml`.
+
+```xml
+	<repositories>
+		<repository>
+		    <id>jitpack.io</id>
+		    <url>https://jitpack.io</url>
+		</repository>
+	</repositories>
+	<dependencies>
+		<dependency>
+			<groupId>com.github.Mashashi</groupId>
+			<artifactId>javaroles</artifactId>
+			<version>vX.X.X</version> <!-- Replace with the appropriate version -->
+		</dependency>
+	</dependencies>
+```
+
+Look through the tags to pick a version. Any that as the format `vX.X.X` will work.
+
+## implementations
+These are the two operation modes available.
+
+### composite
+The main implementation. Hopefully reliable. (See test cases)
+
+### typed
+This implementation is purely academic and highly unstable. It relies on source code analysis to resolve the type currently assigned to the rigid object, in order to resolve the object for which the method call should be dispatched. It does not work under every circumstance. (See test cases)
+
+## opening an issue
+Opening a issue for a bug should be done in addition with a pool request with the necessary code for carrying out test that reproduces it.
