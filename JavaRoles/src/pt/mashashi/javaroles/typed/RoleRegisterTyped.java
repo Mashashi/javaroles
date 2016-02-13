@@ -36,7 +36,7 @@ public class RoleRegisterTyped extends RoleRegister{
 		this.srcFolder = srcFolder;
 	}
 	
-	protected CtMethod injectRoleDependency(CtClass cn, CtMethod method, StringBuffer preCode) throws CannotCompileException, NotFoundException {
+	protected CtMethod injectRoleDependency(CtClass cn, CtMethod method) throws CannotCompileException, NotFoundException {
 		
 		//int lineNumberStart = method.getMethodInfo().getLineNumber(0);
 		final String clazzName = cn.getName();
