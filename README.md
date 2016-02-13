@@ -8,15 +8,6 @@ Main features are:
 
 See the in code documentation and test cases to get the felling on how it works.
 
-## implementations
-These are the two operation modes available.
-
-### composite
-The main implementation. Hopefully reliable. (See test cases)
-
-### typed
-This implementation is purely academic and highly unstable. It relies on source code analysis to resolve the type currently assigned to the rigid object, in order to resolve the object for which the method call should be dispatched. It does not work under every circumstance. (See test cases)
-
 ## Use it
 
 If you use maven, gradel or other build tool you can easily add this library to any project via `jipack.io`.
@@ -39,7 +30,16 @@ For maven just add the following to your `pom.xml`.
 	</dependencies>
 ```
 
-Look through the tags to pick a version any that as the format `vX.X.X` will work.
+Look through the tags to pick a version. Any that as the format `vX.X.X` will work.
+
+## implementations
+These are the two operation modes available.
+
+### composite
+The main implementation. Hopefully reliable. (See test cases)
+
+### typed
+This implementation is purely academic and highly unstable. It relies on source code analysis to resolve the type currently assigned to the rigid object, in order to resolve the object for which the method call should be dispatched. It does not work under every circumstance. (See test cases)
 
 ## examples
 
