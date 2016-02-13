@@ -10,6 +10,11 @@ See the in code documentation and test cases to get the felling on how it works.
 
 ## Use it
 
+### Standalone
+
+Check the [releases](https://github.com/Mashashi/javaroles)
+
+### Via `jipack.io`
 If you use maven, gradel or other build tool you can easily add this library to any project via `jipack.io`.
 
 For maven just add the following to your `pom.xml`.
