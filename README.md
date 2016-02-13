@@ -12,6 +12,8 @@ See the in code documentation and test cases to get the felling on how it works.
 
 Defining the interface for the roles...
 ```java
+package pt.mashashi.example;
+
 public interface Human {
 	String hello(); 
 	String die(String age);  
@@ -26,6 +28,8 @@ public interface Monkey {
 
 Defining rigid type AnimalRoles...
 ```java
+package pt.mashashi.example;
+
 import pt.mashashi.javaroles.ObjRole;
 import pt.mashashi.javaroles.ObjRigid;
 import pt.mashashi.javaroles.Rigid;
@@ -78,6 +82,8 @@ public class AnimalRoles implements Human, Monkey{
 
 Defining class role Portuguese with injected AnimalRoles rigid type...
 ```java
+package pt.mashashi.example;
+
 import pt.mashashi.javaroles.InjObjRigid;
 
 public class Portuguese implements Human{
@@ -112,6 +118,8 @@ Note: We can't call the core method directly this would lead to a StackOverFlowE
 
 Defining a class role Bonobo...
 ```java
+package pt.mashashi.example;
+
 public class Bonobo implements Monkey{
 
 	public static final String HALLO = "Ugauga";
@@ -134,15 +142,17 @@ public class Bonobo implements Monkey{
 
 Putting it all together...
 ```java
+package pt.mashashi.example;
+
 import pt.mashashi.javaroles.composition.RoleRegisterComposition;
 
 public class Main {
-	public static void main(String[] args) {
-		new RoleRegisterComposition().registerRools();
-	    AnimalRoles a = new AnimalRoles(new Portuguese(), new Bonobo());
-	    System.out.println(a.hello());
-	    System.out.println(a.dance());
-	}
+    public static void main(String[] args) {
+        new RoleRegisterComposition(new String[]{"pt.mashashi.example"}).registerRools();
+        AnimalRoles a = new AnimalRoles(new Portuguese(), new Bonobo());
+        System.out.println(a.hello());
+        System.out.println(a.dance());
+    }
 }
 ```
 
