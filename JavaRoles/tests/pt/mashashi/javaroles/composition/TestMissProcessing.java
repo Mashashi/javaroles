@@ -6,6 +6,7 @@ import java.util.HashMap;
 
 import pt.mashashi.javaroles.MissMsgReceptor;
 import pt.mashashi.javaroles.MissProcessingException;
+import pt.mashashi.javaroles.ObjRigid;
 import pt.mashashi.javaroles.ObjRole;
 
 public class TestMissProcessing {

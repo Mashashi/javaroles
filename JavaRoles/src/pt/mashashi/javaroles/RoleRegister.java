@@ -20,7 +20,6 @@ import javassist.CtMethod;
 import javassist.CtNewConstructor;
 import javassist.CtNewMethod;
 import javassist.NotFoundException;
-import pt.mashashi.javaroles.composition.ObjRigid;
 
 /**
  * Offers a way to go through all the classes in the class path searching for the points that need code injection

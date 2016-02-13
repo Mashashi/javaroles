@@ -1,10 +1,10 @@
 package pt.mashashi.javaroles.composition;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import pt.mashashi.javaroles.ObjRole;
 
-public class TestXmlAdapterAnnotation {
+public class TestAdapterAnnotation {
 	
 	public interface Human{ String hello(); }
 	public interface Monkey{ String hello(); }
@@ -22,11 +22,9 @@ public class TestXmlAdapterAnnotation {
 		public AnimalRoles(){}
 		@Override
 		public String hello() { return "Default hello "+this.getClass().getName(); }
-		public String notInRole(){ return "Not in role";}
 	}
 	public static void test(){
 		AnimalRoles a = new AnimalRoles();
-		assertEquals("Yap", "Not in role", a.notInRole());
 	}
 	
 }

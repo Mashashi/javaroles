@@ -1,5 +1,6 @@
 package pt.mashashi.javaroles.composition;
 
+import pt.mashashi.javaroles.ObjRigid;
 import pt.mashashi.javaroles.ObjRole;
 
 public class TestRigidObjectExceptions {
