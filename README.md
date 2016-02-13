@@ -10,8 +10,6 @@ See the in code documentation and test cases to get the felling on how it works.
 
 ## examples
 
-### composite 
-
 Defining the interface for the roles...
 ```java
 public interface Human {
