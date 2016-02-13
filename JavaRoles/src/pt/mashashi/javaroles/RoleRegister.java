@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -33,23 +34,29 @@ public abstract class RoleRegister {
 	private ClassPool cp;
 	private String[] onlyFor;
 	
-	private String selfPackageToExcludeFromRegister;
+	private String[] pkgs /*= new String[]{}*/;
 	
-	public RoleRegister(){
-		
+	@SuppressWarnings("unused")
+	private RoleRegister(){
+		throw new NotImplementedException("This shouldn't be used");
+	}
+	
+	public RoleRegister(String... pkgs){
 		{
 			// CONFIG Suppress console output from log4j missing config file 
 			// log4j:WARN No appenders could be found for logger... When log4j config file is not set
 			Logger.getRootLogger().setLevel(Level.OFF); 
 		}
-		
 		roleBusVarName = ClassUtils.generateIdentifier();
 		cp = ClassPool.getDefault();
-		selfPackageToExcludeFromRegister = this.getClass().getPackage().getName();
+		this.pkgs = pkgs;
+		if(pkgs==null){
+			this.pkgs = new String[0];
+		}
 	}
 	
 	public RoleRegister(Class<?>... clazzes){
-		this();
+		this(new String[]{});
 		List<String> onlyFor = new LinkedList<String>();
 		for(Class<?> clazz : clazzes){
 			onlyFor.add(clazz.getName());
@@ -102,11 +109,6 @@ public abstract class RoleRegister {
 	 * @param clazzName The qualified class name. It is a string because we can not use {@link Class} at this point. 
 	 */
 	public void registerRool(String clazzName){
-		
-		{ // BLOCK we don't want to register classes belonging to the library jar it self
-			if(clazzName.startsWith(selfPackageToExcludeFromRegister))
-				return;
-		}
 		
 		CtClass cn = cp.getOrNull(clazzName);
 		boolean wasInjected = false;
@@ -375,6 +377,17 @@ public abstract class RoleRegister {
 		return originals;
 	}
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	/**
 	 * Before invoking this method be sure that:
 	 * - Any instances for the referenced classes are freed.
@@ -383,16 +396,16 @@ public abstract class RoleRegister {
 	 * 
 	 */
 	public void registerRools(){
-		{ // BLOCK Free up reference in the class loader
-		  /*
-		   This will unload the classes from the class loader if the roles for unloading a class are verified
-		   */
-			System.gc(); 
-		}
 		if(onlyFor!=null){
+			{ // BLOCK Free up reference in the class loader
+			  /*
+			   This will unload the classes from the class loader if the roles for unloading a class are verified
+			   */
+				System.gc(); 
+			}
 			registerRools(onlyFor);
 		}else{
-			List<String> c = ClassUtils.getAllClassNames();
+			List<String> c = getAllClassesForPkgs();
 			for(String className : c){
 				registerRool(className);
 			}
@@ -407,7 +420,6 @@ public abstract class RoleRegister {
 			} catch (NotFoundException e) {
 				throw new RuntimeException(e.getMessage());
 			}
-			
 			try {
 				for(CtClass i : c.getDeclaredClasses()){
 					registerRool(i.getName());
@@ -420,7 +432,7 @@ public abstract class RoleRegister {
 	}
 	
 	public void registerRoolsExcludeGiven(Class<?>... clazzes){
-		List<String> c = ClassUtils.getAllClassNames();
+		List<String> c = getAllClassesForPkgs();
 		classProcessing: for(String className : c){
 			for(Class<?> clazz :clazzes){
 				if(className.startsWith(clazz.getName())){ 
@@ -432,6 +444,19 @@ public abstract class RoleRegister {
 		}
 		
 	}
-
+	
+	public List<String> getAllClassesForPkgs(){
+		List<String> clazzes = ClassUtils.getAllClassNames();
+		Iterator<String> i = clazzes.iterator();
+		for(String pkg:pkgs){
+			next: while(i.hasNext()){	
+				if(i.next().startsWith(pkg)){
+					continue next; 
+				}
+				i.remove();
+			}
+		}
+		return clazzes;
+	}
 	
 }

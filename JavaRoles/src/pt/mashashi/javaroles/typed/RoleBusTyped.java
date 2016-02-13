@@ -53,10 +53,10 @@ public class RoleBusTyped extends RoleBus{
 	
 	private String srcFolder; 
 	
+	@SuppressWarnings("unused")
 	private RoleBusTyped() {}
 	
 	public RoleBusTyped(Object target, String srcFolder) {
-		this();
 		this.target = target;
 		this.srcFolder = srcFolder;
 	}
