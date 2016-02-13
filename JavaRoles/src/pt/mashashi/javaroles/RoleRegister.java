@@ -72,7 +72,7 @@ public abstract class RoleRegister {
 	 * @throws CannotCompileException
 	 * @throws NotFoundException
 	 */
-	protected abstract CtMethod injectRoleDependency(CtClass cn, CtMethod method, StringBuffer preCode) throws CannotCompileException, NotFoundException;
+	protected abstract CtMethod injectRoleDependency(CtClass cn, CtMethod method) throws CannotCompileException, NotFoundException;
 	
 	/**
 	 * Returns a string having the RoleBus method field declaration to be injected
@@ -104,95 +104,14 @@ public abstract class RoleRegister {
 		CtClass cn = cp.getOrNull(clazzName);
 		boolean wasInjected = false;
 		
-		 // SNIPPET Insert a method call in every method of a class that has an annotation
-		 /*
-		 This was made to register the signature of a function because it is not possible to get it from the stack trace
-		 */
-		 /*{
-			try {
-				Object a = cn.getAnnotation(RoleObject.class);
-				if(a!=null){
-					CtMethod[] ct = cn.getMethods();
-					for(CtMethod m : ct){
-						try{
-							m.insertBefore(ClassUtils.class.getName()+".submitSignature(\""+m.getName()+"\", $sig);");
-						}catch (CannotCompileException e){
-							// Probably just an abstract
-						}
-					}
-					try {
-						cn.toClass();
-					} catch (CannotCompileException e) {
-						Logger.getLogger(RoleBus.class.getName()).debug("error processing role class: "+clazzName+" "+e.getMessage());
-						e.printStackTrace();
-						throw new RuntimeException();
-					}
-					return ;
-				}
-			} catch (ClassNotFoundException e) {
-				// Do nothing this is not a role object class
-			}
-		}*/
-		
-		
-		
 		try {
 			
-			
-			
-			
-			
-			{ // BLOCK Check type for @MissMsgReceptor attributes
-				List<CtField> objectRoles = ClassUtils.getListFieldAnotated(cn, MissMsgReceptor.class);
-				if(objectRoles!=null){
-					for(CtField o:objectRoles){
-						if(
-								!o.getType().equals((ClassUtils.getMissMsgReceptorType())) && 
-								(
-								o.getType().getGenericSignature()==null ||
-								!o.getType().getGenericSignature().equals(ClassUtils.getMissMsgReceptorSigGen())
-								)
-										){
-							throw new MissUseAnnotationExceptionException(MissMsgReceptor.class, AnnotationException.BAD_TYPE, cn.getName(), o.getName());
-						}
-					}
-				}
-			}
+			checkMsgReceptorTypes(cn);
 			
 			CtMethod[] methods = cn.getDeclaredMethods();
 			HashMap<String, CtField> objectRoles = ClassUtils.getTypeFieldAnotatedAssist(cn, ObjectForRole.class);
 			
-			StringBuffer injectionCode = new StringBuffer("");
-			if(!cn.isFrozen()){ // injection code for methods
-				try {
-					boolean setUpInjection = cn.getAnnotation(RigidType.class)!=null;
-					if(setUpInjection){
-						//for(CtField obj: objectRoles.values()){
-							//Object objf = FieldUtils.readField(objf, cn, true);}
-							injectionCode.append(Field.class.getName()+"[] fs=this.getClass().getFields();");
-							injectionCode.append("for(int i=0;i<fs.length;i++){");
-								injectionCode.append("Object o = "+FieldUtils.class.getName()+".readField(fs[i], this, true);");
-								injectionCode.append("if(o!=null){");
-									//injectionCode.append("System.out.println(o.getClass());");
-									injectionCode.append(List.class.getName()+" l = "+ClassUtils.class.getName()+".getListFieldAnotated(");
-										injectionCode.append("o, "+InjectRigidType.class.getName()+".class");
-									injectionCode.append(");");
-									injectionCode.append("for(int i2=0;i2<l.size();i2++){");
-									injectionCode.append("String rigidName = (("+CtField.class.getName()+")l.get(i2)).getName();");
-									injectionCode.append("try{");
-										injectionCode.append("Class.forName(o.getClass().getName()).getField(rigidName).set(o, this);");
-									injectionCode.append("}catch("+IllegalArgumentException.class.getName()+" e){/*Do nothing - Just a cast error*/}");
-									injectionCode.append("}");
-								injectionCode.append("}");
-							injectionCode.append("}");		
-					}
-				} catch (SecurityException e) {
-					throw new RuntimeException(e.getMessage());
-				}
-				for(CtConstructor c: cn.getConstructors()){
-					c.insertAfter(injectionCode.toString());
-				}
-			}
+			applyInjectionOnRoles(cn);
 			
 			HashMap<String, CtClass> originals = getOriginals(cn);
 			
@@ -216,7 +135,7 @@ public abstract class RoleRegister {
 						cn.addField(newField);
 					}
 					
-					CtMethod created = injectRoleDependency(cn, method, injectionCode);
+					CtMethod created = injectRoleDependency(cn, method);
 					
 					List<CtClass> inters = ClassUtils.definedOnInterfaces(method, cn);
 					applyIndirect(method, created, originals, inters);
@@ -254,6 +173,90 @@ public abstract class RoleRegister {
 		
 		
 		
+	}
+	
+	/**
+	 * If it is not using HashMap<String, Object> is an error
+	 * 
+	 * @param cn
+	 * @throws ClassNotFoundException
+	 * @throws NotFoundException
+	 */
+	public void checkMsgReceptorTypes(CtClass cn) throws ClassNotFoundException, NotFoundException {
+		List<CtField> objectRoles = ClassUtils.getListFieldAnotated(cn, MissMsgReceptor.class);
+		if(objectRoles!=null){
+			for(CtField o:objectRoles){
+				if(
+						!o.getType().equals((ClassUtils.getMissMsgReceptorType())) && 
+						(
+						o.getType().getGenericSignature()==null ||
+						!o.getType().getGenericSignature().equals(ClassUtils.getMissMsgReceptorSigGen())
+						)
+								){
+					throw new MissUseAnnotationExceptionException(MissMsgReceptor.class, AnnotationException.BAD_TYPE, cn.getName(), o.getName());
+				}
+			}
+		}
+	}
+
+	public void applyInjectionOnRoles(CtClass cn) throws ClassNotFoundException {
+		if(!cn.isFrozen()){
+			StringBuffer injectionCode = new StringBuffer("");
+			try {
+				boolean setUpInjection = cn.getAnnotation(RigidType.class)!=null;
+				
+				if(setUpInjection){
+						injectionCode.append(Field.class.getName()+"[] fs=this.getClass().getFields();");
+						injectionCode.append("for(int i=0;i<fs.length;i++){");
+							injectionCode.append("Object o = "+FieldUtils.class.getName()+".readField(fs[i], this, true);");
+							injectionCode.append("if(o!=null){");
+								injectionCode.append(List.class.getName()+" l = "+ClassUtils.class.getName()+".getListFieldAnotated(");
+									injectionCode.append("o, "+InjectRigidType.class.getName()+".class");
+								injectionCode.append(");");
+								injectionCode.append("for(int i2=0;i2<l.size();i2++){");
+								injectionCode.append("String rigidName = (("+CtField.class.getName()+")l.get(i2)).getName();");
+								injectionCode.append("try{");
+									injectionCode.append("Class.forName(o.getClass().getName()).getField(rigidName).set(o, this);");
+								injectionCode.append("}catch("+IllegalArgumentException.class.getName()+" e){/*Do nothing - Just a cast error*/}");
+								injectionCode.append("}");
+							injectionCode.append("}");
+						injectionCode.append("}");		
+				}
+			} catch (SecurityException e) {
+				throw new RuntimeException(e.getMessage());
+			}
+			
+			for(CtConstructor c: cn.getConstructors()){
+				// OLDFEAT - Instantiate roles automatically
+				/*boolean instanciateObjRoles = c.getAnnotation(DefaultInitObjRole.class)!=null;
+				if(instanciateObjRoles){
+					injectionCode.append(Field.class.getName()+"[] fs=this.getClass().getFields();");
+					injectionCode.append("for(int i=0;i<fs.length;i++){");
+						injectionCode.append("Object o = "+FieldUtils.class.getName()+".readField(fs[i], this, true);");
+						injectionCode.append("if(o==null){");
+						
+							injectionCode.append(Class.class.getName()+" c = Class.forName(o.getClass().getName());");
+							injectionCode.append(Constructor.class.getName()+" c = FileUtils.class.getConstructor(this.getClass());");
+							injectionCode.append("fs[i].set(this, c.newInstance(this));");
+							
+//								injectionCode.append("try{");
+//									injectionCode.append("fs[i].set(this, c.newInstance(this));");
+//								injectionCode.append("}catch("+IllegalArgumentException.class.getName()+" e){");
+//										injectionCode.append("try{");
+//											injectionCode.append("fs[i].set(this, c.newInstance());");
+//										injectionCode.append("}catch("+IllegalArgumentException.class.getName()+" e){");	
+//								injectionCode.append("}");
+							
+						injectionCode.append("}");
+					injectionCode.append("}");		
+				}*/
+				try {
+					c.insertAfter(injectionCode.toString());
+				} catch (CannotCompileException e) {
+					throw new RuntimeException(e.getMessage());
+				}
+			}
+		}
 	}
 
 	public void applyIndirect(CtMethod method, 
@@ -361,53 +364,6 @@ public abstract class RoleRegister {
 		}
 		return originals;
 	}
-	
-	/*public void registerRools(){
-		List<String> c = ClassUtils.getAllClassNames();
-		for(String className : c){
-			registerRool(className);
-		}
-	}
-	
-	public void registerRools(String... clazzes){
-		for(String clazz :clazzes){
-			CtClass c = null;
-			try {
-				c = cp.get(clazz);
-			} catch (NotFoundException e) {
-				throw new RuntimeException(e.getMessage());
-			}
-			
-			try {
-				for(CtClass i : c.getDeclaredClasses()){
-					registerRool(i.getName());
-				}
-			} catch (NotFoundException e) {
-				throw new RuntimeException(e.getMessage());
-			}
-			registerRool(clazz);
-		}
-	}
-	
-	public void registerRoolsExcludeGiven(String... clazzes){
-		List<String> c = ClassUtils.getAllClassNames();
-		classProcessing: for(String className : c){
-			for(String clazz :clazzes){
-				CtClass clazzCt = null;
-				try {
-					clazzCt = cp.get(clazz);
-				} catch (NotFoundException e) {
-					throw new RuntimeException(e.getMessage());
-				}
-					
-				if(className.startsWith(clazzCt.getName())){ 
-					// BLOCK The condition is with .startsWith because we want to stop registration of inner classes
-					continue classProcessing;
-				}
-			}
-			registerRool(className);
-		}
-	}*/
 	
 	/**
 	 * Before invoking this method be sure that:

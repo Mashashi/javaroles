@@ -29,11 +29,11 @@ public class TestRigidAnnotation {
 	
 	@RigidType
 	public static class AnimalRoles implements Human, Monkey{
-		@ObjectForRole public Human human;
+		@ObjectForRole public Human human = new Portuguese();
 		@ObjectForRole public Monkey monkey;
-		public AnimalRoles(){
-			human = new Portuguese();
-		}
+		
+		public AnimalRoles(){}
+		
 		@Override
 		public String hello1() { return "Default hello "+this.getClass().getName(); }
 		public String hello2() { return "Default hello "+this.getClass().getName(); }
