@@ -36,7 +36,7 @@ public class RoleRegisterTyped extends RoleRegister{
 		this.srcFolder = srcFolder;
 	}
 	
-	protected CtMethod injectRoleDependency(CtClass cn, CtMethod method) throws CannotCompileException, NotFoundException {
+	protected CtMethod injectRoleDependency(CtClass cn, CtMethod method, String beforeCode) throws CannotCompileException, NotFoundException {
 		
 		//int lineNumberStart = method.getMethodInfo().getLineNumber(0);
 		final String clazzName = cn.getName();
@@ -71,7 +71,8 @@ public class RoleRegisterTyped extends RoleRegister{
 		cn.addMethod(newMethod);
 		
 		method.setBody(
-			"{"+
+			"{"+	
+					beforeCode+
 					Logger.class.getName()+".getLogger("+RoleBus.class.getName()+".class.getName()).debug(\"invoking injected "+roleBusVarName+".resolve() on method: "+name+"\");"+
 					CtMethod.class.getName()+" "+varM+" = "+ClassUtils.class.getName()+".getExecutingMethod("+
 												"\""+clazzName+"\","+
