@@ -80,6 +80,8 @@ public class AnimalRoles implements Human, Monkey{
 
 Defining class role Portuguese in class AnimalRoles...
 ```java
+import pt.mashashi.javaroles.composite.InjObjRigid;
+
 public class Portuguese implements Human{
 
 	@InjObjRigid public AnimalRoles core;
