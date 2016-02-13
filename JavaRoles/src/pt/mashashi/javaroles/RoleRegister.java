@@ -34,7 +34,7 @@ public abstract class RoleRegister {
 	private ClassPool cp;
 	private String[] onlyFor;
 	
-	private String[] pkgs /*= new String[]{}*/;
+	private String[] pkgs;
 	
 	@SuppressWarnings("unused")
 	private RoleRegister(){
@@ -52,6 +52,9 @@ public abstract class RoleRegister {
 		this.pkgs = pkgs;
 		if(pkgs==null){
 			this.pkgs = new String[0];
+		}
+		if(this.pkgs.length==0){
+			throw new IllegalArgumentException("Supply at least one package perfix");
 		}
 	}
 	
