@@ -26,12 +26,10 @@ import pt.mashashi.javaroles.RoleRegister;
  */
 public class RoleRegisterComposition extends RoleRegister{
 	
-	public RoleRegisterComposition(String[] pkgs) {
-		super(pkgs);
-	}
+	//public RoleRegisterComposition(String[] pkgs) {super(pkgs);}
 	
-	public RoleRegisterComposition(Class<?>[] onlyFor) {
-		super(onlyFor);
+	public RoleRegisterComposition(String[] pkgs, Class<?>... onlyFor) {
+		super(pkgs, onlyFor);
 	}
 	
 	protected CtMethod injectRoleDependency(CtClass cn, CtMethod method, String beforeCode) throws CannotCompileException, NotFoundException {

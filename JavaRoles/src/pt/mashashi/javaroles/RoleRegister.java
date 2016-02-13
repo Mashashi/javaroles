@@ -58,7 +58,7 @@ public abstract class RoleRegister {
 		}
 	}
 	
-	public RoleRegister(Class<?>... clazzes){
+	public RoleRegister(String[] pkgs, Class<?>... clazzes){
 		this(new String[]{""});
 		List<String> onlyFor = new LinkedList<String>();
 		for(Class<?> clazz : clazzes){
