@@ -2,6 +2,7 @@ package pt.mashashi.javaroles.composition;
 
 import static org.junit.Assert.*;
 
+import pt.mashashi.javaroles.ObjRigid;
 import pt.mashashi.javaroles.ObjRole;
 
 public class TestOriginalRigidVoidMethodException {

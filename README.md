@@ -28,6 +28,12 @@ public interface Monkey {
 
 Defining rigid type AnimalRoles...
 ```java
+import pt.mashashi.javaroles.ObjRole;
+import pt.mashashi.javaroles.ObjRigid;
+import pt.mashashi.javaroles.Rigid;
+import pt.mashashi.javaroles.composite.TurnOffRole;
+
+@Rigid
 public class AnimalRoles implements Human, Monkey{
 
 	@ObjRole public Human human;

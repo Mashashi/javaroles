@@ -9,6 +9,7 @@ import org.junit.Test;
 import pt.mashashi.javaroles.AnnotationException;
 import pt.mashashi.javaroles.MissMsgReceptor;
 import pt.mashashi.javaroles.MissUseAnnotationExceptionException;
+import pt.mashashi.javaroles.ObjRigid;
 
 /*
 import org.junit.Rule;
@@ -206,8 +207,8 @@ public class ResolveRoleMethodTest {
 	}
 	
 	@Test
-	public void testXmlAdapterAnnotation() {
-		TestXmlAdapterAnnotation.test();
+	public void testAdapterAnnotation() {
+		TestAdapterAnnotation.test();
 	}
 	
 }
