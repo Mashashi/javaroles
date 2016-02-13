@@ -31,7 +31,7 @@ Defining rigid type AnimalRoles...
 import pt.mashashi.javaroles.ObjRole;
 import pt.mashashi.javaroles.ObjRigid;
 import pt.mashashi.javaroles.Rigid;
-import pt.mashashi.javaroles.TurnOffRole;
+import pt.mashashi.javaroles.composition.TurnOffRole;
 
 @Rigid
 public class AnimalRoles implements Human, Monkey{
