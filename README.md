@@ -114,11 +114,15 @@ Note: We can't call the core method directly this would lead to a StackOverFlowE
 
 Putting it all together...
 ```java
-public static void Main(String[] args){
-	new RoleRegisterComposition().registerRools();
-	AnimalRoles a = new AnimalRoles(new Portuguese(), new Bonobo());
-	System.out.println(a.hello());
-	System.out.println(a.dance());
+import pt.mashashi.javaroles.composition.RoleRegisterComposition;
+
+public class Main {
+	public static void main(String[] args) {
+		new RoleRegisterComposition().registerRools();
+	    AnimalRoles a = new AnimalRoles(new Portuguese(), new Bonobo());
+	    System.out.println(a.hello());
+	    System.out.println(a.dance());
+	}
 }
 ```
 
