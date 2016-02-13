@@ -201,4 +201,4 @@ The main implementation. Hopefully reliable. (See test cases)
 This implementation is purely academic and highly unstable. It relies on source code analysis to resolve the type currently assigned to the rigid object, in order to resolve the object for which the method call should be dispatched. It does not work under every circumstance. (See test cases)
 
 ## opening an issue
-Opening a issue for a bug should be done in addition with a pool request with the necessary code for carrying out test that reproduces it.
+Opening an issue for a bug should be done in addition with a pool request with the necessary code for carrying out test that reproduces it.
