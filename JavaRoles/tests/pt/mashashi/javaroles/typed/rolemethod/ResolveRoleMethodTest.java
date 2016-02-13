@@ -55,7 +55,7 @@ public class ResolveRoleMethodTest {
 	
 	@BeforeClass
 	public static void setup(){
-		new RoleRegisterTyped("tests/").registerRoolsExcludeGiven(TestRigidObjectExceptions.class, TestMissProcessingWrongObjectType.class);
+		new RoleRegisterTyped("tests/", null).registerRoolsExcludeGiven(TestRigidObjectExceptions.class, TestMissProcessingWrongObjectType.class);
 	}
 	
 	

@@ -31,7 +31,8 @@ public class RoleRegisterTyped extends RoleRegister{
 	
 	private String srcFolder;
 	
-	public RoleRegisterTyped(String srcFolder) {
+	public RoleRegisterTyped(String srcFolder, String[] pkgs) {
+		super(pkgs);
 		//System.out.println("Working Directory = " + System.getProperty("user.dir"));
 		this.srcFolder = srcFolder;
 	}
