@@ -1,6 +1,6 @@
 package pt.mashashi.javaroles;
 
-import java.lang.reflect.Field;
+import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -8,7 +8,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.lang3.NotImplementedException;
-import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -40,6 +39,7 @@ public abstract class RoleRegister {
 	private ClassPool cp;
 	private String[] onlyFor;
 	private String[] pkgs;
+	private String classesDir;
 	
 	protected InjectionStrategy injStrategy = new InjectionStrategySimple();
 	
@@ -73,7 +73,6 @@ public abstract class RoleRegister {
 		}
 		this.onlyFor = onlyFor.toArray(new String [onlyFor.size()]);
 	}
-	
 	
 	/**
 	 * 
@@ -174,6 +173,9 @@ public abstract class RoleRegister {
 				 We want to put the class on the class path after modifications if it was injected with new methods or if 
 				 it was some fields annotated with original. In the later case we change the constructor.
 				 */
+				if(classesDir!=null){
+					cn.writeFile(classesDir);
+				}
 				cn.toClass();
 			}
 			
@@ -183,7 +185,7 @@ public abstract class RoleRegister {
 				}
 			}
 			
-		} catch (CannotCompileException | NotFoundException | ClassNotFoundException e) {
+		} catch (CannotCompileException | NotFoundException | ClassNotFoundException | IOException e) {
 			Logger.getLogger(RoleBus.class.getName()).debug("error processing class: "+clazzName+" "+e.getMessage());
 			e.printStackTrace();
 			throw new RuntimeException();
@@ -350,7 +352,10 @@ public abstract class RoleRegister {
 	
 	
 	
-	
+	public RoleRegister writeClasses(String dir){
+		classesDir = dir;
+		return this;
+	}
 	
 	/**
 	 * Before invoking this method be sure that:
@@ -359,7 +364,7 @@ public abstract class RoleRegister {
 	 * - The java.lang.Class object is not referenced from anywhere (same goes for reflective access to their members).
 	 * 
 	 */
-	public void registerRools(){
+	public RoleRegister registerRools(){
 		if(onlyFor!=null){
 			{ // BLOCK Free up reference in the class loader
 			  /*
@@ -374,6 +379,7 @@ public abstract class RoleRegister {
 				registerRool(className);
 			}
 		}
+		return this;
 	}
 	
 	private void registerRools(String... clazzes){
@@ -395,7 +401,7 @@ public abstract class RoleRegister {
 		}
 	}
 	
-	public void registerRoolsExcludeGiven(Class<?>... clazzes){
+	public RoleRegister registerRoolsExcludeGiven(Class<?>... clazzes){
 		if(onlyFor!=null){
 			throw new IllegalStateException("The register configuration does not allow for this method to be called.\n Supply at least one pkg prefix when building the object.");
 		}
@@ -409,9 +415,10 @@ public abstract class RoleRegister {
 			}
 			registerRool(className);
 		}
+		return this;
 	}
 	
-	public List<String> getAllClassesForPkgs(){
+	private List<String> getAllClassesForPkgs(){
 		List<String> clazzes = ClassUtils.getAllClassNames();
 		Iterator<String> i = clazzes.iterator();
 		for(String pkg:pkgs){
