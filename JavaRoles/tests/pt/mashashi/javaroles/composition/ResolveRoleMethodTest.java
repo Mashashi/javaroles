@@ -69,7 +69,8 @@ public class ResolveRoleMethodTest {
 		new RoleRegisterComposition(new String[]{"pt.mashashi.javaroles"}).registerRoolsExcludeGiven(
 				TestRigidObjectExceptions.class,
 				TestOriginalRigidTurnOffRoleMethod.class,
-				TestMissProcessingWrongObjectType.class
+				TestMissProcessingWrongObjectType.class,
+				TestWriteClasses.class
 		);
 	}
 	
@@ -208,9 +209,8 @@ public class ResolveRoleMethodTest {
 	}
 	
 	@Test
-	public void testAdapterAnnotation() {
-		// TODO 
-		//TestAdapterAnnotation.test();
+	public void testWriteClasses() {
+		TestWriteClasses.test();
 	}
 	
 }
