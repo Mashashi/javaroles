@@ -2,7 +2,7 @@ package pt.mashashi.javaroles.composition;
 
 import static org.junit.Assert.fail;
 
-import pt.mashashi.javaroles.ObjRole;
+import pt.mashashi.javaroles.annotations.ObjRole;
 
 public class TestRigidCallMadeWrong {
 	

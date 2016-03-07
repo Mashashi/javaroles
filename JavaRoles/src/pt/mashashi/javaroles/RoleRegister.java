@@ -21,6 +21,12 @@ import javassist.CtMethod;
 import javassist.CtNewConstructor;
 import javassist.CtNewMethod;
 import javassist.NotFoundException;
+import pt.mashashi.javaroles.annotations.AnnotationException;
+import pt.mashashi.javaroles.annotations.MissMsgReceptor;
+import pt.mashashi.javaroles.annotations.MissUseAnnotationExceptionException;
+import pt.mashashi.javaroles.annotations.ObjRigid;
+import pt.mashashi.javaroles.annotations.ObjRole;
+import pt.mashashi.javaroles.annotations.Rigid;
 
 /**
  * Offers a way to go through all the classes in the class path searching for the points that need code injection
@@ -33,8 +39,9 @@ public abstract class RoleRegister {
 	protected String roleBusVarName;
 	private ClassPool cp;
 	private String[] onlyFor;
-	
 	private String[] pkgs;
+	
+	protected InjectionStrategy injStrategy = new InjectionStrategySimple();
 	
 	@SuppressWarnings("unused")
 	private RoleRegister(){
@@ -84,7 +91,7 @@ public abstract class RoleRegister {
 	 * @throws CannotCompileException
 	 * @throws NotFoundException
 	 */
-	protected abstract CtMethod injectRoleDependency(CtClass cn, CtMethod method, String beforeCode) throws CannotCompileException, NotFoundException;
+	protected abstract CtMethod injectRoleDependency(CtClass cn, CtMethod method) throws CannotCompileException, NotFoundException;
 	
 	/**
 	 * Returns a string having the RoleBus method field declaration to be injected
@@ -123,7 +130,7 @@ public abstract class RoleRegister {
 			CtMethod[] methods = cn.getDeclaredMethods();
 			HashMap<String, CtField> objectRoles = ClassUtils.getTypeFieldAnotatedAssist(cn, ObjRole.class);
 			
-			String injectCode = applyInjectionOnRoles(cn);
+			applyInjectionOnRoles(cn);
 			
 			HashMap<String, CtClass> originals = getOriginals(cn);
 			
@@ -147,7 +154,7 @@ public abstract class RoleRegister {
 						cn.addField(newField);
 					}
 					
-					CtMethod created = injectRoleDependency(cn, method, injectCode);
+					CtMethod created = injectRoleDependency(cn, method);
 					
 					List<CtClass> inters = ClassUtils.definedOnInterfaces(method, cn);
 					applyIndirect(method, created, originals, inters);
@@ -209,69 +216,23 @@ public abstract class RoleRegister {
 		}
 	}
 
-	public String applyInjectionOnRoles(CtClass cn) throws ClassNotFoundException {
-		StringBuffer injectionCode = new StringBuffer("");
+	public void applyInjectionOnRoles(CtClass cn) throws ClassNotFoundException {
 		if(!cn.isFrozen()){
 			try {
 				boolean setUpInjection = cn.getAnnotation(Rigid.class)!=null;
-				
 				if(setUpInjection){
-						injectionCode.append(Field.class.getName()+"[] fs=this.getClass().getFields();");
-						injectionCode.append("for(int i=0;i<fs.length;i++){");
-							injectionCode.append("Object o = "+FieldUtils.class.getName()+".readField(fs[i], this, true);");
-							injectionCode.append("if(o!=null){");
-								injectionCode.append(List.class.getName()+" l = "+ClassUtils.class.getName()+".getListFieldAnotated(");
-									injectionCode.append("o.getClass(), "+InjObjRigid.class.getName()+".class");
-								injectionCode.append(");");
-								injectionCode.append("for(int i2=0;i2<l.size();i2++){");
-									injectionCode.append(Field.class.getName()+" f = (("+Field.class.getName()+")l.get(i2));");
-									injectionCode.append("boolean accesibilityOriginal = f.isAccessible();");
-									injectionCode.append("f.setAccessible(true);");
-									//injectionCode.append("String rigidName = f.getName();");
-									injectionCode.append("try{");
-										injectionCode.append("f.set(o, this);");
-										injectionCode.append("f.setAccessible(accesibilityOriginal);");	
-									injectionCode.append("}catch("+IllegalArgumentException.class.getName()+" e){/*Do nothing - Just a cast error*/}");
-								injectionCode.append("}");
-							injectionCode.append("}");
-						injectionCode.append("}");		
+					for(CtConstructor c: cn.getConstructors()){
+						try {
+							c.insertAfter(injStrategy.getCode());
+						} catch (CannotCompileException e) {
+							throw new RuntimeException(e.getMessage());
+						}
+					}	
 				}
 			} catch (SecurityException e) {
 				throw new RuntimeException(e.getMessage());
 			}
-			
-			for(CtConstructor c: cn.getConstructors()){
-				// OLDFEAT - Instantiate roles automatically
-				/*boolean instanciateObjRoles = c.getAnnotation(DefaultInitObjRole.class)!=null;
-				if(instanciateObjRoles){
-					injectionCode.append(Field.class.getName()+"[] fs=this.getClass().getFields();");
-					injectionCode.append("for(int i=0;i<fs.length;i++){");
-						injectionCode.append("Object o = "+FieldUtils.class.getName()+".readField(fs[i], this, true);");
-						injectionCode.append("if(o==null){");
-						
-							injectionCode.append(Class.class.getName()+" c = Class.forName(o.getClass().getName());");
-							injectionCode.append(Constructor.class.getName()+" c = FileUtils.class.getConstructor(this.getClass());");
-							injectionCode.append("fs[i].set(this, c.newInstance(this));");
-							
-//								injectionCode.append("try{");
-//									injectionCode.append("fs[i].set(this, c.newInstance(this));");
-//								injectionCode.append("}catch("+IllegalArgumentException.class.getName()+" e){");
-//										injectionCode.append("try{");
-//											injectionCode.append("fs[i].set(this, c.newInstance());");
-//										injectionCode.append("}catch("+IllegalArgumentException.class.getName()+" e){");	
-//								injectionCode.append("}");
-							
-						injectionCode.append("}");
-					injectionCode.append("}");		
-				}*/
-				try {
-					c.insertAfter(injectionCode.toString());
-				} catch (CannotCompileException e) {
-					throw new RuntimeException(e.getMessage());
-				}
-			}
 		}
-		return injectionCode.toString();
 	}
 
 	public void applyIndirect(CtMethod method, 

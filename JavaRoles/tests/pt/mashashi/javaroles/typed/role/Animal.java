@@ -3,22 +3,7 @@ package pt.mashashi.javaroles.typed.role;
 import javassist.CtMethod;
 import pt.mashashi.javaroles.Human;
 import pt.mashashi.javaroles.Monkey;
-import pt.mashashi.javaroles.typed.TurnOnRole;
-/**
- * We can than use other patterns to implement all the roles.
- * 
- * 
- * Order of method callback
- * + <role>
- * + <role>Stop
- * + <role>Start
- * + Pre
- * 
- * If the callback is not implemented than it will simply not be called
- * 
- * @author Rafael
- *
- */
+import pt.mashashi.javaroles.impl.typed.TurnOnRole;
 
 /*
 public class Animal implements Human, Monkey{

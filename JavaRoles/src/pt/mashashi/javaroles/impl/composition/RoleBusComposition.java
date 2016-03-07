@@ -1,4 +1,4 @@
-package pt.mashashi.javaroles.composition;
+package pt.mashashi.javaroles.impl.composition;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -13,10 +13,10 @@ import javassist.CtField;
 import javassist.CtMethod;
 import javassist.NotFoundException;
 import pt.mashashi.javaroles.ClassUtils;
-import pt.mashashi.javaroles.MissMsgReceptor;
 import pt.mashashi.javaroles.MissProcessingException;
-import pt.mashashi.javaroles.ObjRole;
 import pt.mashashi.javaroles.RoleBus;
+import pt.mashashi.javaroles.annotations.MissMsgReceptor;
+import pt.mashashi.javaroles.annotations.ObjRole;
 
 /**
  * Very restricted implementation of role objects the point of this RoleBus is to provide a way to mixin classes

@@ -4,10 +4,10 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.HashMap;
 
-import pt.mashashi.javaroles.MissMsgReceptor;
 import pt.mashashi.javaroles.MissProcessingException;
-import pt.mashashi.javaroles.ObjRigid;
-import pt.mashashi.javaroles.ObjRole;
+import pt.mashashi.javaroles.annotations.MissMsgReceptor;
+import pt.mashashi.javaroles.annotations.ObjRigid;
+import pt.mashashi.javaroles.annotations.ObjRole;
 
 public class TestMissProcessingWrongObjectType {
 	

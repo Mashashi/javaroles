@@ -1,4 +1,4 @@
-package pt.mashashi.javaroles;
+package pt.mashashi.javaroles.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

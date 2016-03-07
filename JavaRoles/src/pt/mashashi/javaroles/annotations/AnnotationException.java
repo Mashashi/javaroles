@@ -1,4 +1,4 @@
-package pt.mashashi.javaroles;
+package pt.mashashi.javaroles.annotations;
 
 public enum AnnotationException {
 	MISS_USE, 

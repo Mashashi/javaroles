@@ -1,4 +1,4 @@
-package pt.mashashi.javaroles.typed;
+package pt.mashashi.javaroles.impl.typed;
 
 import java.util.LinkedList;
 import java.util.List;

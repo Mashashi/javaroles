@@ -2,9 +2,9 @@ package pt.mashashi.javaroles.typed.rolemethod;
 
 import pt.mashashi.javaroles.Human;
 import pt.mashashi.javaroles.Monkey;
-import pt.mashashi.javaroles.ObjRole;
-import pt.mashashi.javaroles.composition.TurnOffRole;
-import pt.mashashi.javaroles.typed.TurnOnRole;
+import pt.mashashi.javaroles.annotations.ObjRole;
+import pt.mashashi.javaroles.impl.composition.TurnOffRole;
+import pt.mashashi.javaroles.impl.typed.TurnOnRole;
 
 /**
  * 

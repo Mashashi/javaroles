@@ -1,4 +1,4 @@
-package pt.mashashi.javaroles.typed;
+package pt.mashashi.javaroles.impl.typed;
 import java.util.List;
 
 import com.github.javaparser.ast.Node;

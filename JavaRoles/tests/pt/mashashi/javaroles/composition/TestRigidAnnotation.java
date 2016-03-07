@@ -4,9 +4,9 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
-import pt.mashashi.javaroles.InjObjRigid;
-import pt.mashashi.javaroles.ObjRole;
-import pt.mashashi.javaroles.Rigid;
+import pt.mashashi.javaroles.annotations.InjObjRigid;
+import pt.mashashi.javaroles.annotations.ObjRole;
+import pt.mashashi.javaroles.annotations.Rigid;
 
 public class TestRigidAnnotation {
 	
@@ -49,8 +49,11 @@ public class TestRigidAnnotation {
 		assertEquals("Yap", "Was setup", a.hello2());
 		assertEquals("Yap", "Fails", a.hello3());
 		assertEquals("Yap", "Was setup", a.hello4());
-		a.human = new Portuguese();
-		assertEquals("Yap", "Was setup", a.hello1());
+		/*
+		 // This feature was removed
+		 a.human = new Portuguese();
+		 assertEquals("Yap", "Was setup", a.hello1());
+		 */
 	}
 	
 }

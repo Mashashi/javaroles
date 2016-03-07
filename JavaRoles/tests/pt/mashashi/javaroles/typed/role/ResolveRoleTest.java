@@ -10,8 +10,8 @@ import pt.mashashi.javaroles.Human;
 import pt.mashashi.javaroles.Monkey;
 import pt.mashashi.javaroles.composition.TestMissProcessingWrongObjectType;
 import pt.mashashi.javaroles.composition.TestRigidObjectExceptions;
-import pt.mashashi.javaroles.typed.ConditionalExprNotSupportedByRoleSystemException;
-import pt.mashashi.javaroles.typed.RoleRegisterTyped;
+import pt.mashashi.javaroles.impl.typed.ConditionalExprNotSupportedByRoleSystemException;
+import pt.mashashi.javaroles.impl.typed.RoleRegisterTyped;
 
 /*
 import org.junit.Rule;

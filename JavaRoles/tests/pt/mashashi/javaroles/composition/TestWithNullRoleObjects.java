@@ -2,7 +2,7 @@ package pt.mashashi.javaroles.composition;
 
 import static org.junit.Assert.assertEquals;
 
-import pt.mashashi.javaroles.ObjRole;
+import pt.mashashi.javaroles.annotations.ObjRole;
 
 public class TestWithNullRoleObjects {
 	
