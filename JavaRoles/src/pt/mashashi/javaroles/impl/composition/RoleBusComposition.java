@@ -129,13 +129,8 @@ public class RoleBusComposition extends RoleBus{
 			
 			Class<?>[] paramsObjectRole = ClassUtils.getNativeTypes(methodInvoked.getParameterTypes());
 			
-			Method m = o.getClass().getMethod(methodInvoked.getName(), paramsObjectRole);
-			boolean access = m.isAccessible();
-			m.setAccessible(true);
-			roleReturned = m.invoke(o, params);
-			m.setAccessible(access);
-			
-			
+			roleReturned = ClassUtils.invokeWithNativeTypes(o, methodInvoked.getName(), paramsObjectRole, params);
+
 		}catch (NotFoundException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
 			
 			// TODO Enhance error handling

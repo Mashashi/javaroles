@@ -26,7 +26,7 @@ public class TestWithNotAccessibleClasses {
 		public String hello() { return "Default hello "+this.getClass().getName(); }
 	}
 	
-	public static void test() throws IllegalAccessException{
+	public static void test(){
 		AnimalRoles a = new AnimalRoles();
 		assertEquals("Yap", "Default hello "+AnimalRoles.class.getName(), a.hello());
 	}
