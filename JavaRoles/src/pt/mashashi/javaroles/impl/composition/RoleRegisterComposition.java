@@ -1,4 +1,4 @@
-package pt.mashashi.javaroles.composition;
+package pt.mashashi.javaroles.impl.composition;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -13,9 +13,9 @@ import javassist.CtMethod;
 import javassist.CtNewMethod;
 import javassist.NotFoundException;
 import pt.mashashi.javaroles.ClassUtils;
-import pt.mashashi.javaroles.MissMsgReceptor;
 import pt.mashashi.javaroles.MissProcessingException;
 import pt.mashashi.javaroles.RoleRegister;
+import pt.mashashi.javaroles.annotations.MissMsgReceptor;
 
 
 /**
@@ -34,7 +34,7 @@ public class RoleRegisterComposition extends RoleRegister{
 		super(pkgs, onlyFor);
 	}
 	
-	protected CtMethod injectRoleDependency(CtClass cn, CtMethod method, String beforeCode) throws CannotCompileException, NotFoundException {
+	protected CtMethod injectRoleDependency(CtClass cn, CtMethod method) throws CannotCompileException, NotFoundException {
 		
 		CtMethod methodCreated =null;
 		
@@ -51,7 +51,6 @@ public class RoleRegisterComposition extends RoleRegister{
 		
 		method.setBody(
 			"{"+
-					beforeCode+
 					CtMethod.class.getName()+" "+varM+" = "+ClassUtils.class.getName()+".getExecutingMethod("+
 																						"\""+clazzName+"\","+
 																						"\""+name+"\","+

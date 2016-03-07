@@ -2,8 +2,8 @@ package pt.mashashi.javaroles.composition;
 
 import static org.junit.Assert.*;
 
-import pt.mashashi.javaroles.ObjRigid;
-import pt.mashashi.javaroles.ObjRole;
+import pt.mashashi.javaroles.annotations.ObjRigid;
+import pt.mashashi.javaroles.annotations.ObjRole;
 
 public class TestOriginalRigidVoidMethodException {
 	

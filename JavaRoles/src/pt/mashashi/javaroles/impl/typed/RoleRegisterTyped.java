@@ -1,4 +1,4 @@
-package pt.mashashi.javaroles.typed;
+package pt.mashashi.javaroles.impl.typed;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -37,7 +37,7 @@ public class RoleRegisterTyped extends RoleRegister{
 		this.srcFolder = srcFolder;
 	}
 	
-	protected CtMethod injectRoleDependency(CtClass cn, CtMethod method, String beforeCode) throws CannotCompileException, NotFoundException {
+	protected CtMethod injectRoleDependency(CtClass cn, CtMethod method) throws CannotCompileException, NotFoundException {
 		
 		//int lineNumberStart = method.getMethodInfo().getLineNumber(0);
 		final String clazzName = cn.getName();
@@ -73,7 +73,6 @@ public class RoleRegisterTyped extends RoleRegister{
 		
 		method.setBody(
 			"{"+	
-					beforeCode+
 					Logger.class.getName()+".getLogger("+RoleBus.class.getName()+".class.getName()).debug(\"invoking injected "+roleBusVarName+".resolve() on method: "+name+"\");"+
 					CtMethod.class.getName()+" "+varM+" = "+ClassUtils.class.getName()+".getExecutingMethod("+
 												"\""+clazzName+"\","+

@@ -2,8 +2,9 @@ package pt.mashashi.javaroles.composition;
 
 import static org.junit.Assert.assertEquals;
 
-import pt.mashashi.javaroles.ObjRigid;
-import pt.mashashi.javaroles.ObjRole;
+import pt.mashashi.javaroles.annotations.ObjRigid;
+import pt.mashashi.javaroles.annotations.ObjRole;
+import pt.mashashi.javaroles.impl.composition.TurnOffRole;
 
 public class TestOriginalRigidTurnOffRoleMethod {
 	

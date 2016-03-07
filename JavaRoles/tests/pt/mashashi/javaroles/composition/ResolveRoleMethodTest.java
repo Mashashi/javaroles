@@ -6,10 +6,11 @@ import org.junit.BeforeClass;
 
 import org.junit.Test;
 
-import pt.mashashi.javaroles.AnnotationException;
-import pt.mashashi.javaroles.MissMsgReceptor;
-import pt.mashashi.javaroles.MissUseAnnotationExceptionException;
-import pt.mashashi.javaroles.ObjRigid;
+import pt.mashashi.javaroles.annotations.AnnotationException;
+import pt.mashashi.javaroles.annotations.MissMsgReceptor;
+import pt.mashashi.javaroles.annotations.MissUseAnnotationExceptionException;
+import pt.mashashi.javaroles.annotations.ObjRigid;
+import pt.mashashi.javaroles.impl.composition.RoleRegisterComposition;
 
 /*
 import org.junit.Rule;
