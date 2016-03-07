@@ -2,6 +2,7 @@ package pt.mashashi.javaroles.impl.composition;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -127,7 +128,13 @@ public class RoleBusComposition extends RoleBus{
 			}
 			
 			Class<?>[] paramsObjectRole = ClassUtils.getNativeTypes(methodInvoked.getParameterTypes());
-			roleReturned = o.getClass().getMethod(methodInvoked.getName(), paramsObjectRole).invoke(o, params);
+			
+			Method m = o.getClass().getMethod(methodInvoked.getName(), paramsObjectRole);
+			boolean access = m.isAccessible();
+			m.setAccessible(true);
+			roleReturned = m.invoke(o, params);
+			m.setAccessible(access);
+			
 			
 		}catch (NotFoundException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
 			

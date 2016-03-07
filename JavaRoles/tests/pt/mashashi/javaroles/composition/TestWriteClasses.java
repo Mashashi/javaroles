@@ -43,7 +43,6 @@ public class TestWriteClasses {
 		String dir = "C:\\ouputDir";
 		new RoleRegisterComposition(new String[]{"pt.mashashi.javaroles.composition.TestWriteClasses"}).writeClasses(dir).registerRools();
 		String path = dir+"\\pt\\mashashi\\javaroles\\composition\\TestWriteClasses$AnimalRoles.class";
-		System.out.println(path);
 		File f = new File(path);
 		if(!f.exists()){
 			fail("Class file wasn't created");
