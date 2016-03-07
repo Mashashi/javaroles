@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -122,10 +123,20 @@ public class ClassUtils {
 	
 	public static Object invokeWithNativeTypes(Object target, String methodName, CtClass[] jaTypes, Object[] args) throws ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException{
 		Class<?>[] types = getNativeTypes(jaTypes);
-		return target.getClass().getMethod(methodName, types).invoke(target, args);
+		Method m = target.getClass().getMethod(methodName, types);
+		boolean access = m.isAccessible();
+		m.setAccessible(true);
+		Object ret = m.invoke(target, args);
+		m.setAccessible(access);
+		return ret;
 	}
-	public static Object invokeWithNativeTypes(Object target, String methodName, Class<?>[] types, Object[] args) throws ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException{
-		return target.getClass().getMethod(methodName, types).invoke(target, args);
+	public static Object invokeWithNativeTypes(Object target, String methodName, Class<?>[] types, Object[] args) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException{
+		Method m = target.getClass().getMethod(methodName, types);
+		boolean access = m.isAccessible();
+		m.setAccessible(true);
+		Object ret = m.invoke(target, args);
+		m.setAccessible(access);
+		return ret;
 	}
 	
 	public static CtMethod getExecutingMethod(String clazzName, String name, String sig){

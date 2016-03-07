@@ -87,10 +87,7 @@ public class ResolveRoleMethodTest {
 	
 	@Test
 	public void testWithNotAccessibleClasses() {
-		try{
-			TestWithNotAccessibleClasses.test();
-			fail("Should throw "+IllegalAccessException.class.getName());
-		}catch(IllegalAccessException e){}
+		TestWithNotAccessibleClasses.test();
 	}
 	
 	@Test
