@@ -225,7 +225,31 @@ public abstract class RoleRegister {
 				if(setUpInjection){
 					for(CtConstructor c: cn.getConstructors()){
 						try {
+							
 							c.insertAfter(injStrategy.getCode());
+// OLDFEAT - Try to call the inject before constructor.
+// Not done it has hard because default initializations injected byte code into the constructor.
+// Another alternative is to use the insertAt but we have to have a method to find out where the code begins
+//							final String name = ClassUtils.generateIdentifier();
+//							final CtMethod method = c.toMethod(name, cn);
+//							final String varC = ClassUtils.generateIdentifier(); 
+//							cn.addMethod(method);
+//							c.setBody("{"
+//									
+//									+injStrategy.getCode()+
+//									
+//									CtConstructor.class.getName()+" "+varC+" = "+ClassUtils.class.getName()+".getExecutingConstructor("+
+//									"\""+cn.getName()+"\","+
+//									"\""+c.getSignature()+"\");"+
+//									
+//									ClassUtils.class.getName()+".invokeWithNativeTypes("+
+//									"this,"+
+//									"\""+name+"\","+
+//									varC+".getParameterTypes(),"+
+//									"$args);"
+//									
+//									+"}");
+							
 						} catch (CannotCompileException e) {
 							throw new RuntimeException(e.getMessage());
 						}
