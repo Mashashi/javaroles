@@ -13,14 +13,17 @@ public class InjectionStrategySimple implements InjectionStrategy {
 	
 	public InjectionStrategySimple() {
 		StringBuffer injectionCode = new StringBuffer("");
+		
 		injectionCode.append(Field.class.getName()+"[] fs=this.getClass().getFields();");
 		injectionCode.append("for(int i=0;i<fs.length;i++){");
+		
 			injectionCode.append("Object o = "+FieldUtils.class.getName()+".readField(fs[i], this, true);");
 			injectionCode.append("if(o!=null){");
 				injectionCode.append(List.class.getName()+" l = "+ClassUtils.class.getName()+".getListFieldAnotated(");
 					injectionCode.append("o.getClass(), "+InjObjRigid.class.getName()+".class");
 				injectionCode.append(");");
 				injectionCode.append("for(int i2=0;i2<l.size();i2++){");
+					
 					injectionCode.append(Field.class.getName()+" f = (("+Field.class.getName()+")l.get(i2));");
 					injectionCode.append("boolean accesibilityOriginal = f.isAccessible();");
 					injectionCode.append("f.setAccessible(true);");

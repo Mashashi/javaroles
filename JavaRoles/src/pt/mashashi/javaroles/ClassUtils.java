@@ -20,6 +20,7 @@ import org.apache.log4j.Logger;
 
 import javassist.ClassPool;
 import javassist.CtClass;
+import javassist.CtConstructor;
 import javassist.CtField;
 import javassist.CtMethod;
 import javassist.NotFoundException;
@@ -154,6 +155,21 @@ public class ClassUtils {
 		
 		return null;
 	}
+	public static CtConstructor getExecutingConstructor(String clazzName, String sig){
+		
+		ClassPool cp = ClassPool.getDefault();
+		CtClass c = cp.getOrNull(clazzName);
+		
+		for(CtConstructor clazzMethod: c.getDeclaredConstructors()){
+			String sigProcessing = clazzMethod.getSignature();
+			if(sigProcessing.equals(sig)){
+				return clazzMethod;
+			}
+		}
+		
+		return null;
+	}
+	
 	public static List<CtField> getListFieldAnotated(CtClass target, Class<? extends Annotation> annotation) throws ClassNotFoundException{
 		List<CtField> roleObjects = new LinkedList<>();
 		for(CtField field : target.getDeclaredFields()){//Class.forName(target.getName()).getFields();

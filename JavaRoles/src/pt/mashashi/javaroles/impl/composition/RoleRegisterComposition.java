@@ -42,7 +42,7 @@ public class RoleRegisterComposition extends RoleRegister{
 		final String clazzName = cn.getName();
 		final String name = method.getMethodInfo().getName();
 		final String sig = method.getSignature();
-		final String uuid = name+UUID.randomUUID().toString();
+		final String uuid = ClassUtils.generateIdentifier();
 		//final String varAnot = ClassUtils.generateIdentifier();
 		final String varM = ClassUtils.generateIdentifier();
 		

@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
+
 import pt.mashashi.javaroles.annotations.InjObjRigid;
 import pt.mashashi.javaroles.annotations.ObjRole;
 import pt.mashashi.javaroles.annotations.Rigid;
@@ -43,6 +44,25 @@ public class TestRigidAnnotation {
 		public String hello3() { return "Default hello "+this.getClass().getName(); }
 		public String hello4() { return "Default hello "+this.getClass().getName(); }
 	}
+	/*@Rigid
+	public static class AnimalRoles2 implements Human, Monkey{
+		@ObjRole public Portuguese human = new Portuguese();
+		@ObjRole public Monkey monkey;
+		
+		public AnimalRoles2(){
+//			System.out.println("-->"+human);
+ * 
+//			if(human.rigid2==null){
+//				fail("Was not initialized");
+//			}
+		}
+		
+		@Override
+		public String hello1() { return "Default hello "+this.getClass().getName(); }
+		public String hello2() { return "Default hello "+this.getClass().getName(); }
+		public String hello3() { return "Default hello "+this.getClass().getName(); }
+		public String hello4() { return "Default hello "+this.getClass().getName(); }
+	}*/
 	public static void test(){
 		AnimalRoles a = new AnimalRoles();
 		assertEquals("Yap", "Was setup", a.hello1());
@@ -54,6 +74,10 @@ public class TestRigidAnnotation {
 		 a.human = new Portuguese();
 		 assertEquals("Yap", "Was setup", a.hello1());
 		 */
+		
+		// Inject before construct
+		/*AnimalRoles2 b = new AnimalRoles2();
+		System.out.println(b.human.rigid2);*/
 	}
 	
 }
