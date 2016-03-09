@@ -70,7 +70,9 @@ public class ResolveRoleMethodTest {
 				TestRigidObjectExceptions.class,
 				TestOriginalRigidTurnOffRoleMethod.class,
 				TestMissProcessingWrongObjectType.class,
-				TestWriteClasses.class
+				TestWriteClasses.class,
+				TestRigidAnnotationSingleStrategy.class,
+				TestRigidAnnotationMultipleStrategy.class
 		);
 	}
 	
@@ -201,8 +203,13 @@ public class ResolveRoleMethodTest {
 	}
 	
 	@Test
-	public void testRigidAnnotation() {
-		TestRigidAnnotation.test();
+	public void TestRigidAnnotationSingleStrategy() {
+		TestRigidAnnotationSingleStrategy.test();
+	}
+	
+	@Test
+	public void TestRigidAnnotationMultipleStrategy() {
+		TestRigidAnnotationMultipleStrategy.test();
 	}
 	
 	@Test
