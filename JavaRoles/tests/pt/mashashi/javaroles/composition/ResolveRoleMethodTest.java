@@ -66,13 +66,14 @@ public class ResolveRoleMethodTest {
 				"pt.mashashi.javaroles.composition.TestOriginalRigidTurnOffRoleMethod"
 		);
 		*/
-		new RoleRegisterComposition(new String[]{"pt.mashashi.javaroles"}).registerRoolsExcludeGiven(
+		new RoleRegisterComposition("pt.mashashi.javaroles").registerRoolsExcludeGiven(
 				TestRigidObjectExceptions.class,
 				TestOriginalRigidTurnOffRoleMethod.class,
 				TestMissProcessingWrongObjectType.class,
 				TestWriteClasses.class,
 				TestRigidAnnotationSingleStrategy.class,
-				TestRigidAnnotationMultipleStrategy.class
+				TestRigidAnnotationMultipleStrategy.class,
+				TestPkgMatchTypes.class
 		);
 	}
 	
@@ -127,7 +128,7 @@ public class ResolveRoleMethodTest {
 	public void testRigidObjectExceptions(){
 		
 		try{
-			new RoleRegisterComposition(new String[]{""},new Class[]{TestRigidObjectExceptions.AnimalRoles.class}).registerRools();
+			new RoleRegisterComposition(TestRigidObjectExceptions.AnimalRoles.class).registerRools();
 			fail("no exception thrown");
 		}catch(MissUseAnnotationExceptionException e){
 			if(	
@@ -140,7 +141,7 @@ public class ResolveRoleMethodTest {
 		}
 		
 		try{
-			new RoleRegisterComposition(new String[]{""},new Class[]{TestRigidObjectExceptions.AnimalRoles2.class}).registerRools();
+			new RoleRegisterComposition(TestRigidObjectExceptions.AnimalRoles2.class).registerRools();
 			fail("no exception thrown");
 		}catch(MissUseAnnotationExceptionException e){
 			if(		
@@ -156,7 +157,7 @@ public class ResolveRoleMethodTest {
 	
 	@Test
 	public void testOriginalRigidTurnOffRoleMethod() {
-		new RoleRegisterComposition(new String[]{""},new Class[]{TestOriginalRigidTurnOffRoleMethod.class}).registerRools();
+		new RoleRegisterComposition(TestOriginalRigidTurnOffRoleMethod.class).registerRools();
 		TestOriginalRigidTurnOffRoleMethod.test();
 	}
 	
@@ -189,7 +190,7 @@ public class ResolveRoleMethodTest {
 	@Test
 	public void testMissProcessingWrongObjectType() {
 		try {
-			new RoleRegisterComposition(new String[]{""},new Class[]{TestMissProcessingWrongObjectType.class}).registerRools();
+			new RoleRegisterComposition(TestMissProcessingWrongObjectType.class).registerRools();
 			fail("no exception thrown");
 		} catch (MissUseAnnotationExceptionException e) {
 			if(
@@ -215,6 +216,12 @@ public class ResolveRoleMethodTest {
 	@Test
 	public void testWriteClasses() {
 		TestWriteClasses.test();
+	}
+	
+	
+	@Test
+	public void testPkgMatchTypes() {
+		TestPkgMatchTypes.test();
 	}
 	
 }
