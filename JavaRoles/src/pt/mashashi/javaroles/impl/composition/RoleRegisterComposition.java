@@ -26,12 +26,16 @@ import pt.mashashi.javaroles.annotations.MissMsgReceptor;
  */
 public class RoleRegisterComposition extends RoleRegister{
 	
-	public RoleRegisterComposition(String[] pkgs) {
+	public RoleRegisterComposition(String... pkgs) {
 		super(pkgs);
 	}
 	
 	public RoleRegisterComposition(String[] pkgs, Class<?>[] onlyFor) {
 		super(pkgs, onlyFor);
+	}
+	
+	public RoleRegisterComposition(Class<?>... onlyFor) {
+		super(onlyFor);
 	}
 	
 	protected CtMethod injectRoleDependency(CtClass cn, CtMethod method) throws CannotCompileException, NotFoundException {

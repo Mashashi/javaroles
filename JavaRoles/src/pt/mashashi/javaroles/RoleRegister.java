@@ -27,7 +27,6 @@ import pt.mashashi.javaroles.annotations.ObjRigid;
 import pt.mashashi.javaroles.annotations.ObjRole;
 import pt.mashashi.javaroles.annotations.Rigid;
 import pt.mashashi.javaroles.injection.InjectionStrategy;
-import pt.mashashi.javaroles.injection.InjectionStrategyMultiple;
 import pt.mashashi.javaroles.injection.InjectionStrategySingle;
 
 /**
@@ -44,8 +43,16 @@ public abstract class RoleRegister {
 	private String[] pkgs;
 	private String classesDir;
 	
-	protected InjectionStrategy injRigStrategy  = new InjectionStrategySingle();
+	private InjectionStrategy injRigStrategy  = new InjectionStrategySingle();
 	//protected InjectionStrategy injRigStrategy = new InjectionStrategyMultiple();
+	
+	
+	public enum MATCH_TYPE{ EXACT, STARTS_WITH, REGEX }
+	private HashMap<String, MATCH_TYPE> matchTypePkg;
+	
+	private List<String> classReport;
+	
+	
 	
 	@SuppressWarnings("unused")
 	private RoleRegister(){
@@ -60,16 +67,27 @@ public abstract class RoleRegister {
 		}
 		roleBusVarName = ClassUtils.generateIdentifier();
 		cp = ClassPool.getDefault();
-		this.pkgs = pkgs;
-		if(pkgs==null){
-			this.pkgs = new String[0];
+		{
+			this.pkgs = pkgs;
+			if(pkgs==null){ this.pkgs = new String[0]; }
+			if(this.pkgs.length==0){ throw new IllegalArgumentException("Supply at least one package perfix."); }
+			matchTypePkg = new HashMap<>();
+			setPkgMatchType(MATCH_TYPE.STARTS_WITH);
 		}
-		if(this.pkgs.length==0){
-			throw new IllegalArgumentException("Supply at least one package perfix.");
-		}
+		classReport = new LinkedList<>();
+		
 	}
 	
 	public RoleRegister(String[] pkgs, Class<?>... clazzes){
+		this(pkgs);
+		List<String> onlyFor = new LinkedList<String>();
+		for(Class<?> clazz : clazzes){
+			onlyFor.add(clazz.getName());
+		}
+		this.onlyFor = onlyFor.toArray(new String [onlyFor.size()]);
+	}
+	
+	public RoleRegister(Class<?>... clazzes){
 		this(new String[]{""});
 		List<String> onlyFor = new LinkedList<String>();
 		for(Class<?> clazz : clazzes){
@@ -121,7 +139,7 @@ public abstract class RoleRegister {
 	 * 
 	 * @param clazzName The qualified class name. It is a string because we can not use {@link Class} at this point. 
 	 */
-	public void registerRool(String clazzName){
+	private void registerRool(String clazzName){
 		
 		CtClass cn = cp.getOrNull(clazzName);
 		boolean wasInjected = false;
@@ -181,6 +199,7 @@ public abstract class RoleRegister {
 					cn.writeFile(classesDir);
 				}
 				cn.toClass();
+				classReport.add(clazzName);
 			}
 			
 			{ // freeze originals
@@ -207,7 +226,7 @@ public abstract class RoleRegister {
 	 * @throws ClassNotFoundException
 	 * @throws NotFoundException
 	 */
-	public void checkMsgReceptorTypes(CtClass cn) throws ClassNotFoundException, NotFoundException {
+	private void checkMsgReceptorTypes(CtClass cn) throws ClassNotFoundException, NotFoundException {
 		List<CtField> objectRoles = ClassUtils.getListFieldAnotated(cn, MissMsgReceptor.class);
 		for(CtField o:objectRoles){
 			if(
@@ -222,7 +241,7 @@ public abstract class RoleRegister {
 		}
 	}
 
-	public void applyInjectionOnRoles(CtClass cn) throws ClassNotFoundException {
+	private void applyInjectionOnRoles(CtClass cn) throws ClassNotFoundException {
 		if(!cn.isFrozen()){
 			try {
 				boolean setUpInjection = cn.getAnnotation(Rigid.class)!=null;
@@ -265,7 +284,7 @@ public abstract class RoleRegister {
 		}
 	}
 
-	public void applyIndirect(CtMethod method, 
+	private void applyIndirect(CtMethod method, 
 								CtMethod created, 
 								HashMap<String, CtClass> originals,
 								List<CtClass> inters) throws CannotCompileException {
@@ -300,7 +319,7 @@ public abstract class RoleRegister {
 		}
 	}
 
-	public HashMap<String, CtClass> getOriginals(CtClass cn)
+	private HashMap<String, CtClass> getOriginals(CtClass cn)
 			throws ClassNotFoundException, NotFoundException, CannotCompileException {
 		
 		HashMap<String, CtClass> originals = new HashMap<>();
@@ -375,15 +394,38 @@ public abstract class RoleRegister {
 	
 	
 	
+	public List<String> getClassReport() {
+		return new LinkedList<>(classReport);
+	}
 	
 	
 	
 	
-	
+	public RoleRegister setPkgMatchType(MATCH_TYPE matchType){
+		for(String pkg : pkgs){ 
+			matchTypePkg.put(pkg, matchType); 
+		}
+		return this;
+	}
+	public RoleRegister setPkgMatchType(int pkgIdx, MATCH_TYPE matchType){
+		matchTypePkg.put(pkgs[pkgIdx], matchType);
+		return this;
+	}
 	public RoleRegister writeClasses(String dir){
 		classesDir = dir;
 		return this;
 	}
+	public RoleRegister setRigidInjectionStrategy(InjectionStrategy injRigStrategy){
+		this.injRigStrategy = injRigStrategy;
+		return this;
+	}
+	
+	
+	
+	
+	
+	
+	
 	
 	/**
 	 * Before invoking this method be sure that:
@@ -444,19 +486,36 @@ public abstract class RoleRegister {
 		}
 	}
 	
-	public RoleRegister setRigidInjectionStrategy(InjectionStrategy injRigStrategy){
-		this.injRigStrategy = injRigStrategy;
-		return this;
-	}
+	
+	
+	
+	
 	
 	private List<String> getAllClassesForPkgs(){
 		List<String> clazzes = ClassUtils.getAllClassNames();
 		Iterator<String> i = clazzes.iterator();
 		for(String pkg:pkgs){
+			final MATCH_TYPE matchType = matchTypePkg.get(pkg);
 			next: while(i.hasNext()){	
-				if(i.next().startsWith(pkg)){
-					continue next; 
+				final String next = i.next();
+				switch(matchType){
+					case STARTS_WITH: 
+						if(next.startsWith(pkg)){ 
+							continue next;
+						}/*else{assert(!pkg.startsWith(next));}*/
+						break;
+					case EXACT: 
+						if(next.equals(pkg)){ 
+							continue next; 
+						}/*else{assert(!pkg.equals(next));}*/
+						break;
+					case REGEX: 
+						if(next.matches(pkg)){
+							continue next; 
+						}/*else{assert(!pkg.equals(next));}*/
+						break;
 				}
+				
 				i.remove();
 			}
 		}
