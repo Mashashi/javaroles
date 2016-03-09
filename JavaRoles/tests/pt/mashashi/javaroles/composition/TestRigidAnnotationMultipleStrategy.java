@@ -8,8 +8,10 @@ import java.util.List;
 import pt.mashashi.javaroles.annotations.InjObjRigid;
 import pt.mashashi.javaroles.annotations.ObjRole;
 import pt.mashashi.javaroles.annotations.Rigid;
+import pt.mashashi.javaroles.impl.composition.RoleRegisterComposition;
+import pt.mashashi.javaroles.injection.InjectionStrategyMultiple;
 
-public class TestRigidAnnotation {
+public class TestRigidAnnotationMultipleStrategy {
 	
 	public interface Human{String hello1();String hello2();String hello3();String hello4();}
 	public interface Monkey{String hello1();String hello2();String hello3();String hello4();}
@@ -33,28 +35,12 @@ public class TestRigidAnnotation {
 	
 	@Rigid
 	public static class AnimalRoles implements Human, Monkey{
-		@ObjRole public Human human = new Portuguese();
+		@ObjRole public Human human;
 		@ObjRole public Monkey monkey;
 		
-		public AnimalRoles(){}
-		
-		@Override
-		public String hello1() { return "Default hello "+this.getClass().getName(); }
-		public String hello2() { return "Default hello "+this.getClass().getName(); }
-		public String hello3() { return "Default hello "+this.getClass().getName(); }
-		public String hello4() { return "Default hello "+this.getClass().getName(); }
-	}
-	/*@Rigid
-	public static class AnimalRoles2 implements Human, Monkey{
-		@ObjRole public Portuguese human = new Portuguese();
-		@ObjRole public Monkey monkey;
-		
-		public AnimalRoles2(){
-//			System.out.println("-->"+human);
- * 
-//			if(human.rigid2==null){
-//				fail("Was not initialized");
-//			}
+		public AnimalRoles(Human human, Monkey monkey){
+			this.human = human;
+			this.monkey = monkey;
 		}
 		
 		@Override
@@ -62,22 +48,22 @@ public class TestRigidAnnotation {
 		public String hello2() { return "Default hello "+this.getClass().getName(); }
 		public String hello3() { return "Default hello "+this.getClass().getName(); }
 		public String hello4() { return "Default hello "+this.getClass().getName(); }
-	}*/
+	}
+	
 	public static void test(){
-		AnimalRoles a = new AnimalRoles();
+		
+		new RoleRegisterComposition(new String[]{""},new Class[]{TestRigidAnnotationMultipleStrategy.class})
+				.setRigidInjectionStrategy(new InjectionStrategyMultiple())
+				.registerRools();
+		
+		Portuguese p = new Portuguese();
+		
+		AnimalRoles a = new AnimalRoles(p, null);
 		assertEquals("Yap", "Was setup", a.hello1());
 		assertEquals("Yap", "Was setup", a.hello2());
 		assertEquals("Yap", "Fails", a.hello3());
 		assertEquals("Yap", "Was setup", a.hello4());
-		/*
-		 // This feature was removed
-		 a.human = new Portuguese();
-		 assertEquals("Yap", "Was setup", a.hello1());
-		 */
 		
-		// Inject before construct
-		/*AnimalRoles2 b = new AnimalRoles2();
-		System.out.println(b.human.rigid2);*/
 	}
 	
 }

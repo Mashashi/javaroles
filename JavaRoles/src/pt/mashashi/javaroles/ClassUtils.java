@@ -155,7 +155,7 @@ public class ClassUtils {
 		
 		return null;
 	}
-	public static CtConstructor getExecutingConstructor(String clazzName, String sig){
+	/*public static CtConstructor getExecutingConstructor(String clazzName, String sig){
 		
 		ClassPool cp = ClassPool.getDefault();
 		CtClass c = cp.getOrNull(clazzName);
@@ -168,7 +168,7 @@ public class ClassUtils {
 		}
 		
 		return null;
-	}
+	}*/
 	
 	public static List<CtField> getListFieldAnotated(CtClass target, Class<? extends Annotation> annotation) throws ClassNotFoundException{
 		List<CtField> roleObjects = new LinkedList<>();

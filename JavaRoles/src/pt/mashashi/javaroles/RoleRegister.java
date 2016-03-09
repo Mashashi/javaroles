@@ -26,6 +26,9 @@ import pt.mashashi.javaroles.annotations.MissUseAnnotationExceptionException;
 import pt.mashashi.javaroles.annotations.ObjRigid;
 import pt.mashashi.javaroles.annotations.ObjRole;
 import pt.mashashi.javaroles.annotations.Rigid;
+import pt.mashashi.javaroles.injection.InjectionStrategy;
+import pt.mashashi.javaroles.injection.InjectionStrategyMultiple;
+import pt.mashashi.javaroles.injection.InjectionStrategySingle;
 
 /**
  * Offers a way to go through all the classes in the class path searching for the points that need code injection
@@ -41,7 +44,8 @@ public abstract class RoleRegister {
 	private String[] pkgs;
 	private String classesDir;
 	
-	protected InjectionStrategy injStrategy = new InjectionStrategySimple();
+	protected InjectionStrategy injRigStrategy  = new InjectionStrategySingle();
+	//protected InjectionStrategy injRigStrategy = new InjectionStrategyMultiple();
 	
 	@SuppressWarnings("unused")
 	private RoleRegister(){
@@ -226,7 +230,7 @@ public abstract class RoleRegister {
 					for(CtConstructor c: cn.getConstructors()){
 						try {
 							
-							c.insertAfter(injStrategy.getCode());
+							c.insertAfter(injRigStrategy.posConstructor());
 // OLDFEAT - Try to call the inject before constructor.
 // Not done it has hard because default initializations injected byte code into the constructor.
 // Another alternative is to use the insertAt but we have to have a method to find out where the code begins
@@ -388,7 +392,7 @@ public abstract class RoleRegister {
 	 * - The java.lang.Class object is not referenced from anywhere (same goes for reflective access to their members).
 	 * 
 	 */
-	public RoleRegister registerRools(){
+	public void registerRools(){
 		if(onlyFor!=null){
 			{ // BLOCK Free up reference in the class loader
 			  /*
@@ -403,7 +407,6 @@ public abstract class RoleRegister {
 				registerRool(className);
 			}
 		}
-		return this;
 	}
 	
 	private void registerRools(String... clazzes){
@@ -425,7 +428,7 @@ public abstract class RoleRegister {
 		}
 	}
 	
-	public RoleRegister registerRoolsExcludeGiven(Class<?>... clazzes){
+	public void registerRoolsExcludeGiven(Class<?>... clazzes){
 		if(onlyFor!=null){
 			throw new IllegalStateException("The register configuration does not allow for this method to be called.\n Supply at least one pkg prefix when building the object.");
 		}
@@ -439,6 +442,10 @@ public abstract class RoleRegister {
 			}
 			registerRool(className);
 		}
+	}
+	
+	public RoleRegister setRigidInjectionStrategy(InjectionStrategy injRigStrategy){
+		this.injRigStrategy = injRigStrategy;
 		return this;
 	}
 	
