@@ -25,7 +25,6 @@ import pt.mashashi.javaroles.ClassUtils;
 import pt.mashashi.javaroles.MissProcessingException;
 import pt.mashashi.javaroles.RoleBus;
 import pt.mashashi.javaroles.annotations.ObjRole;
-import pt.mashashi.javaroles.typed.role.ResolveRoleTest;
 
 /**
  * Uses the interface on which the rigid object is assigned to to resolve the role type method. To do this
