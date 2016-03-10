@@ -34,7 +34,7 @@ import org.junit.runners.model.Statement;
  * @author Rafael
  *
  */
-public class ResolveRoleMethodTest {
+public class RolesTest {
 	
 
 	/*public class SingleTestRule implements MethodRule {

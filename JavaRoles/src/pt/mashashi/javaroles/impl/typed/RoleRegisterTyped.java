@@ -1,7 +1,6 @@
 package pt.mashashi.javaroles.impl.typed;
 
 import java.util.HashMap;
-import java.util.UUID;
 
 import org.apache.log4j.Logger;
 
