@@ -27,7 +27,6 @@ import pt.mashashi.javaroles.annotations.ObjRigid;
 import pt.mashashi.javaroles.annotations.ObjRole;
 import pt.mashashi.javaroles.annotations.Rigid;
 import pt.mashashi.javaroles.injection.InjectionStrategy;
-import pt.mashashi.javaroles.injection.InjectionStrategySingle;
 
 /**
  * Offers a way to go through all the classes in the class path searching for the points that need code injection
@@ -43,7 +42,7 @@ public abstract class RoleRegister {
 	private String[] pkgs;
 	private String classesDir;
 	
-	private InjectionStrategy injRigStrategy  = new InjectionStrategySingle();
+	private InjectionStrategy injRigStrategy  = InjectionStrategy.getInstanceSingle();
 	//protected InjectionStrategy injRigStrategy = new InjectionStrategyMultiple();
 	
 	

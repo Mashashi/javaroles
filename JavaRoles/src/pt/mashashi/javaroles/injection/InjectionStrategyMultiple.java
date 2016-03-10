@@ -8,11 +8,11 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 import pt.mashashi.javaroles.ClassUtils;
 import pt.mashashi.javaroles.annotations.InjObjRigid;
 
-public class InjectionStrategyMultiple implements InjectionStrategy {
+public class InjectionStrategyMultiple extends InjectionStrategy {
 
 	private String posConstructor;
 	
-	public InjectionStrategyMultiple() {
+	InjectionStrategyMultiple() {
 		StringBuffer injectionCode = new StringBuffer("");
 		
 		injectionCode.append(Field.class.getName()+"[] fs=this.getClass().getFields();");
