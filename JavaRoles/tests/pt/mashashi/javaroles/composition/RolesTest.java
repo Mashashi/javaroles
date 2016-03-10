@@ -66,6 +66,7 @@ public class RolesTest {
 				"pt.mashashi.javaroles.composition.TestOriginalRigidTurnOffRoleMethod"
 		);
 		*/
+		
 		new RoleRegisterComposition("pt.mashashi.javaroles").registerRoolsExcludeGiven(
 				TestRigidObjectExceptions.class,
 				TestOriginalRigidTurnOffRoleMethod.class,
@@ -73,7 +74,8 @@ public class RolesTest {
 				TestWriteClasses.class,
 				TestRigidAnnotationSingleStrategy.class,
 				TestRigidAnnotationMultipleStrategy.class,
-				TestPkgMatchTypes.class
+				TestPkgMatchTypes.class,
+				TestPlay.class
 		);
 	}
 	
@@ -222,6 +224,11 @@ public class RolesTest {
 	@Test
 	public void testPkgMatchTypes() {
 		TestPkgMatchTypes.test();
+	}
+	
+	@Test
+	public void testPlay() {
+		TestPlay.test();
 	}
 	
 }

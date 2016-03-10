@@ -2,7 +2,7 @@ package pt.mashashi.javaroles.injection;
 
 public abstract class InjectionStrategy {
 	
-	public abstract String posConstructor();
+	public abstract String set();
 	
 	private static InjectionStrategySingle instanceSingle = new InjectionStrategySingle();
 	private static InjectionStrategyMultiple instanceMultiple = new InjectionStrategyMultiple();
