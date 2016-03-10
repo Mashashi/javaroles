@@ -26,6 +26,7 @@ import pt.mashashi.javaroles.annotations.MissUseAnnotationExceptionException;
 import pt.mashashi.javaroles.annotations.ObjRigid;
 import pt.mashashi.javaroles.annotations.ObjRole;
 import pt.mashashi.javaroles.annotations.Rigid;
+import pt.mashashi.javaroles.composition.TestPlay;
 import pt.mashashi.javaroles.injection.InjectionStrategy;
 
 /**
@@ -244,11 +245,14 @@ public abstract class RoleRegister {
 		if(!cn.isFrozen()){
 			try {
 				boolean setUpInjection = cn.getAnnotation(Rigid.class)!=null;
+				
+				
+				LinkedList<CtConstructor> pConstructor = new LinkedList<CtConstructor>(); 
 				if(setUpInjection){
 					for(CtConstructor c: cn.getConstructors()){
-						try {
+						
 							
-							c.insertAfter(injRigStrategy.posConstructor());
+						c.insertAfter(injRigStrategy.set());
 // OLDFEAT - Try to call the inject before constructor.
 // Not done it has hard because default initializations injected byte code into the constructor.
 // Another alternative is to use the insertAt but we have to have a method to find out where the code begins
@@ -272,12 +276,33 @@ public abstract class RoleRegister {
 //									
 //									+"}");
 							
-						} catch (CannotCompileException e) {
-							throw new RuntimeException(e.getMessage());
-						}
+							
+						pConstructor.add(c);
+						Logger.getRootLogger().trace("Test:"+TestPlay.class.getName()+"-"+c.getName()+"-rc");
 					}	
 				}
+				
+				{ // Process play constructors
+					for(CtConstructor c: cn.getConstructors()){
+						if(c.getAnnotation(Rigid.class)!=null && !pConstructor.contains(c)){
+							c.insertAfter(injRigStrategy.set());
+							Logger.getRootLogger().trace("Test:"+TestPlay.class.getName()+"-"+c.getName()+"-pc");
+						}
+					}
+				}
+				
+				{ // Process play methods
+					for(CtMethod m: cn.getDeclaredMethods()){
+						if(m.getAnnotation(Rigid.class)!=null){
+							m.insertBefore(injRigStrategy.set());
+							Logger.getRootLogger().trace("Test:"+TestPlay.class.getName()+"-"+m.getDeclaringClass().getName()+"-"+m.getName()+"-pm");
+						}
+					}
+				}
+				
 			} catch (SecurityException e) {
+				throw new RuntimeException(e.getMessage());
+			} catch (CannotCompileException e) {
 				throw new RuntimeException(e.getMessage());
 			}
 		}

@@ -79,7 +79,7 @@ public class InjectionStrategySingle extends InjectionStrategy {
 	}
 	
 	@Override
-	public String posConstructor() {
+	public String set() {
 		return posConstructor;
 	}
 
