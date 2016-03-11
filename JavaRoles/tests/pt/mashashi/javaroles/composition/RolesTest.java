@@ -77,6 +77,7 @@ public class RolesTest {
 				TestPkgMatchTypes.class,
 				TestPlay.class
 		);
+		
 	}
 	
 	
@@ -229,6 +230,11 @@ public class RolesTest {
 	@Test
 	public void testPlay() {
 		TestPlay.test();
+	}
+	
+	@Test
+	public void testPlayCheck() {
+		TestPlayCheck.test();
 	}
 	
 }

@@ -26,12 +26,12 @@ public abstract class RoleBus {
 	
 	// key - rolename
 	// value - first invocation
-	private HashMap<String, Boolean> rollCallMade;  
+	private HashMap<String, Boolean> roleCallMade;  
 	
 	private CircularLifoBuffer callHistory;
 	
 	public RoleBus() {
-		rollCallMade = new HashMap<>();
+		roleCallMade = new HashMap<>();
 		callHistory = new CircularLifoBuffer(5);
 	}
 	
@@ -46,7 +46,7 @@ public abstract class RoleBus {
 	public abstract Object resolve(CtMethod methodInvoked, Object[] params) throws MissProcessingException, Throwable;
 	
 	protected void invokeLifeCycleCallbacks(String roleName, CtMethod methodInvoked) {
-		Boolean roleNameFirstCall = rollCallMade.get(roleName);
+		Boolean roleNameFirstCall = roleCallMade.get(roleName);
 		
 		if(roleNameFirstCall==null){
 			roleNameFirstCall = Boolean.TRUE;
@@ -100,7 +100,7 @@ public abstract class RoleBus {
 		
 		callHistory.add(roleName);
 		
-		rollCallMade.put(roleName, Boolean.FALSE);
+		roleCallMade.put(roleName, Boolean.FALSE);
 	}
 	
 }

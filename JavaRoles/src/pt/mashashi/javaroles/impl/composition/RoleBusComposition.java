@@ -15,6 +15,7 @@ import javassist.NotFoundException;
 import pt.mashashi.javaroles.ClassUtils;
 import pt.mashashi.javaroles.MissProcessingException;
 import pt.mashashi.javaroles.RoleBus;
+import pt.mashashi.javaroles.annotations.InjObjRigid;
 import pt.mashashi.javaroles.annotations.MissMsgReceptor;
 import pt.mashashi.javaroles.annotations.ObjRole;
 
@@ -44,7 +45,7 @@ public class RoleBusComposition extends RoleBus{
 	    	List<CtField> fieldsTried = new LinkedList<>();
 	    	HashMap<String, Object> details = new HashMap<>();
 	    	do{
-				CtField ctFieldRole = getTargetObjectRoleField(methodInvoked,fieldsTried.toArray(new CtField[fieldsTried.size()]));
+				CtField ctFieldRole = getTargetObjectRoleField(methodInvoked, fieldsTried.toArray(new CtField[fieldsTried.size()]));
 				if(ctFieldRole==null){
 					throw new MissProcessingException(details);
 				}
@@ -81,14 +82,31 @@ public class RoleBusComposition extends RoleBus{
 				{ // check if it is not null
 					Object o = null;
 			    	try {
+			    		
 			    		String declaringClass = field.getDeclaringClass().getName();
 						fieldRole = Class.forName(declaringClass).getDeclaredField(field.getName());
 						o = FieldUtils.readField(fieldRole, target, true);
-					} catch (NoSuchFieldException | SecurityException | IllegalAccessException e) {}
-			    	useIt = useIt && o!=null;
+						
+				    	useIt = useIt && o!=null;
+				    	if(useIt){
+					    	// BLOCK Exclude object roles that require the rigid and it is not set on them
+					    	for(Field f : ClassUtils.getListFieldAnotated(o.getClass(), InjObjRigid.class)){
+					    		InjObjRigid a = f.getAnnotation(InjObjRigid.class);
+					    		if(f.getType().isInstance(target) && a.required()){
+					    			Object o2 = FieldUtils.readField(f, o, true);
+					    			if(o2== null || !o2.equals(target)){
+					    				useIt = false;
+					    				break;
+					    			}
+					    		}
+					    	}
+				    	}
+			    	
+			    	} catch (NoSuchFieldException | SecurityException | IllegalAccessException e) {}
+			    	
 				}
 				
-				if(fieldRole!=null){
+				if(useIt){
 					// Exclude fields given has parameter
 					for(CtField e:exclude){
 						if(e.getName().equals(fieldRole.getName())){
@@ -98,7 +116,11 @@ public class RoleBusComposition extends RoleBus{
 					}
 				}
 				
-				if(useIt){	
+				
+				
+				if(useIt){
+					
+					
 					ctFieldRole = field;
 					break roleSearch;
 				}

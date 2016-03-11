@@ -2,6 +2,7 @@ package pt.mashashi.javaroles;
 
 import java.io.IOException;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -278,7 +279,7 @@ public abstract class RoleRegister {
 							
 							
 						pConstructor.add(c);
-						Logger.getRootLogger().trace("Test:"+TestPlay.class.getName()+"-"+c.getName()+"-rc");
+						Logger.getLogger(RoleBus.class.getName()).trace("Test:"+TestPlay.class.getName()+"-"+c.getName()+"-rc");
 					}	
 				}
 				
@@ -286,7 +287,7 @@ public abstract class RoleRegister {
 					for(CtConstructor c: cn.getConstructors()){
 						if(c.getAnnotation(Rigid.class)!=null && !pConstructor.contains(c)){
 							c.insertAfter(injRigStrategy.set());
-							Logger.getRootLogger().trace("Test:"+TestPlay.class.getName()+"-"+c.getName()+"-pc");
+							Logger.getLogger(RoleBus.class.getName()).trace("Test:"+TestPlay.class.getName()+"-"+c.getName()+"-pc");
 						}
 					}
 				}
@@ -295,7 +296,7 @@ public abstract class RoleRegister {
 					for(CtMethod m: cn.getDeclaredMethods()){
 						if(m.getAnnotation(Rigid.class)!=null){
 							m.insertBefore(injRigStrategy.set());
-							Logger.getRootLogger().trace("Test:"+TestPlay.class.getName()+"-"+m.getDeclaringClass().getName()+"-"+m.getName()+"-pm");
+							Logger.getLogger(RoleBus.class.getName()).trace("Test:"+TestPlay.class.getName()+"-"+m.getDeclaringClass().getName()+"-"+m.getName()+"-pm");
 						}
 					}
 				}

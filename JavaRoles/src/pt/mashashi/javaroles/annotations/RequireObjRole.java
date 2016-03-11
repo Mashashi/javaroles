@@ -6,7 +6,5 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
-public @interface InjObjRigid {
-	boolean required() default false;
-}
+@Target({ElementType.LOCAL_VARIABLE})
+public @interface RequireObjRole {}
