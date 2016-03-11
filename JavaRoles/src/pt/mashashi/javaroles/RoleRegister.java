@@ -252,8 +252,7 @@ public abstract class RoleRegister {
 				if(setUpInjection){
 					for(CtConstructor c: cn.getConstructors()){
 						
-							
-						c.insertAfter(injRigStrategy.set());
+						c.insertAfter(injRigStrategy.setAll());
 // OLDFEAT - Try to call the inject before constructor.
 // Not done it has hard because default initializations injected byte code into the constructor.
 // Another alternative is to use the insertAt but we have to have a method to find out where the code begins
@@ -276,8 +275,7 @@ public abstract class RoleRegister {
 //									"$args);"
 //									
 //									+"}");
-							
-							
+						
 						pConstructor.add(c);
 						Logger.getLogger(RoleBus.class.getName()).trace("Test:"+TestPlay.class.getName()+"-"+c.getName()+"-rc");
 					}	
@@ -286,7 +284,7 @@ public abstract class RoleRegister {
 				{ // Process play constructors
 					for(CtConstructor c: cn.getConstructors()){
 						if(c.getAnnotation(Rigid.class)!=null && !pConstructor.contains(c)){
-							c.insertAfter(injRigStrategy.set());
+							c.insertAfter(injRigStrategy.setAll());
 							Logger.getLogger(RoleBus.class.getName()).trace("Test:"+TestPlay.class.getName()+"-"+c.getName()+"-pc");
 						}
 					}
@@ -295,17 +293,19 @@ public abstract class RoleRegister {
 				{ // Process play methods
 					for(CtMethod m: cn.getDeclaredMethods()){
 						if(m.getAnnotation(Rigid.class)!=null){
-							m.insertBefore(injRigStrategy.set());
-							Logger.getLogger(RoleBus.class.getName()).trace("Test:"+TestPlay.class.getName()+"-"+m.getDeclaringClass().getName()+"-"+m.getName()+"-pm");
+							if(m.getParameterTypes().length==0){
+								m.insertBefore(injRigStrategy.setAll());
+								Logger.getLogger(RoleBus.class.getName()).trace("Test:"+TestPlay.class.getName()+"-"+m.getDeclaringClass().getName()+"-"+m.getName()+"-pm");
+							}else{
+								m.insertBefore(injRigStrategy.setParams());
+							}
 						}
 					}
 				}
 				
-			} catch (SecurityException e) {
+			} catch (SecurityException|CannotCompileException|NotFoundException e) {
 				throw new RuntimeException(e.getMessage());
-			} catch (CannotCompileException e) {
-				throw new RuntimeException(e.getMessage());
-			}
+			} 
 		}
 	}
 
