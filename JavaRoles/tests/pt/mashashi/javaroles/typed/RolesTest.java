@@ -55,7 +55,7 @@ public class RolesTest {
 	@BeforeClass
 	public static void setup(){
 		//Role.registerRool("Animal");
-		PropertyConfigurator.configure("tests/log4j.properties");
+		//PropertyConfigurator.configure("tests/log4j.properties");
 		new RoleRegisterTyped("tests/", new String[]{""}).registerRoolsExcludeGiven(TestRigidObjectExceptions.class, TestMissProcessingWrongObjectType.class);
 	}
 	
