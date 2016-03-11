@@ -64,7 +64,7 @@ public abstract class RoleRegister {
 		{
 			// CONFIG Suppress console output from log4j missing config file 
 			// log4j:WARN No appenders could be found for logger... When log4j config file is not set
-			Logger.getRootLogger().setLevel(Level.OFF); 
+			Logger.getRootLogger().setLevel(Level.OFF);
 		}
 		roleBusVarName = ClassUtils.generateIdentifier();
 		cp = ClassPool.getDefault();
