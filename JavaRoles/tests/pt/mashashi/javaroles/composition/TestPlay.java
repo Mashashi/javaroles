@@ -84,7 +84,7 @@ public class TestPlay {
 	
 	public static void test(){
 		
-		RoleRegisterComposition rrc = new RoleRegisterComposition("pt.mashashi.javaroles.composition.TestPlay");
+		RoleRegisterComposition rrc = new RoleRegisterComposition("pt.mashashi.javaroles.composition.TestPlay$AnimalRoles");
 		
 		Logger.getRootLogger().setLevel(Level.ALL);
 		rrc.registerRools();
