@@ -1,5 +1,6 @@
 package pt.mashashi.javaroles.typed;
 
+import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.PropertyConfigurator;
 import org.junit.BeforeClass;
 
@@ -55,7 +56,7 @@ public class RolesTest {
 	@BeforeClass
 	public static void setup(){
 		//Role.registerRool("Animal");
-		//PropertyConfigurator.configure("tests/log4j.properties");
+		BasicConfigurator.configure();
 		new RoleRegisterTyped("tests/", new String[]{""}).registerRoolsExcludeGiven(TestRigidObjectExceptions.class, TestMissProcessingWrongObjectType.class);
 	}
 	
