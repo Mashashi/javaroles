@@ -25,7 +25,11 @@ public class TestPlay {
 		public String hello() { return "Hello buddy"; }
 	}
 	public static class Bonobo implements Monkey{
-		@Override public String hello() { return "Ugauga"; } 
+		
+		@InjObjRigid public AnimalRoles animalRoles;
+		
+		@Override 
+		public String hello() { return "Ugauga"; } 
 	}
 	
 	public interface AnimalRoles{}
@@ -82,6 +86,30 @@ public class TestPlay {
 		
 	}
 	
+	public static class AnimalRoles4 implements AnimalRoles, Human, Monkey{
+		
+		@ObjRole public Human human;
+		@ObjRole public Monkey monkey;
+		
+		public AnimalRoles4(){
+			this.human = new Portuguese();
+			this.monkey = new Bonobo();
+		}
+		
+		@Override
+		public String hello() { return "Default hello "+this.getClass().getName(); }
+		
+		@Rigid
+		private void setRigidHuman(Human human){
+			// Code gets injected hear
+		}
+		
+		public void playHuman(){
+			setRigidHuman(human);
+		}
+		
+	}
+	
 	public static void test(){
 		
 		RoleRegisterComposition rrc = new RoleRegisterComposition("pt.mashashi.javaroles.composition.TestPlay$AnimalRoles");
@@ -104,6 +132,13 @@ public class TestPlay {
 		List<String> t3r = LoggerTarget.string("Test:pt.mashashi.javaroles.composition.TestPlay-TestPlay$AnimalRoles3");
 		assertEquals(1, t3r.size());
 		assertEquals("-rc", t3r.get(0));
+		
+		
+		AnimalRoles4 a4 = new AnimalRoles4();
+		assertEquals(null, ((Portuguese)a4.human).animalRoles);
+		a4.playHuman();
+		assertNotEquals(null, ((Portuguese)a4.human).animalRoles);
+		assertEquals(null, ((Bonobo)a4.monkey).animalRoles);
 		
 	}
 	
