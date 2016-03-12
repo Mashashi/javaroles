@@ -2,7 +2,6 @@ package pt.mashashi.javaroles;
 
 import java.io.IOException;
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -14,6 +13,7 @@ import org.apache.log4j.Logger;
 
 import javassist.CannotCompileException;
 import javassist.ClassPool;
+import javassist.CtBehavior;
 import javassist.CtClass;
 import javassist.CtConstructor;
 import javassist.CtField;
@@ -26,7 +26,8 @@ import pt.mashashi.javaroles.annotations.MissMsgReceptor;
 import pt.mashashi.javaroles.annotations.MissUseAnnotationExceptionException;
 import pt.mashashi.javaroles.annotations.ObjRigid;
 import pt.mashashi.javaroles.annotations.ObjRole;
-import pt.mashashi.javaroles.annotations.Rigid;
+import pt.mashashi.javaroles.annotations.Play;
+import pt.mashashi.javaroles.annotations.Play.Place;
 import pt.mashashi.javaroles.composition.TestPlay;
 import pt.mashashi.javaroles.injection.InjectionStrategy;
 
@@ -245,46 +246,46 @@ public abstract class RoleRegister {
 	private void applyInjectionOnRoles(CtClass cn) throws ClassNotFoundException {
 		if(!cn.isFrozen()){
 			try {
-				boolean setUpInjection = cn.getAnnotation(Rigid.class)!=null;
-				
-				
-				LinkedList<CtConstructor> pConstructor = new LinkedList<CtConstructor>(); 
-				if(setUpInjection){
+				LinkedList<CtConstructor> pConstructor = new LinkedList<CtConstructor>();
+				{
+				Play a = (Play) cn.getAnnotation(Play.class); 
+				if(a!=null){
 					for(CtConstructor c: cn.getConstructors()){
-						
-						c.insertAfter(injRigStrategy.setAll());
+						insertAccordingOrder(c, a, injRigStrategy.setAll());
+						/*
 // OLDFEAT - Try to call the inject before constructor.
 // Not done it has hard because default initializations injected byte code into the constructor.
 // Another alternative is to use the insertAt but we have to have a method to find out where the code begins
-//							final String name = ClassUtils.generateIdentifier();
-//							final CtMethod method = c.toMethod(name, cn);
-//							final String varC = ClassUtils.generateIdentifier(); 
-//							cn.addMethod(method);
-//							c.setBody("{"
-//									
-//									+injStrategy.getCode()+
-//									
-//									CtConstructor.class.getName()+" "+varC+" = "+ClassUtils.class.getName()+".getExecutingConstructor("+
-//									"\""+cn.getName()+"\","+
-//									"\""+c.getSignature()+"\");"+
-//									
-//									ClassUtils.class.getName()+".invokeWithNativeTypes("+
-//									"this,"+
-//									"\""+name+"\","+
-//									varC+".getParameterTypes(),"+
-//									"$args);"
-//									
-//									+"}");
-						
+							final String name = ClassUtils.generateIdentifier();
+							final CtMethod method = c.toMethod(name, cn);
+							final String varC = ClassUtils.generateIdentifier(); 
+							cn.addMethod(method);
+							c.setBody("{"
+									
+									+injStrategy.getCode()+
+									
+									CtConstructor.class.getName()+" "+varC+" = "+ClassUtils.class.getName()+".getExecutingConstructor("+
+									"\""+cn.getName()+"\","+
+									"\""+c.getSignature()+"\");"+
+									
+									ClassUtils.class.getName()+".invokeWithNativeTypes("+
+									"this,"+
+									"\""+name+"\","+
+									varC+".getParameterTypes(),"+
+									"$args);"
+									
+									+"}");
+						 */
 						pConstructor.add(c);
 						Logger.getLogger(RoleBus.class.getName()).trace("Test:"+TestPlay.class.getName()+"-"+c.getName()+"-rc");
 					}	
 				}
-				
+				}
 				{ // Process play constructors
 					for(CtConstructor c: cn.getConstructors()){
-						if(c.getAnnotation(Rigid.class)!=null && !pConstructor.contains(c)){
-							c.insertAfter(injRigStrategy.setAll());
+						Play a = (Play) c.getAnnotation(Play.class);
+						if(a!=null && !pConstructor.contains(c)){
+							insertAccordingOrder(c, a, injRigStrategy.setAll());
 							Logger.getLogger(RoleBus.class.getName()).trace("Test:"+TestPlay.class.getName()+"-"+c.getName()+"-pc");
 						}
 					}
@@ -292,12 +293,13 @@ public abstract class RoleRegister {
 				
 				{ // Process play methods
 					for(CtMethod m: cn.getDeclaredMethods()){
-						if(m.getAnnotation(Rigid.class)!=null){
+						Play a = (Play) m.getAnnotation(Play.class);
+						if(a!=null){
 							if(m.getParameterTypes().length==0){
-								m.insertBefore(injRigStrategy.setAll());
+								insertAccordingOrder(m, a, injRigStrategy.setAll());
 								Logger.getLogger(RoleBus.class.getName()).trace("Test:"+TestPlay.class.getName()+"-"+m.getDeclaringClass().getName()+"-"+m.getName()+"-pm");
 							}else{
-								m.insertBefore(injRigStrategy.setParams());
+								insertAccordingOrder(m, a, injRigStrategy.setParams());
 							}
 						}
 					}
@@ -308,7 +310,17 @@ public abstract class RoleRegister {
 			} 
 		}
 	}
-
+	
+	private void insertAccordingOrder(CtBehavior m, Play a, String code) throws ClassNotFoundException, CannotCompileException{
+		assert a!=null;
+		assert a.order().equals(Place.AFTER) || a.order().equals(Place.BEFORE);
+		if(a.order().equals(Place.AFTER)){
+			m.insertAfter(code);
+		}else{
+			m.insertBefore(code);
+		}
+	}
+	
 	private void applyIndirect(CtMethod method, 
 								CtMethod created, 
 								HashMap<String, CtClass> originals,

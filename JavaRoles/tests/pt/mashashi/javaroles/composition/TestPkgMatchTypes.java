@@ -9,7 +9,7 @@ import pt.mashashi.javaroles.RoleRegister;
 import pt.mashashi.javaroles.RoleRegister.MATCH_TYPE;
 import pt.mashashi.javaroles.annotations.InjObjRigid;
 import pt.mashashi.javaroles.annotations.ObjRole;
-import pt.mashashi.javaroles.annotations.Rigid;
+import pt.mashashi.javaroles.annotations.Play;
 import pt.mashashi.javaroles.impl.composition.RoleRegisterComposition;
 
 public class TestPkgMatchTypes {
@@ -33,7 +33,7 @@ public class TestPkgMatchTypes {
 	
 	
 	
-	@Rigid
+	@Play
 	public static class AnimalRolesStartsImplicit1 implements Human, Monkey{
 		@ObjRole public Human human;
 		@ObjRole public Monkey monkey;
@@ -48,7 +48,7 @@ public class TestPkgMatchTypes {
 	}
 	
 	
-	@Rigid
+	@Play
 	public static class AnimalRolesStartsImplicit2 implements Human, Monkey{
 		@ObjRole public Human human;
 		@ObjRole public Monkey monkey;
@@ -69,7 +69,7 @@ public class TestPkgMatchTypes {
 	
 	
 	
-	@Rigid
+	@Play
 	public static class AnimalRolesStartsExplicit1 implements Human, Monkey{
 		@ObjRole public Human human;
 		@ObjRole public Monkey monkey;
@@ -84,7 +84,7 @@ public class TestPkgMatchTypes {
 	}
 	
 	
-	@Rigid
+	@Play
 	public static class AnimalRolesStartsExplicit2 implements Human, Monkey{
 		@ObjRole public Human human;
 		@ObjRole public Monkey monkey;
@@ -110,7 +110,7 @@ public class TestPkgMatchTypes {
 	
 	
 	
-	@Rigid
+	@Play
 	public static class AnimalRolesExact1 implements Human, Monkey{
 		@ObjRole public Human human;
 		@ObjRole public Monkey monkey;
@@ -125,7 +125,7 @@ public class TestPkgMatchTypes {
 	}
 	
 	
-	@Rigid
+	@Play
 	public static class AnimalRolesExact2 implements Human, Monkey{
 		@ObjRole public Human human;
 		@ObjRole public Monkey monkey;
@@ -146,7 +146,7 @@ public class TestPkgMatchTypes {
 	
 	
 	
-	@Rigid
+	@Play
 	public static class AnimalRolesRegex1 implements Human, Monkey{
 		@ObjRole public Human human;
 		@ObjRole public Monkey monkey;
@@ -161,7 +161,7 @@ public class TestPkgMatchTypes {
 	}
 	
 	
-	@Rigid
+	@Play
 	public static class AnimalRolesRegex2 implements Human, Monkey{
 		@ObjRole public Human human;
 		@ObjRole public Monkey monkey;
@@ -175,7 +175,7 @@ public class TestPkgMatchTypes {
 		public String hello1() { return "Default hello "+this.getClass().getName(); }
 	}
 	
-	@Rigid
+	@Play
 	public static class AnimalRolesRegex3d implements Human, Monkey{
 		@ObjRole public Human human;
 		@ObjRole public Monkey monkey;
@@ -199,7 +199,7 @@ public class TestPkgMatchTypes {
 	
 	
 	
-	@Rigid
+	@Play
 	public static class AnimalRolesExactSelective implements Human, Monkey{
 		@ObjRole public Human human;
 		@ObjRole public Monkey monkey;
@@ -214,7 +214,7 @@ public class TestPkgMatchTypes {
 	}
 	
 	
-	@Rigid
+	@Play
 	public static class AnimalRolesExactSelective_i1 implements Human, Monkey{
 		@ObjRole public Human human;
 		@ObjRole public Monkey monkey;
@@ -227,7 +227,7 @@ public class TestPkgMatchTypes {
 		@Override
 		public String hello1() { return "Default hello "+this.getClass().getName(); }
 	}
-	@Rigid
+	@Play
 	public static class AnimalRolesExactSelective_i2 implements Human, Monkey{
 		@ObjRole public Human human;
 		@ObjRole public Monkey monkey;

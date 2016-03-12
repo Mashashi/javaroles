@@ -83,6 +83,9 @@ public class InjectionStrategySingle extends InjectionStrategy {
 		{
 			StringBuffer injectionCode = new StringBuffer("");
 			injectionCode.append(Object.class.getName()+"[] fs=$args;");
+			
+			//injectionCode.append("System.out.println($args[0]);");
+			
 			injectionCode.append("for(int i=0;i<fs.length;i++){");
 			
 				injectionCode.append("Object o = fs[i];");
