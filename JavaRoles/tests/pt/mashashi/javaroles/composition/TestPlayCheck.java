@@ -4,7 +4,7 @@ import static org.junit.Assert.*;
 
 import pt.mashashi.javaroles.annotations.InjObjRigid;
 import pt.mashashi.javaroles.annotations.ObjRole;
-import pt.mashashi.javaroles.annotations.Play;
+import pt.mashashi.javaroles.annotations.Player;
 import pt.mashashi.javaroles.impl.composition.RoleRegisterComposition;
 import pt.mashashi.javaroles.injection.InjectionStrategy;
 
@@ -87,7 +87,7 @@ public class TestPlayCheck {
 		@ObjRole public Human human;
 		@ObjRole public Monkey monkey;
 		
-		@Play
+		@Player
 		public AnimalRoles3(){
 			this.human = new Portuguese3();
 			this.monkey = new Bonobo();

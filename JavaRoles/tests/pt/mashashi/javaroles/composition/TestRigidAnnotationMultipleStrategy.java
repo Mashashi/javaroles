@@ -7,10 +7,9 @@ import java.util.List;
 
 import pt.mashashi.javaroles.annotations.InjObjRigid;
 import pt.mashashi.javaroles.annotations.ObjRole;
-import pt.mashashi.javaroles.annotations.Play;
+import pt.mashashi.javaroles.annotations.Player;
 import pt.mashashi.javaroles.impl.composition.RoleRegisterComposition;
 import pt.mashashi.javaroles.injection.InjectionStrategy;
-import pt.mashashi.javaroles.injection.InjectionStrategyMultiple;
 
 public class TestRigidAnnotationMultipleStrategy {
 	
@@ -20,6 +19,7 @@ public class TestRigidAnnotationMultipleStrategy {
 	public static class Portuguese implements Human{
 		@InjObjRigid public AnimalRoles rigid1;
 		@InjObjRigid public Object rigid2;
+		@SuppressWarnings("rawtypes")
 		@InjObjRigid public List rigid3;
 		@InjObjRigid private AnimalRoles rigid4;
 		@Override public String hello1() { return rigid1!=null?"Was setup":"Fails"; }
@@ -34,7 +34,7 @@ public class TestRigidAnnotationMultipleStrategy {
 		@Override public String hello4() { return "Ugauga"; }
 	}
 	
-	@Play
+	@Player
 	public static class AnimalRoles implements Human, Monkey{
 		@ObjRole public Human human;
 		@ObjRole public Monkey monkey;

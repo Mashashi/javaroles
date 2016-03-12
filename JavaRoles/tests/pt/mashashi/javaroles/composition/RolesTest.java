@@ -237,4 +237,9 @@ public class RolesTest {
 		TestPlayCheck.test();
 	}
 	
+	@Test
+	public void testInjectionMethod() {
+		TestInjectionMethod.test();
+	}
+	
 }

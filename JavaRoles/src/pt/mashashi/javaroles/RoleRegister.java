@@ -27,6 +27,7 @@ import pt.mashashi.javaroles.annotations.MissUseAnnotationExceptionException;
 import pt.mashashi.javaroles.annotations.ObjRigid;
 import pt.mashashi.javaroles.annotations.ObjRole;
 import pt.mashashi.javaroles.annotations.Play;
+import pt.mashashi.javaroles.annotations.Player;
 import pt.mashashi.javaroles.annotations.Play.Place;
 import pt.mashashi.javaroles.composition.TestPlay;
 import pt.mashashi.javaroles.injection.InjectionStrategy;
@@ -248,44 +249,45 @@ public abstract class RoleRegister {
 			try {
 				LinkedList<CtConstructor> pConstructor = new LinkedList<CtConstructor>();
 				{
-				Play a = (Play) cn.getAnnotation(Play.class); 
-				if(a!=null){
-					for(CtConstructor c: cn.getConstructors()){
-						insertAccordingOrder(c, a, injRigStrategy.setAll());
-						/*
-// OLDFEAT - Try to call the inject before constructor.
-// Not done it has hard because default initializations injected byte code into the constructor.
-// Another alternative is to use the insertAt but we have to have a method to find out where the code begins
-							final String name = ClassUtils.generateIdentifier();
-							final CtMethod method = c.toMethod(name, cn);
-							final String varC = ClassUtils.generateIdentifier(); 
-							cn.addMethod(method);
-							c.setBody("{"
-									
-									+injStrategy.getCode()+
-									
-									CtConstructor.class.getName()+" "+varC+" = "+ClassUtils.class.getName()+".getExecutingConstructor("+
-									"\""+cn.getName()+"\","+
-									"\""+c.getSignature()+"\");"+
-									
-									ClassUtils.class.getName()+".invokeWithNativeTypes("+
-									"this,"+
-									"\""+name+"\","+
-									varC+".getParameterTypes(),"+
-									"$args);"
-									
-									+"}");
-						 */
-						pConstructor.add(c);
-						Logger.getLogger(RoleBus.class.getName()).trace("Test:"+TestPlay.class.getName()+"-"+c.getName()+"-rc");
-					}	
-				}
+					Player a = (Player) cn.getAnnotation(Player.class); 
+					if(a!=null){
+						for(CtConstructor c: cn.getConstructors()){
+							c.insertAfter(injRigStrategy.setAll());
+							/*
+								// OLDFEAT - Try to call the inject before constructor.
+								// Not done it has hard because default initializations injected byte code into the constructor.
+								// Another alternative is to use the insertAt but we have to have a method to find out where the code begins
+								// Another problem is that the injected code makes use of the keyword this which is not available before the constructor starts
+								final String name = ClassUtils.generateIdentifier();
+								final CtMethod method = c.toMethod(name, cn);
+								final String varC = ClassUtils.generateIdentifier(); 
+								cn.addMethod(method);
+								c.setBody("{"
+										
+										+injStrategy.getCode()+
+										
+										CtConstructor.class.getName()+" "+varC+" = "+ClassUtils.class.getName()+".getExecutingConstructor("+
+										"\""+cn.getName()+"\","+
+										"\""+c.getSignature()+"\");"+
+										
+										ClassUtils.class.getName()+".invokeWithNativeTypes("+
+										"this,"+
+										"\""+name+"\","+
+										varC+".getParameterTypes(),"+
+										"$args);"
+										
+										+"}");
+							 */
+							pConstructor.add(c);
+							Logger.getLogger(RoleBus.class.getName()).trace("Test:"+TestPlay.class.getName()+"-"+c.getName()+"-rc");
+						}	
+					}
 				}
 				{ // Process play constructors
 					for(CtConstructor c: cn.getConstructors()){
-						Play a = (Play) c.getAnnotation(Play.class);
+						Player a = (Player) c.getAnnotation(Player.class);
 						if(a!=null && !pConstructor.contains(c)){
-							insertAccordingOrder(c, a, injRigStrategy.setAll());
+							c.insertAfter(injRigStrategy.setAll());
 							Logger.getLogger(RoleBus.class.getName()).trace("Test:"+TestPlay.class.getName()+"-"+c.getName()+"-pc");
 						}
 					}
@@ -315,7 +317,7 @@ public abstract class RoleRegister {
 		assert a!=null;
 		assert a.order().equals(Place.AFTER) || a.order().equals(Place.BEFORE);
 		if(a.order().equals(Place.AFTER)){
-			m.insertAfter(code);
+			m.insertAfter(code);//m.hashCode()
 		}else{
 			m.insertBefore(code);
 		}

@@ -42,7 +42,7 @@ public class InjectionStrategySingle extends InjectionStrategy {
 								injectionCode.append("setIt = false;");
 								//injectionCode.append("System.out.println(\"-->\"+rigidName);");//
 							injectionCode.append("}catch("+IllegalArgumentException.class.getName()+" e){");
-								injectionCode.append("/*Do nothing - Just a cast error*/");
+								//injectionCode.append("//Do nothing - Just a cast error");
 							injectionCode.append("}finally{");
 								injectionCode.append("f.setAccessible(accesibilityOriginal);");
 							injectionCode.append("}");
@@ -77,7 +77,7 @@ public class InjectionStrategySingle extends InjectionStrategy {
 				injectionCode.append("}");		
 			}*/
 			
-			super.all = injectionCode.toString(); 
+			super.all = injectionCode.toString();
 		}
 		
 		{
