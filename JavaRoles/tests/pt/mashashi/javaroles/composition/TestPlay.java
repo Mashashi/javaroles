@@ -1,17 +1,18 @@
 package pt.mashashi.javaroles.composition;
 
-import java.util.List;
-
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import static org.junit.Assert.*;
+
+import java.util.List;
 
 import pt.mashashi.javaroles.LoggerTarget;
 import pt.mashashi.javaroles.annotations.InjObjRigid;
 import pt.mashashi.javaroles.annotations.ObjRole;
 import pt.mashashi.javaroles.annotations.Play;
 import pt.mashashi.javaroles.annotations.Play.Place;
+import pt.mashashi.javaroles.annotations.Player;
 import pt.mashashi.javaroles.impl.composition.RoleRegisterComposition;
 
 public class TestPlay {
@@ -40,7 +41,7 @@ public class TestPlay {
 		@ObjRole public Human human;
 		@ObjRole public Monkey monkey;
 		
-		@Play
+		@Player
 		public AnimalRoles1(){
 			this.human = new Portuguese();
 			this.monkey = new Bonobo();
@@ -70,13 +71,13 @@ public class TestPlay {
 		
 	}
 	
-	@Play
+	@Player
 	public static class AnimalRoles3 implements AnimalRoles, Human, Monkey{
 		
 		@ObjRole public Human human;
 		@ObjRole public Monkey monkey;
 		
-		@Play
+		@Player
 		public AnimalRoles3(){
 			this.human = new Portuguese();
 			this.monkey = new Bonobo();
@@ -188,7 +189,6 @@ public class TestPlay {
 		assertEquals(null, ((Portuguese)a5.human).animalRoles);
 		a5.setRigidHuman2(null);
 		assertEquals(null, ((Portuguese)a5.human).animalRoles);
-		//a5.setRigidHuman3(null);
 		a5.setRigidHuman3(null);
 		assertNotEquals(null, ((Portuguese)a5.human).animalRoles);
 		

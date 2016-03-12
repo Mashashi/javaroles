@@ -13,8 +13,5 @@ import java.lang.annotation.Target;
  *
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD})
-public @interface Play {
-	public enum Place{ BEFORE, AFTER }
-	Place order() default Place.AFTER;
-}
+@Target({ElementType.TYPE, ElementType.CONSTRUCTOR})
+public @interface Player {}

@@ -7,7 +7,7 @@ import java.util.List;
 
 import pt.mashashi.javaroles.annotations.InjObjRigid;
 import pt.mashashi.javaroles.annotations.ObjRole;
-import pt.mashashi.javaroles.annotations.Play;
+import pt.mashashi.javaroles.annotations.Player;
 import pt.mashashi.javaroles.impl.composition.RoleRegisterComposition;
 
 public class TestRigidAnnotationSingleStrategy {
@@ -18,6 +18,7 @@ public class TestRigidAnnotationSingleStrategy {
 	public static class Portuguese implements Human{
 		@InjObjRigid public AnimalRoles rigid1;
 		@InjObjRigid public Object rigid2;
+		@SuppressWarnings("rawtypes")
 		@InjObjRigid public List rigid3;
 		@InjObjRigid private AnimalRoles rigid4;
 		@Override public String hello1() { return rigid1!=null?"Was setup":"Fails"; }
@@ -32,7 +33,7 @@ public class TestRigidAnnotationSingleStrategy {
 		@Override public String hello4() { return "Ugauga"; }
 	}
 	
-	@Play
+	@Player
 	public static class AnimalRoles implements Human, Monkey{
 		@ObjRole public Human human;
 		@ObjRole public Monkey monkey;
@@ -82,20 +83,16 @@ public class TestRigidAnnotationSingleStrategy {
 		assertEquals("Yap", "Fails", a.hello4());
 		
 		AnimalRoles b = new AnimalRoles(p, null);
-		assertEquals("Yap", "Was setup", a.hello1());
-		assertEquals("Yap", "Was setup", a.hello2());
-		assertEquals("Yap", "Fails", a.hello3());
-		assertEquals("Yap", "Fails", a.hello4());
+		assertEquals("Yap", "Was setup", b.hello1());
+		assertEquals("Yap", "Was setup", b.hello2());
+		assertEquals("Yap", "Fails", b.hello3());
+		assertEquals("Yap", "Fails", b.hello4());
 		
 		AnimalRoles c = new AnimalRoles(p, null);
-		assertEquals("Yap", "Was setup", a.hello1());
-		assertEquals("Yap", "Was setup", a.hello2());
-		assertEquals("Yap", "Fails", a.hello3());
-		assertEquals("Yap", "Was setup", a.hello4());
-		
-		
-		
-		
+		assertEquals("Yap", "Was setup", c.hello1());
+		assertEquals("Yap", "Was setup", c.hello2());
+		assertEquals("Yap", "Fails", c.hello3());
+		assertEquals("Yap", "Was setup", c.hello4());
 		
 		/*
 		 // This feature was removed
