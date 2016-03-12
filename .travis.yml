@@ -4,7 +4,7 @@ jdk:
 ## Run Integration tests
 
 # All tests that should be run 
-script: "mvn -f JavaRoles/pom.xml clean && mvn -f JavaRoles/pom.xml -Dlog4j.configuration=file:log4j.properties -ea -Dtest=pt.mashashi.javaroles.typed.RolesTest test && mvn -f JavaRoles/pom.xml clean && mvn -f JavaRoles/pom.xml -Dlog4j.configuration=file:log4j.properties -ea -Dtest=pt.mashashi.javaroles.composition.RolesTest test && mvn -f JavaRoles/pom.xml clean"
+script: "mvn -f JavaRoles/pom.xml clean && mvn -f JavaRoles/pom.xml -Dlog4j.configuration=file:log4j.properties -Dea -Dtest=pt.mashashi.javaroles.typed.RolesTest test && mvn -f JavaRoles/pom.xml clean && mvn -f JavaRoles/pom.xml -Dlog4j.configuration=file:log4j.properties -Dea -Dtest=pt.mashashi.javaroles.composition.RolesTest test && mvn -f JavaRoles/pom.xml clean"
 
 # Reference commands
 #script: "mvn -f JavaRoles/pom.xml clean"
