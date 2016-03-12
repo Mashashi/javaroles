@@ -20,7 +20,6 @@ import org.apache.log4j.Logger;
 
 import javassist.ClassPool;
 import javassist.CtClass;
-import javassist.CtConstructor;
 import javassist.CtField;
 import javassist.CtMethod;
 import javassist.NotFoundException;
@@ -187,6 +186,15 @@ public class ClassUtils {
 			}
 		}
 		return roleObjects;
+	}
+	public static List<Method> getListMethodAnotated(Class<?> target, Class<? extends Annotation> annotation) throws ClassNotFoundException{
+		List<Method> methods = new LinkedList<>();
+		for(Method m : target.getMethods()){
+			if(m.getAnnotation(annotation)!=null){
+				methods.add(m);
+			}
+		}
+		return methods;
 	}
 	public static List<CtField> getListFieldAnotated(Object target, Class<? extends Annotation> annotation) throws ClassNotFoundException, NotFoundException{
 		ClassPool pool = ClassPool.getDefault();

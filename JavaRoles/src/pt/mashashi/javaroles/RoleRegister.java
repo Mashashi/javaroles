@@ -307,6 +307,10 @@ public abstract class RoleRegister {
 					}
 				}
 				
+				{ // Process callbacks pos injection
+					
+				}
+				
 			} catch (SecurityException|CannotCompileException|NotFoundException e) {
 				throw new RuntimeException(e.getMessage());
 			} 

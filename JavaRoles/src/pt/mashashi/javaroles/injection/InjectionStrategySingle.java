@@ -9,119 +9,38 @@ import pt.mashashi.javaroles.ClassUtils;
 import pt.mashashi.javaroles.annotations.InjObjRigid;
 
 public class InjectionStrategySingle extends InjectionStrategy {
-
 	
+	InjectionStrategySingle() {}
 	
-	InjectionStrategySingle() {
-		
-		{
-			StringBuffer injectionCode = new StringBuffer("");
+	@Override
+	protected void referenceSetCode(StringBuffer injectionCode) {
+		injectionCode.append(List.class.getName()+" l = "+ClassUtils.class.getName()+".getListFieldAnotated(");
+			injectionCode.append("o.getClass(), "+InjObjRigid.class.getName()+".class");
+		injectionCode.append(");");
+		injectionCode.append("boolean setIt = true;");
+		injectionCode.append("for(int i2=0;i2<l.size() && setIt;i2++){");
 			
-			injectionCode.append(Field.class.getName()+"[] fs=this.getClass().getFields();");
-			injectionCode.append("for(int i=0;i<fs.length;i++){");
+			injectionCode.append(Field.class.getName()+" f = (("+Field.class.getName()+")l.get(i2));");
 			
-				injectionCode.append("Object o = "+FieldUtils.class.getName()+".readField(fs[i], this, true);");
-				injectionCode.append("if(o!=null){");
-					injectionCode.append(List.class.getName()+" l = "+ClassUtils.class.getName()+".getListFieldAnotated(");
-						injectionCode.append("o.getClass(), "+InjObjRigid.class.getName()+".class");
-					injectionCode.append(");");
-					injectionCode.append("boolean setIt = true;");
-					injectionCode.append("for(int i2=0;i2<l.size() && setIt;i2++){");
-						
-						injectionCode.append(Field.class.getName()+" f = (("+Field.class.getName()+")l.get(i2));");
-						
-						injectionCode.append("Object of = "+FieldUtils.class.getName()+".readField(f, o, true);");
-						injectionCode.append("if(of==null){");
-						
-						
-							injectionCode.append("boolean accesibilityOriginal = f.isAccessible();");
-							injectionCode.append("f.setAccessible(true);");
-							//injectionCode.append("String rigidName = f.getName();");//
-							injectionCode.append("try{");
-								injectionCode.append("f.set(o, this);");
-								injectionCode.append("setIt = false;");
-								//injectionCode.append("System.out.println(\"-->\"+rigidName);");//
-							injectionCode.append("}catch("+IllegalArgumentException.class.getName()+" e){");
-								//injectionCode.append("//Do nothing - Just a cast error");
-							injectionCode.append("}finally{");
-								injectionCode.append("f.setAccessible(accesibilityOriginal);");
-							injectionCode.append("}");
-							
-						injectionCode.append("}");
-						
-					injectionCode.append("}");
+			injectionCode.append("Object of = "+FieldUtils.class.getName()+".readField(f, o, true);");
+			injectionCode.append("if(of==null){");
+			
+			
+				injectionCode.append("boolean accesibilityOriginal = f.isAccessible();");
+				injectionCode.append("f.setAccessible(true);");
+				//injectionCode.append("String rigidName = f.getName();");//
+				injectionCode.append("try{");
+					injectionCode.append("f.set(o, this);");
+					injectionCode.append("setIt = false;");
+					//injectionCode.append("System.out.println(\"-->\"+rigidName);");//
+				injectionCode.append("}catch("+IllegalArgumentException.class.getName()+" e){");
+					injectionCode.append("/*Do nothing - Just a cast error*/");
+				injectionCode.append("}finally{");
+					injectionCode.append("f.setAccessible(accesibilityOriginal);");
 				injectionCode.append("}");
+				
 			injectionCode.append("}");
 			
-			// OLDFEAT - Instantiate roles automatically
-			/*boolean instanciateObjRoles = c.getAnnotation(DefaultInitObjRole.class)!=null;
-			if(instanciateObjRoles){
-				injectionCode.append(Field.class.getName()+"[] fs=this.getClass().getFields();");
-				injectionCode.append("for(int i=0;i<fs.length;i++){");
-					injectionCode.append("Object o = "+FieldUtils.class.getName()+".readField(fs[i], this, true);");
-					injectionCode.append("if(o==null){");
-					
-						injectionCode.append(Class.class.getName()+" c = Class.forName(o.getClass().getName());");
-						injectionCode.append(Constructor.class.getName()+" c = FileUtils.class.getConstructor(this.getClass());");
-						injectionCode.append("fs[i].set(this, c.newInstance(this));");
-						
-	//						injectionCode.append("try{");
-	//							injectionCode.append("fs[i].set(this, c.newInstance(this));");
-	//						injectionCode.append("}catch("+IllegalArgumentException.class.getName()+" e){");
-	//								injectionCode.append("try{");
-	//									injectionCode.append("fs[i].set(this, c.newInstance());");
-	//								injectionCode.append("}catch("+IllegalArgumentException.class.getName()+" e){");	
-	//						injectionCode.append("}");
-						
-					injectionCode.append("}");
-				injectionCode.append("}");		
-			}*/
-			
-			super.all = injectionCode.toString();
-		}
-		
-		{
-			StringBuffer injectionCode = new StringBuffer("");
-			injectionCode.append(Object.class.getName()+"[] fs=$args;");
-			
-			//injectionCode.append("System.out.println($args[0]);");
-			
-			injectionCode.append("for(int i=0;i<fs.length;i++){");
-			
-				injectionCode.append("Object o = fs[i];");
-				injectionCode.append("if(o!=null){");
-					injectionCode.append(List.class.getName()+" l = "+ClassUtils.class.getName()+".getListFieldAnotated(");
-						injectionCode.append("o.getClass(), "+InjObjRigid.class.getName()+".class");
-					injectionCode.append(");");
-					injectionCode.append("boolean setIt = true;");
-					injectionCode.append("for(int i2=0;i2<l.size() && setIt;i2++){");
-						
-						injectionCode.append(Field.class.getName()+" f = (("+Field.class.getName()+")l.get(i2));");
-						
-						injectionCode.append("Object of = "+FieldUtils.class.getName()+".readField(f, o, true);");
-						injectionCode.append("if(of==null){");
-						
-						
-							injectionCode.append("boolean accesibilityOriginal = f.isAccessible();");
-							injectionCode.append("f.setAccessible(true);");
-							//injectionCode.append("String rigidName = f.getName();");//
-							injectionCode.append("try{");
-								injectionCode.append("f.set(o, this);");
-								injectionCode.append("setIt = false;");
-								//injectionCode.append("System.out.println(\"-->\"+rigidName);");//
-							injectionCode.append("}catch("+IllegalArgumentException.class.getName()+" e){");
-								injectionCode.append("/*Do nothing - Just a cast error*/");
-							injectionCode.append("}finally{");
-								injectionCode.append("f.setAccessible(accesibilityOriginal);");
-							injectionCode.append("}");
-							
-						injectionCode.append("}");
-						
-					injectionCode.append("}");
-				injectionCode.append("}");
-			injectionCode.append("}");
-			
-			super.params = injectionCode.toString(); 
-		}
+		injectionCode.append("}");
 	}
 }
