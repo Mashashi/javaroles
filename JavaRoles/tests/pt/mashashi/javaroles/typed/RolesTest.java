@@ -1,7 +1,5 @@
 package pt.mashashi.javaroles.typed;
 
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.PropertyConfigurator;
 import org.junit.BeforeClass;
 
 import org.junit.Test;

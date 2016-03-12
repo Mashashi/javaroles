@@ -6,7 +6,6 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import org.apache.log4j.Layout;
 import org.apache.log4j.PatternLayout;
