@@ -10,7 +10,8 @@ import static org.junit.Assert.*;
 import pt.mashashi.javaroles.LoggerTarget;
 import pt.mashashi.javaroles.annotations.InjObjRigid;
 import pt.mashashi.javaroles.annotations.ObjRole;
-import pt.mashashi.javaroles.annotations.Rigid;
+import pt.mashashi.javaroles.annotations.Play;
+import pt.mashashi.javaroles.annotations.Play.Place;
 import pt.mashashi.javaroles.impl.composition.RoleRegisterComposition;
 
 public class TestPlay {
@@ -39,7 +40,7 @@ public class TestPlay {
 		@ObjRole public Human human;
 		@ObjRole public Monkey monkey;
 		
-		@Rigid
+		@Play
 		public AnimalRoles1(){
 			this.human = new Portuguese();
 			this.monkey = new Bonobo();
@@ -64,18 +65,18 @@ public class TestPlay {
 		@Override
 		public String hello() { return "Default hello "+this.getClass().getName(); }
 		
-		@Rigid
+		@Play
 		public void set(){}
 		
 	}
 	
-	@Rigid
+	@Play
 	public static class AnimalRoles3 implements AnimalRoles, Human, Monkey{
 		
 		@ObjRole public Human human;
 		@ObjRole public Monkey monkey;
 		
-		@Rigid
+		@Play
 		public AnimalRoles3(){
 			this.human = new Portuguese();
 			this.monkey = new Bonobo();
@@ -99,13 +100,50 @@ public class TestPlay {
 		@Override
 		public String hello() { return "Default hello "+this.getClass().getName(); }
 		
-		@Rigid
+		@Play
 		private void setRigidHuman(Human human){
 			// Code gets injected hear
 		}
 		
 		public void playHuman(){
 			setRigidHuman(human);
+		}
+		
+	}
+	
+	public static class AnimalRoles5 implements AnimalRoles, Human, Monkey{
+		
+		@ObjRole public Human human;
+		@ObjRole public Monkey monkey;
+		
+		public AnimalRoles5(){
+			this.human = new Portuguese();
+			this.monkey = new Bonobo();
+		}
+		
+		@Override
+		public String hello() { return "Default hello "+this.getClass().getName(); }
+		
+		@Play
+		private void setRigidHuman(Human human){
+			// Code gets injected hear
+			human = this.human;
+		}
+		
+		@Play(order=Place.BEFORE)
+		private void setRigidHuman2(Human human){
+			// Code gets injected hear
+			human = this.human;
+		}
+		
+		@Play(order=Place.AFTER)
+		private void setRigidHuman3(Human human){
+			// Code gets injected hear
+			human = this.human;
+		}
+		
+		public void playHuman(){
+			setRigidHuman(null);
 		}
 		
 	}
@@ -139,6 +177,21 @@ public class TestPlay {
 		a4.playHuman();
 		assertNotEquals(null, ((Portuguese)a4.human).animalRoles);
 		assertEquals(null, ((Bonobo)a4.monkey).animalRoles);
+		
+		AnimalRoles5 a5 = new AnimalRoles5();
+		assertEquals(null, ((Portuguese)a5.human).animalRoles);
+		a5.setRigidHuman(null);
+		assertNotEquals(null, ((Portuguese)a5.human).animalRoles);
+		assertEquals(null, ((Bonobo)a5.monkey).animalRoles);
+		
+		a5 = new AnimalRoles5();
+		assertEquals(null, ((Portuguese)a5.human).animalRoles);
+		a5.setRigidHuman2(null);
+		assertEquals(null, ((Portuguese)a5.human).animalRoles);
+		//a5.setRigidHuman3(null);
+		a5.setRigidHuman3(null);
+		assertNotEquals(null, ((Portuguese)a5.human).animalRoles);
+		
 		
 	}
 	

@@ -7,7 +7,7 @@ import java.util.List;
 
 import pt.mashashi.javaroles.annotations.InjObjRigid;
 import pt.mashashi.javaroles.annotations.ObjRole;
-import pt.mashashi.javaroles.annotations.Rigid;
+import pt.mashashi.javaroles.annotations.Play;
 import pt.mashashi.javaroles.impl.composition.RoleRegisterComposition;
 
 public class TestRigidAnnotationSingleStrategy {
@@ -32,7 +32,7 @@ public class TestRigidAnnotationSingleStrategy {
 		@Override public String hello4() { return "Ugauga"; }
 	}
 	
-	@Rigid
+	@Play
 	public static class AnimalRoles implements Human, Monkey{
 		@ObjRole public Human human;
 		@ObjRole public Monkey monkey;
