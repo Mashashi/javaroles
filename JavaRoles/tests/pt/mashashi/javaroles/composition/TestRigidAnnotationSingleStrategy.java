@@ -70,7 +70,7 @@ public class TestRigidAnnotationSingleStrategy {
 	}*/
 	public static void test(){
 		new RoleRegisterComposition(TestRigidAnnotationSingleStrategy.class)
-			.registerRools();
+			.registerRoles();
 		
 		Portuguese p = new Portuguese();
 		

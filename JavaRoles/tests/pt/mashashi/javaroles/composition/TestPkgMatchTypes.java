@@ -2,12 +2,11 @@ package pt.mashashi.javaroles.composition;
 
 import static org.junit.Assert.assertEquals;
 
-
-import pt.mashashi.javaroles.RoleRegister;
-import pt.mashashi.javaroles.RoleRegister.MATCH_TYPE;
 import pt.mashashi.javaroles.annotations.ObjRole;
 import pt.mashashi.javaroles.annotations.Player;
 import pt.mashashi.javaroles.impl.composition.RoleRegisterComposition;
+import pt.mashashi.javaroles.register.RoleRegister;
+import pt.mashashi.javaroles.register.RoleRegister.MATCH_TYPE;
 
 public class TestPkgMatchTypes {
 	
@@ -246,34 +245,34 @@ public class TestPkgMatchTypes {
 		rr = new RoleRegisterComposition(
 				"pt.mashashi.javaroles.composition.TestPkgMatchTypes$AnimalRolesStartsImplicit"
 		);
-		rr.registerRools();
+		rr.registerRoles();
 		r = rr.getClassReport().contains("pt.mashashi.javaroles.composition.TestPkgMatchTypes$AnimalRolesStartsImplicit1") && rr.getClassReport().contains("pt.mashashi.javaroles.composition.TestPkgMatchTypes$AnimalRolesStartsImplicit2");
 		assertEquals(true, r);
 		
 		rr = new RoleRegisterComposition(
 				"pt.mashashi.javaroles.composition.TestPkgMatchTypes$AnimalRolesStartsExplicit"
 		).setPkgMatchType(MATCH_TYPE.STARTS_WITH);
-		rr.registerRools();
+		rr.registerRoles();
 		r = rr.getClassReport().contains("pt.mashashi.javaroles.composition.TestPkgMatchTypes$AnimalRolesStartsExplicit1") && rr.getClassReport().contains("pt.mashashi.javaroles.composition.TestPkgMatchTypes$AnimalRolesStartsExplicit2");
 		assertEquals(true, r && rr.getClassReport().size()==2);
 		
 		rr = new RoleRegisterComposition(
 				"pt.mashashi.javaroles.composition.TestPkgMatchTypes$AnimalRolesExact"
 		).setPkgMatchType(MATCH_TYPE.EXACT);
-		rr.registerRools();
+		rr.registerRoles();
 		assertEquals(true, rr.getClassReport().size()==0);
 		
 		rr = new RoleRegisterComposition(
 				"pt.mashashi.javaroles.composition.TestPkgMatchTypes$AnimalRolesExact1"
 		).setPkgMatchType(MATCH_TYPE.EXACT);
-		rr.registerRools();
+		rr.registerRoles();
 		r = rr.getClassReport().contains("pt.mashashi.javaroles.composition.TestPkgMatchTypes$AnimalRolesExact1");		
 		assertEquals(true, r && rr.getClassReport().size()==1);
 		
 		rr = new RoleRegisterComposition(
 				"^pt\\.mashashi\\.javaroles\\.composition\\.TestPkgMatchTypes\\$AnimalRolesRegex\\d$"
 		).setPkgMatchType(MATCH_TYPE.REGEX);
-		rr.registerRools();
+		rr.registerRoles();
 		r = rr.getClassReport().contains("pt.mashashi.javaroles.composition.TestPkgMatchTypes$AnimalRolesRegex1") && rr.getClassReport().contains("pt.mashashi.javaroles.composition.TestPkgMatchTypes$AnimalRolesRegex2");		
 		assertEquals(true, r && rr.getClassReport().size()==2);
 		
@@ -281,7 +280,7 @@ public class TestPkgMatchTypes {
 		rr = new RoleRegisterComposition(
 				"pt.mashashi.javaroles.composition.TestPkgMatchTypes$AnimalRolesExactSelective"
 		).setPkgMatchType(0, MATCH_TYPE.EXACT);
-		rr.registerRools();
+		rr.registerRoles();
 		r = rr.getClassReport().contains("pt.mashashi.javaroles.composition.TestPkgMatchTypes$AnimalRolesExactSelective");		
 		assertEquals(true, r && rr.getClassReport().size()==1);
 		
