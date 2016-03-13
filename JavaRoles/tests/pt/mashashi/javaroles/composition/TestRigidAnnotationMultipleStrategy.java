@@ -55,7 +55,7 @@ public class TestRigidAnnotationMultipleStrategy {
 		
 		new RoleRegisterComposition(TestRigidAnnotationMultipleStrategy.class)
 				.setRigidInjectionStrategy(InjectionStrategy.getInstanceMultiple())
-				.registerRools();
+				.registerRoles();
 		
 		Portuguese p = new Portuguese();
 		

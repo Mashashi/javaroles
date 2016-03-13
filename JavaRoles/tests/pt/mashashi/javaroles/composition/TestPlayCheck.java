@@ -121,7 +121,7 @@ public class TestPlayCheck {
 		
 		new RoleRegisterComposition("pt.mashashi.javaroles.composition.TestPlayCheck")
 			.setRigidInjectionStrategy(InjectionStrategy.getInstanceMultiple())
-			.registerRools();
+			.registerRoles();
 		
 		//System.out.println(LoggerTarget.string("Test:pt.mashashi.javaroles.composition.TestPlay-TestPlay$AnimalRoles3"));
 		

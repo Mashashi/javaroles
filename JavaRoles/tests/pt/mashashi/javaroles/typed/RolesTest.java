@@ -54,7 +54,10 @@ public class RolesTest {
 	@BeforeClass
 	public static void setup(){
 		//Role.registerRool("Animal");
-		new RoleRegisterTyped("tests/", new String[]{""}).registerRoolsExcludeGiven(TestRigidObjectExceptions.class, TestMissProcessingWrongObjectType.class);
+		new RoleRegisterTyped("tests/", new String[]{""}).excludeGiven(
+				TestRigidObjectExceptions.class, 
+				TestMissProcessingWrongObjectType.class
+		).registerRoles();
 	}
 	
 	

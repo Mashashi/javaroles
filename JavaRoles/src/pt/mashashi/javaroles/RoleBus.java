@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 
 import javassist.CtMethod;
+import pt.mashashi.javaroles.register.RoleRegister;
 
 /**
  * 
@@ -15,7 +16,7 @@ import javassist.CtMethod;
  * The method {@link pt.mashashi.javaroles.RoleBus#resolve(CtMethod, Object[])} is the main part that should be present in this
  * code injection
  * 
- * A instance of a class that extends {@link pt.mashashi.javaroles.RoleRegister} is responsible to do such code injection
+ * A instance of a class that extends {@link pt.mashashi.javaroles.register.RoleRegister} is responsible to do such code injection
  * 
  * @author Rafael
  * @see RoleRegister

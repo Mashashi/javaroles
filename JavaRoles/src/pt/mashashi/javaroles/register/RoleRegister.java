@@ -1,4 +1,4 @@
-package pt.mashashi.javaroles;
+package pt.mashashi.javaroles.register;
 
 import java.io.IOException;
 import java.lang.reflect.Modifier;
@@ -21,6 +21,8 @@ import javassist.CtMethod;
 import javassist.CtNewConstructor;
 import javassist.CtNewMethod;
 import javassist.NotFoundException;
+import pt.mashashi.javaroles.ClassUtils;
+import pt.mashashi.javaroles.RoleBus;
 import pt.mashashi.javaroles.annotations.AnnotationException;
 import pt.mashashi.javaroles.annotations.MissMsgReceptor;
 import pt.mashashi.javaroles.annotations.MissUseAnnotationExceptionException;
@@ -28,9 +30,11 @@ import pt.mashashi.javaroles.annotations.ObjRigid;
 import pt.mashashi.javaroles.annotations.ObjRole;
 import pt.mashashi.javaroles.annotations.Play;
 import pt.mashashi.javaroles.annotations.Player;
+import pt.mashashi.javaroles.annotations.sprinkles.InheritAnnots;
 import pt.mashashi.javaroles.annotations.Play.Place;
 import pt.mashashi.javaroles.composition.TestPlay;
 import pt.mashashi.javaroles.injection.InjectionStrategy;
+import pt.mashashi.javaroles.register.ClassScheduler.Order;
 
 /**
  * Offers a way to go through all the classes in the class path searching for the points that need code injection
@@ -42,12 +46,20 @@ public abstract class RoleRegister {
 	
 	protected String roleBusVarName;
 	private ClassPool cp;
-	private String[] onlyFor;
+	private List<String> onlyFor;
+	private List<String> excludeGiven;
 	private String[] pkgs;
 	private String classesDir;
 	
 	private InjectionStrategy injRigStrategy  = InjectionStrategy.getInstanceSingle();
 	//protected InjectionStrategy injRigStrategy = new InjectionStrategyMultiple();
+	
+	private ClassScheduler classScheduler; 
+	
+	
+	
+	
+	
 	
 	
 	public enum MATCH_TYPE{ EXACT, STARTS_WITH, REGEX }
@@ -78,25 +90,25 @@ public abstract class RoleRegister {
 			setPkgMatchType(MATCH_TYPE.STARTS_WITH);
 		}
 		classReport = new LinkedList<>();
+		classScheduler = new ClassScheduler();
+		excludeGiven = new LinkedList<String>();
 		
 	}
 	
 	public RoleRegister(String[] pkgs, Class<?>... clazzes){
 		this(pkgs);
-		List<String> onlyFor = new LinkedList<String>();
+		this.onlyFor = new LinkedList<String>();
 		for(Class<?> clazz : clazzes){
 			onlyFor.add(clazz.getName());
 		}
-		this.onlyFor = onlyFor.toArray(new String [onlyFor.size()]);
 	}
 	
 	public RoleRegister(Class<?>... clazzes){
 		this(new String[]{""});
-		List<String> onlyFor = new LinkedList<String>();
+		this.onlyFor = new LinkedList<String>();
 		for(Class<?> clazz : clazzes){
 			onlyFor.add(clazz.getName());
 		}
-		this.onlyFor = onlyFor.toArray(new String [onlyFor.size()]);
 	}
 	
 	/**
@@ -154,7 +166,7 @@ public abstract class RoleRegister {
 			CtMethod[] methods = cn.getDeclaredMethods();
 			HashMap<String, CtField> objectRoles = ClassUtils.getTypeFieldAnotatedAssist(cn, ObjRole.class);
 			
-			applyInjectionOnRoles(cn);
+			applyInjections(cn);
 			
 			HashMap<String, CtClass> originals = getOriginals(cn);
 			
@@ -198,27 +210,19 @@ public abstract class RoleRegister {
 				 We want to put the class on the class path after modifications if it was injected with new methods or if 
 				 it was some fields annotated with original. In the later case we change the constructor.
 				 */
-				if(classesDir!=null){
-					cn.writeFile(classesDir);
-				}
-				cn.toClass();
+				classScheduler.scheduleCommand(new ClassScheduler.CloseClass(cn,classesDir), Order.FINAL);
 				classReport.add(clazzName);
 			}
 			
 			{ // freeze originals
-				for(CtClass o : originals.values()){
-					o.toClass();
-				}
+				classScheduler.scheduleCommand(new ClassScheduler.CloseClasses(originals.values(),classesDir), Order.FINAL);
 			}
 			
-		} catch (CannotCompileException | NotFoundException | ClassNotFoundException | IOException e) {
+		} catch (CannotCompileException | NotFoundException | ClassNotFoundException e) {
 			Logger.getLogger(RoleBus.class.getName()).debug("error processing class: "+clazzName+" "+e.getMessage());
 			e.printStackTrace();
 			throw new RuntimeException();
 		}
-		
-		
-		
 		
 	}
 	
@@ -244,11 +248,11 @@ public abstract class RoleRegister {
 		}
 	}
 
-	private void applyInjectionOnRoles(CtClass cn) throws ClassNotFoundException {
+	private void applyInjections(CtClass cn) throws ClassNotFoundException {
 		if(!cn.isFrozen()){
 			try {
 				LinkedList<CtConstructor> pConstructor = new LinkedList<CtConstructor>();
-				{
+				{ // BLOCK Process constructor
 					Player a = (Player) cn.getAnnotation(Player.class); 
 					if(a!=null){
 						for(CtConstructor c: cn.getConstructors()){
@@ -283,7 +287,7 @@ public abstract class RoleRegister {
 						}	
 					}
 				}
-				{ // Process play constructors
+				{ // BLOCK Process play constructors
 					for(CtConstructor c: cn.getConstructors()){
 						Player a = (Player) c.getAnnotation(Player.class);
 						if(a!=null && !pConstructor.contains(c)){
@@ -293,7 +297,7 @@ public abstract class RoleRegister {
 					}
 				}
 				
-				{ // Process play methods
+				{ // BLOCK Process play methods
 					for(CtMethod m: cn.getDeclaredMethods()){
 						Play a = (Play) m.getAnnotation(Play.class);
 						if(a!=null){
@@ -307,9 +311,17 @@ public abstract class RoleRegister {
 					}
 				}
 				
-				{ // Process callbacks pos injection
-					
+				{ // TODO Inherit annotations
+					for(CtMethod m: cn.getDeclaredMethods()){
+						InheritAnnots a = (InheritAnnots) m.getAnnotation(InheritAnnots.class);
+						if(a!=null){
+							classScheduler.scheduleCommand(new ClassScheduler.ExtendAnnotations(this, m), Order.NEXT);
+						}
+					}
 				}
+				
+				
+				
 				
 			} catch (SecurityException|CannotCompileException|NotFoundException e) {
 				throw new RuntimeException(e.getMessage());
@@ -391,6 +403,7 @@ public abstract class RoleRegister {
 				evalClass = cp.makeClass(ClassUtils.generateIdentifier());	
 				evalClass.addInterface(i);
 				originals.put(i.getName(), evalClass);
+				//final String core = ClassUtils.generateIdentifier();
 				evalClass.addField(CtField.make("public "+i.getName()+" core;", evalClass));
 				for(CtMethod method : evalClass.getMethods()){
 					if(Modifier.isAbstract(method.getModifiers())){
@@ -463,8 +476,17 @@ public abstract class RoleRegister {
 		return this;
 	}
 	
-	
-	
+	public RoleRegister excludeGiven(Class<?>... clazzes){	
+		if(clazzes==null){
+			excludeGiven.clear();
+		}
+		excludeGiven.clear();
+		for(Class<?> clazz : clazzes){
+			excludeGiven.add(clazz.getName());
+		}
+		return this;
+	}
+
 	
 	
 	
@@ -477,7 +499,7 @@ public abstract class RoleRegister {
 	 * - The java.lang.Class object is not referenced from anywhere (same goes for reflective access to their members).
 	 * 
 	 */
-	public void registerRools(){
+	public void registerRoles(){
 		if(onlyFor!=null){
 			{ // BLOCK Free up reference in the class loader
 			  /*
@@ -485,13 +507,27 @@ public abstract class RoleRegister {
 			   */
 				System.gc(); 
 			}
-			registerRools(onlyFor);
+			
+			List<String> computedOnlyFor = new LinkedList<String>(onlyFor);
+			
+			{ // BLOCK Remove classes to exclude
+				for(String o : onlyFor){
+					for(String e : excludeGiven){
+						if(o.startsWith(e)){
+							 computedOnlyFor.remove(o);
+						}
+					}
+				}
+			}
+			registerRools(computedOnlyFor.toArray(new String[computedOnlyFor.size()]));
+			
 		}else{
 			List<String> c = getAllClassesForPkgs();
 			for(String className : c){
 				registerRool(className);
 			}
 		}
+		classScheduler.executeSchedule();
 	}
 	
 	private void registerRools(String... clazzes){
@@ -513,50 +549,48 @@ public abstract class RoleRegister {
 		}
 	}
 	
-	public void registerRoolsExcludeGiven(Class<?>... clazzes){
-		if(onlyFor!=null){
-			throw new IllegalStateException("The register configuration does not allow for this method to be called.\n Supply at least one pkg prefix when building the object.");
-		}
-		List<String> c = getAllClassesForPkgs();
-		classProcessing: for(String className : c){
-			for(Class<?> clazz :clazzes){
-				if(className.startsWith(clazz.getName())){ 
-					// BLOCK The condition is with .startsWith because we want to stop registration of inner classes
-					continue classProcessing;
-				}
-			}
-			registerRool(className);
-		}
-	}
 	
 	
 	
 	
 	
-	
-	private List<String> getAllClassesForPkgs(){
+	List<String> getAllClassesForPkgs(){
 		List<String> clazzes = ClassUtils.getAllClassNames();
 		Iterator<String> i = clazzes.iterator();
 		for(String pkg:pkgs){
 			final MATCH_TYPE matchType = matchTypePkg.get(pkg);
 			next: while(i.hasNext()){	
 				final String next = i.next();
-				switch(matchType){
-					case STARTS_WITH: 
-						if(next.startsWith(pkg)){ 
-							continue next;
-						}/*else{assert(!pkg.startsWith(next));}*/
-						break;
-					case EXACT: 
-						if(next.equals(pkg)){ 
-							continue next; 
-						}/*else{assert(!pkg.equals(next));}*/
-						break;
-					case REGEX: 
-						if(next.matches(pkg)){
-							continue next; 
-						}/*else{assert(!pkg.equals(next));}*/
-						break;
+				
+				
+				boolean exclude = false;
+				{ // BLOCK 
+					for(String clazzNameExclude : excludeGiven){
+						if(next.startsWith(clazzNameExclude)){ 
+							// BLOCK The condition is with .startsWith because we want to stop registration of inner classes
+							exclude = true;
+						}
+					}
+				}
+				
+				if(!exclude){
+					switch(matchType){
+						case STARTS_WITH: 
+							if(next.startsWith(pkg)){ 
+								continue next;
+							}/*else{assert(!pkg.startsWith(next));}*/
+							break;
+						case EXACT: 
+							if(next.equals(pkg)){ 
+								continue next; 
+							}/*else{assert(!pkg.equals(next));}*/
+							break;
+						case REGEX: 
+							if(next.matches(pkg)){
+								continue next; 
+							}/*else{assert(!pkg.equals(next));}*/
+							break;
+					}
 				}
 				
 				i.remove();

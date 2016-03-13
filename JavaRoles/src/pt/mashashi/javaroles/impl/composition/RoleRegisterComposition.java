@@ -13,8 +13,8 @@ import javassist.CtNewMethod;
 import javassist.NotFoundException;
 import pt.mashashi.javaroles.ClassUtils;
 import pt.mashashi.javaroles.MissProcessingException;
-import pt.mashashi.javaroles.RoleRegister;
 import pt.mashashi.javaroles.annotations.MissMsgReceptor;
+import pt.mashashi.javaroles.register.RoleRegister;
 
 
 /**

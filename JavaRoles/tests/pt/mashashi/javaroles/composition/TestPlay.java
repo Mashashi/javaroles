@@ -7,13 +7,13 @@ import static org.junit.Assert.*;
 
 import java.util.List;
 
-import pt.mashashi.javaroles.LoggerTarget;
 import pt.mashashi.javaroles.annotations.InjObjRigid;
 import pt.mashashi.javaroles.annotations.ObjRole;
 import pt.mashashi.javaroles.annotations.Play;
 import pt.mashashi.javaroles.annotations.Play.Place;
 import pt.mashashi.javaroles.annotations.Player;
 import pt.mashashi.javaroles.impl.composition.RoleRegisterComposition;
+import pt.mashashi.javaroles.logging.LoggerTarget;
 
 public class TestPlay {
 	public interface Human{ String hello(); }
@@ -154,7 +154,7 @@ public class TestPlay {
 		RoleRegisterComposition rrc = new RoleRegisterComposition("pt.mashashi.javaroles.composition.TestPlay$AnimalRoles");
 		
 		Logger.getRootLogger().setLevel(Level.ALL);
-		rrc.registerRools();
+		rrc.registerRoles();
 		Logger.getRootLogger().setLevel(Level.OFF);
 		
 		//System.out.println(LoggerTarget.string("Test:pt.mashashi.javaroles.composition.TestPlay-TestPlay$AnimalRoles3"));

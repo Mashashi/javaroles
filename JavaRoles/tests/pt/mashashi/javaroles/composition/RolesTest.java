@@ -67,7 +67,7 @@ public class RolesTest {
 		);
 		*/
 		
-		new RoleRegisterComposition("pt.mashashi.javaroles").registerRoolsExcludeGiven(
+		Class<?>[] exclude = {
 				TestRigidObjectExceptions.class,
 				TestOriginalRigidTurnOffRoleMethod.class,
 				TestMissProcessingWrongObjectType.class,
@@ -76,7 +76,8 @@ public class RolesTest {
 				TestRigidAnnotationMultipleStrategy.class,
 				TestPkgMatchTypes.class,
 				TestPlay.class
-		);
+		};
+		new RoleRegisterComposition("pt.mashashi.javaroles").excludeGiven(exclude).registerRoles();
 		
 	}
 	
@@ -131,7 +132,7 @@ public class RolesTest {
 	public void testRigidObjectExceptions(){
 		
 		try{
-			new RoleRegisterComposition(TestRigidObjectExceptions.AnimalRoles.class).registerRools();
+			new RoleRegisterComposition(TestRigidObjectExceptions.AnimalRoles.class).registerRoles();
 			fail("no exception thrown");
 		}catch(MissUseAnnotationExceptionException e){
 			if(	
@@ -144,7 +145,7 @@ public class RolesTest {
 		}
 		
 		try{
-			new RoleRegisterComposition(TestRigidObjectExceptions.AnimalRoles2.class).registerRools();
+			new RoleRegisterComposition(TestRigidObjectExceptions.AnimalRoles2.class).registerRoles();
 			fail("no exception thrown");
 		}catch(MissUseAnnotationExceptionException e){
 			if(		
@@ -160,7 +161,7 @@ public class RolesTest {
 	
 	@Test
 	public void testOriginalRigidTurnOffRoleMethod() {
-		new RoleRegisterComposition(TestOriginalRigidTurnOffRoleMethod.class).registerRools();
+		new RoleRegisterComposition(TestOriginalRigidTurnOffRoleMethod.class).registerRoles();
 		TestOriginalRigidTurnOffRoleMethod.test();
 	}
 	
@@ -193,7 +194,7 @@ public class RolesTest {
 	@Test
 	public void testMissProcessingWrongObjectType() {
 		try {
-			new RoleRegisterComposition(TestMissProcessingWrongObjectType.class).registerRools();
+			new RoleRegisterComposition(TestMissProcessingWrongObjectType.class).registerRoles();
 			fail("no exception thrown");
 		} catch (MissUseAnnotationExceptionException e) {
 			if(
@@ -239,6 +240,11 @@ public class RolesTest {
 	
 	@Test
 	public void testInjectionMethod() {
+		TestInjectionMethod.test();
+	}
+	
+	@Test
+	public void testInheritAnnotation() {
 		TestInjectionMethod.test();
 	}
 	

@@ -1,4 +1,4 @@
-package pt.mashashi.javaroles;
+package pt.mashashi.javaroles.logging;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
