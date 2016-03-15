@@ -1,6 +1,5 @@
 package pt.mashashi.javaroles.register;
 
-import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -30,11 +29,9 @@ import pt.mashashi.javaroles.annotations.ObjRigid;
 import pt.mashashi.javaroles.annotations.ObjRole;
 import pt.mashashi.javaroles.annotations.Play;
 import pt.mashashi.javaroles.annotations.Player;
-import pt.mashashi.javaroles.annotations.sprinkles.InheritAnnots;
 import pt.mashashi.javaroles.annotations.Play.Place;
 import pt.mashashi.javaroles.composition.TestPlay;
 import pt.mashashi.javaroles.injection.InjectionStrategy;
-import pt.mashashi.javaroles.register.ClassScheduler.Order;
 
 /**
  * Offers a way to go through all the classes in the class path searching for the points that need code injection
@@ -49,12 +46,12 @@ public abstract class RoleRegister {
 	private List<String> onlyFor;
 	private List<String> excludeGiven;
 	private String[] pkgs;
-	private String classesDir;
+	String classesDir;
 	
 	private InjectionStrategy injRigStrategy  = InjectionStrategy.getInstanceSingle();
 	//protected InjectionStrategy injRigStrategy = new InjectionStrategyMultiple();
 	
-	private ClassScheduler classScheduler; 
+	ClassScheduler classScheduler; 
 	
 	
 	
@@ -210,12 +207,12 @@ public abstract class RoleRegister {
 				 We want to put the class on the class path after modifications if it was injected with new methods or if 
 				 it was some fields annotated with original. In the later case we change the constructor.
 				 */
-				classScheduler.scheduleCommand(new ClassScheduler.CloseClass(cn,classesDir), Order.FINAL);
+				classScheduler.scheduleFinalCmd(CmdCloseClass.neu(cn,classesDir));
 				classReport.add(clazzName);
 			}
 			
-			{ // freeze originals
-				classScheduler.scheduleCommand(new ClassScheduler.CloseClasses(originals.values(),classesDir), Order.FINAL);
+			{ // BLOCK freeze originals
+				classScheduler.scheduleFinalCmd(new CmdCloseClasses(originals.values(),classesDir));
 			}
 			
 		} catch (CannotCompileException | NotFoundException | ClassNotFoundException e) {
@@ -311,14 +308,14 @@ public abstract class RoleRegister {
 					}
 				}
 				
-				{ // TODO Inherit annotations
+				/*{ // TODO Inherit annotations
 					for(CtMethod m: cn.getDeclaredMethods()){
 						InheritAnnots a = (InheritAnnots) m.getAnnotation(InheritAnnots.class);
 						if(a!=null){
-							classScheduler.scheduleCommand(new ClassScheduler.ExtendAnnotations(this, m), Order.NEXT);
+							classScheduler.scheduleNextCommand(new CmdExtendAnnotation(this, m));
 						}
 					}
-				}
+				}*/
 				
 				
 				
@@ -487,7 +484,11 @@ public abstract class RoleRegister {
 		return this;
 	}
 
-	
+	public RoleRegister extendAnnots(){
+		classScheduler.scheduleNextCmd(new CmdExtendAnnotationFind(this));
+		classScheduler.execSchedule();
+		return this;
+	}
 	
 	
 	
@@ -500,6 +501,13 @@ public abstract class RoleRegister {
 	 * 
 	 */
 	public void registerRoles(){
+		
+		// classScheduler.scheduleCommand(new Class, Order.NEXT);
+		
+		/*
+		classScheduler.executeSchedule();
+		*/
+		
 		if(onlyFor!=null){
 			{ // BLOCK Free up reference in the class loader
 			  /*
@@ -527,7 +535,8 @@ public abstract class RoleRegister {
 				registerRool(className);
 			}
 		}
-		classScheduler.executeSchedule();
+		classScheduler.execSchedule();
+		classScheduler.finalize();
 	}
 	
 	private void registerRools(String... clazzes){
@@ -553,50 +562,57 @@ public abstract class RoleRegister {
 	
 	
 	
-	
+	private List<String> clazzesForPkgs;
 	List<String> getAllClassesForPkgs(){
-		List<String> clazzes = ClassUtils.getAllClassNames();
-		Iterator<String> i = clazzes.iterator();
-		for(String pkg:pkgs){
-			final MATCH_TYPE matchType = matchTypePkg.get(pkg);
-			next: while(i.hasNext()){	
-				final String next = i.next();
-				
-				
-				boolean exclude = false;
-				{ // BLOCK 
-					for(String clazzNameExclude : excludeGiven){
-						if(next.startsWith(clazzNameExclude)){ 
-							// BLOCK The condition is with .startsWith because we want to stop registration of inner classes
-							exclude = true;
+		
+		if(clazzesForPkgs==null){
+			List<String> clazzes = ClassUtils.getAllClassNames();
+			Iterator<String> i = clazzes.iterator();
+			for(String pkg:pkgs){
+				final MATCH_TYPE matchType = matchTypePkg.get(pkg);
+				next: while(i.hasNext()){	
+					final String next = i.next();
+					
+					
+					boolean exclude = false;
+					{ // BLOCK 
+						for(String clazzNameExclude : excludeGiven){
+							if(next.startsWith(clazzNameExclude)){ 
+								// BLOCK The condition is with .startsWith because we want to stop registration of inner classes
+								exclude = true;
+							}
 						}
 					}
-				}
-				
-				if(!exclude){
-					switch(matchType){
-						case STARTS_WITH: 
-							if(next.startsWith(pkg)){ 
-								continue next;
-							}/*else{assert(!pkg.startsWith(next));}*/
-							break;
-						case EXACT: 
-							if(next.equals(pkg)){ 
-								continue next; 
-							}/*else{assert(!pkg.equals(next));}*/
-							break;
-						case REGEX: 
-							if(next.matches(pkg)){
-								continue next; 
-							}/*else{assert(!pkg.equals(next));}*/
-							break;
+					
+					if(!exclude){
+						switch(matchType){
+							case STARTS_WITH: 
+								if(next.startsWith(pkg)){ 
+									continue next;
+								}/*else{assert(!pkg.startsWith(next));}*/
+								break;
+							case EXACT: 
+								if(next.equals(pkg)){ 
+									continue next; 
+								}/*else{assert(!pkg.equals(next));}*/
+								break;
+							case REGEX: 
+								if(next.matches(pkg)){
+									continue next; 
+								}/*else{assert(!pkg.equals(next));}*/
+								break;
+						}
 					}
+					
+					i.remove();
 				}
-				
-				i.remove();
 			}
+			clazzesForPkgs = clazzes;
 		}
-		return clazzes;
+		
+		
+		
+		return clazzesForPkgs;
 	}
 	
 }
