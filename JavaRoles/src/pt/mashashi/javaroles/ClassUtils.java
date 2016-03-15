@@ -23,6 +23,9 @@ import javassist.CtClass;
 import javassist.CtField;
 import javassist.CtMethod;
 import javassist.NotFoundException;
+import javassist.bytecode.AnnotationsAttribute;
+import javassist.bytecode.ClassFile;
+import javassist.bytecode.ConstPool;
 
 /**
  * 
@@ -171,18 +174,32 @@ public class ClassUtils {
 	
 	public static List<CtField> getListFieldAnotated(CtClass target, Class<? extends Annotation> annotation) throws ClassNotFoundException{
 		List<CtField> roleObjects = new LinkedList<>();
-		for(CtField field : target.getDeclaredFields()){//Class.forName(target.getName()).getFields();
+		for(CtField field : target.getFields()){//Class.forName(target.getName()).getFields();
 			if(field.getAnnotation(annotation)!=null){
 				roleObjects.add(field);
+			}
+		}
+		{ // Get the private fields also
+			for(CtField field : target.getDeclaredFields()){//Class.forName(target.getName()).getFields();
+				if(field.getAnnotation(annotation)!=null && !roleObjects.contains(field)){
+					roleObjects.add(field);
+				}
 			}
 		}
 		return roleObjects;
 	}
 	public static List<Field> getListFieldAnotated(Class<?> target, Class<? extends Annotation> annotation) throws ClassNotFoundException{
 		List<Field> roleObjects = new LinkedList<>();
-		for(Field field : target.getDeclaredFields()){//Class.forName(target.getName()).getFields();
+		for(Field field : target.getFields()){//Class.forName(target.getName()).getFields();
 			if(field.getAnnotation(annotation)!=null){
 				roleObjects.add(field);
+			}
+		}
+		{ // Get the private fields also
+			for(Field field : target.getDeclaredFields()){//Class.forName(target.getName()).getFields();
+				if(field.getAnnotation(annotation)!=null && !roleObjects.contains(field)){
+					roleObjects.add(field);
+				}
 			}
 		}
 		return roleObjects;
@@ -343,5 +360,18 @@ public class ClassUtils {
 	}
 
 
-	
+	public static void addAnnotation(
+            CtMethod cmethod,
+            Annotation annot)
+    {
+        ClassFile cfile = cmethod.getDeclaringClass().getClassFile();
+        ConstPool cpool = cfile.getConstPool();
+ 
+        AnnotationsAttribute attr =
+                new AnnotationsAttribute(cpool, AnnotationsAttribute.visibleTag);
+        javassist.bytecode.annotation.Annotation annotAssist = new javassist.bytecode.annotation.Annotation(annot.annotationType().getName(), cpool);
+        //annot.addMemberValue("value", new IntegerMemberValue(ccFile.getConstPool(), 0));
+        attr.addAnnotation(annotAssist);
+        cmethod.getMethodInfo().addAttribute(attr);
+    }
 }

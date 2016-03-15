@@ -75,7 +75,8 @@ public class RolesTest {
 				TestRigidAnnotationSingleStrategy.class,
 				TestRigidAnnotationMultipleStrategy.class,
 				TestPkgMatchTypes.class,
-				TestPlay.class
+				TestPlay.class,
+				TestInheritAnnotation.class
 		};
 		new RoleRegisterComposition("pt.mashashi.javaroles").excludeGiven(exclude).registerRoles();
 		
@@ -208,7 +209,7 @@ public class RolesTest {
 	}
 	
 	@Test
-	public void TestRigidAnnotationSingleStrategy() {
+	public void testRigidAnnotationSingleStrategy() {
 		TestRigidAnnotationSingleStrategy.test();
 	}
 	
@@ -245,7 +246,7 @@ public class RolesTest {
 	
 	@Test
 	public void testInheritAnnotation() {
-		TestInjectionMethod.test();
+		TestInheritAnnotation.test();
 	}
 	
 }

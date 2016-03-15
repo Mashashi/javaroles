@@ -116,6 +116,8 @@ public abstract class InjectionStrategy {
 		
 			injectionCode.append(Method.class.getName()+" m = (("+Method.class.getName()+")l.get(i));");
 			
+			
+			
 			injectionCode.append("boolean isAccessible = m.isAccessible();");
 			injectionCode.append("m.setAccessible(true);");
 			
@@ -124,6 +126,7 @@ public abstract class InjectionStrategy {
 			injectionCode.append("}catch("+InvocationTargetException.class.getName()+" e){");
 				//injectionCode.append("//Do nothing - This method is just not compatible");
 				//injectionCode.append("e.printStackTrace();");
+				injectionCode.append("throw e.getCause();");
 			injectionCode.append("}catch("+IllegalArgumentException.class.getName()+" e){");
 				//injectionCode.append("//Do nothing - This method is not accessible");
 				//injectionCode.append("e.printStackTrace();");
