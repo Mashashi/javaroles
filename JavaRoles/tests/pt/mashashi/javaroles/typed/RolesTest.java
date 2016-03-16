@@ -5,7 +5,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import pt.mashashi.javaroles.composition.TestMissProcessingWrongObjectType;
-import pt.mashashi.javaroles.composition.TestRigidObjectExceptions;
 import pt.mashashi.javaroles.impl.typed.RoleRegisterTyped;
 
 /*
@@ -54,10 +53,7 @@ public class RolesTest {
 	@BeforeClass
 	public static void setup(){
 		//Role.registerRool("Animal");
-		new RoleRegisterTyped("tests/", new String[]{""}).excludeGiven(
-				TestRigidObjectExceptions.class, 
-				TestMissProcessingWrongObjectType.class
-		).registerRoles();
+		new RoleRegisterTyped("tests/","pt.mashashi.javaroles.typed").registerRoles();
 	}
 	
 	

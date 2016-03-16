@@ -64,11 +64,8 @@ public abstract class RoleRegister {
 	
 	private List<String> classReport;
 	
-	
-	
-	@SuppressWarnings("unused")
-	private RoleRegister(){
-		throw new NotImplementedException("This shouldn't be used");
+	public RoleRegister(){
+		this(new String[]{""});
 	}
 	
 	public RoleRegister(String[] pkgs){
@@ -101,7 +98,7 @@ public abstract class RoleRegister {
 	}
 	
 	public RoleRegister(Class<?>... clazzes){
-		this(new String[]{""});
+		this();
 		this.onlyFor = new LinkedList<String>();
 		for(Class<?> clazz : clazzes){
 			onlyFor.add(clazz.getName());
@@ -182,7 +179,9 @@ public abstract class RoleRegister {
 						break methodInj;
 					}
 					
-					if(!wasInjected){						
+					if(!wasInjected){
+						//System.out.println(clazzName);
+						wasInjected = true;
 						CtField newField = CtField.make(getRoleBusDeclaration(), cn);
 						cn.addField(newField);
 					}
@@ -191,8 +190,6 @@ public abstract class RoleRegister {
 					
 					List<CtClass> inters = ClassUtils.definedOnInterfaces(method, cn);
 					applyIndirect(method, created, originals, inters);
-					
-					wasInjected = true;
 					
 					Logger.getLogger(RoleBus.class.getName()).debug(cn.getName()+" add code injected in method "+method.getName()+" done");
 					
@@ -474,12 +471,21 @@ public abstract class RoleRegister {
 	}
 	
 	public RoleRegister excludeGiven(Class<?>... clazzes){	
-		if(clazzes==null){
-			excludeGiven.clear();
+		//excludeGiven.clear();
+		if(clazzes!=null){
+			for(Class<?> clazz : clazzes){
+				excludeGiven.add(clazz.getName());
+			}
 		}
-		excludeGiven.clear();
-		for(Class<?> clazz : clazzes){
-			excludeGiven.add(clazz.getName());
+		return this;
+	}
+	
+	public RoleRegister excludeGivenPkg(String... pkgs){	
+		//excludeGiven.clear();
+		if(pkgs!=null){
+			for(String pkg : pkgs){
+				excludeGiven.add(pkg);
+			}
 		}
 		return this;
 	}
@@ -531,7 +537,9 @@ public abstract class RoleRegister {
 			
 		}else{
 			List<String> c = getAllClassesForPkgs();
+			
 			for(String className : c){
+				//System.out.println("-->"+className);
 				registerRool(className);
 			}
 		}
