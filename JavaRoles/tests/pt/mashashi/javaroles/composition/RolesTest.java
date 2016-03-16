@@ -79,7 +79,7 @@ public class RolesTest {
 				TestPlay.class,
 				TestInheritAnnotation.class
 		};
-		new RoleRegisterComposition("pt.mashashi.javaroles").excludeGiven(exclude).registerRoles();
+		new RoleRegisterComposition("pt.mashashi.javaroles.composition").excludeGiven(exclude).registerRoles();
 		
 	}
 	

@@ -6,10 +6,13 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -255,15 +258,16 @@ public class ClassUtils {
 	
 	
 	public static List<String> getAllClassNames(){
-		List<String> classNames = new LinkedList<>();
+		Set<String> classNames = new HashSet<>();
 		String classpath = System.getProperty("java.class.path");
 		String[] classpathEntries = classpath.split(File.pathSeparator);
 		for(String classPathEntry: classpathEntries){
 			Logger.getLogger(RoleBus.class).debug("classpath element: "+classPathEntry);
 			classNames.addAll( getAllClassNamesFolder(classPathEntry) );
 		}
-		return classNames;
+		return new LinkedList<String>(Arrays.asList(classNames.toArray(new String[classNames.size()])));
 	}
+	
 	public static List<String> getAllClassNamesFolder(String path){
 		return getAllClassNamesFolder(path, "");
 	}
