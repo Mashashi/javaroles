@@ -1,12 +1,12 @@
 package pt.mashashi.javaroles.register;
 
 import java.lang.reflect.Modifier;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.commons.lang3.NotImplementedException;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -228,7 +228,7 @@ public abstract class RoleRegister {
 	 * @throws NotFoundException
 	 */
 	private void checkMsgReceptorTypes(CtClass cn) throws ClassNotFoundException, NotFoundException {
-		List<CtField> objectRoles = ClassUtils.getListFieldAnotated(cn, MissMsgReceptor.class);
+		List<CtField> objectRoles = ClassUtils.getListFieldAnnotated(cn, MissMsgReceptor.class);
 		for(CtField o:objectRoles){
 			if(
 					!o.getType().equals((ClassUtils.getMissMsgReceptorType())) && 
@@ -377,7 +377,7 @@ public abstract class RoleRegister {
 			return originals;
 		}
 		ClassPool cp = ClassPool.getDefault();
-		List<CtField> objectOriginal = ClassUtils.getListFieldAnotated(cn, ObjRigid.class);
+		List<CtField> objectOriginal = ClassUtils.getListFieldAnnotated(cn, ObjRigid.class);
 		Iterator<CtField> ite = objectOriginal.iterator();
 		while(ite.hasNext()){
 			CtField n = ite.next();
@@ -490,11 +490,18 @@ public abstract class RoleRegister {
 		return this;
 	}
 
-	public RoleRegister extendAnnots(){
+	public RoleRegister inheritAnnots(){
 		classScheduler.scheduleNextCmd(new CmdExtendAnnotationFind(this));
 		classScheduler.execSchedule();
 		return this;
 	}
+	
+	public RoleRegister callSuperAnnots(){
+		classScheduler.scheduleNextCmd(new CmdSuperAnnotationFind(this));
+		classScheduler.execSchedule();
+		return this;
+	}
+	
 	
 	
 	
@@ -536,9 +543,8 @@ public abstract class RoleRegister {
 			registerRools(computedOnlyFor.toArray(new String[computedOnlyFor.size()]));
 			
 		}else{
-			List<String> c = getAllClassesForPkgs();
 			
-			for(String className : c){
+			for(String className : getAllClassesForPkgs()){
 				//System.out.println("-->"+className);
 				registerRool(className);
 			}
@@ -570,12 +576,12 @@ public abstract class RoleRegister {
 	
 	
 	
-	private List<String> clazzesForPkgs;
-	List<String> getAllClassesForPkgs(){
+	private Collection<String> clazzesForPkgs;
+	Collection<String> getAllClassesForPkgs(){
 		
 		if(clazzesForPkgs==null){
-			List<String> clazzes = ClassUtils.getAllClassNames();
-			Iterator<String> i = clazzes.iterator();
+			clazzesForPkgs = ClassUtils.getAllClassNames();
+			Iterator<String> i = clazzesForPkgs.iterator();
 			for(String pkg:pkgs){
 				final MATCH_TYPE matchType = matchTypePkg.get(pkg);
 				next: while(i.hasNext()){	
@@ -615,7 +621,6 @@ public abstract class RoleRegister {
 					i.remove();
 				}
 			}
-			clazzesForPkgs = clazzes;
 		}
 		
 		

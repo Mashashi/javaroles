@@ -6,7 +6,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -136,8 +136,41 @@ public class ClassUtils {
 		m.setAccessible(access);
 		return ret;
 	}
-	public static Object invokeWithNativeTypes(Object target, String methodName, Class<?>[] types, Object[] args) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException{
+	
+	public static String getMethodCall(String methodName, CtClass[] jaTypes, String objArgsVar){
+		String s = new String("");
+		s += methodName+"(";
+		for(int i=0;i<jaTypes.length;i++){
+			s +="(("+jaTypes[i].getName()+")"+objArgsVar+"["+i+"]"+")";
+			if(i+1<jaTypes.length)
+				s+=",";
+		}
+		s += ");";
+		return s;
+	}
+	
+	public static Object invokeSuperWithNativeTypes(Object target, String methodName, CtClass[] jaTypes, Object[] args) throws ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException{
+		Class<?>[] types = getNativeTypes(jaTypes);
 		Method m = target.getClass().getMethod(methodName, types);
+		boolean access = m.isAccessible();
+		m.setAccessible(true);
+		Object ret = m.invoke(target, args);
+		m.setAccessible(access);
+		return ret;
+	}
+	
+	/*public static Object invokeSuperWithNativeTypes(Object target, String methodName, CtClass[] jaTypes, Object[] args) throws ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException{
+		Class<?>[] types = getNativeTypes(jaTypes);
+		Method m = target.getClass().getSuperclass().getDeclaredMethod(methodName, types);
+		boolean access = m.isAccessible();
+		m.setAccessible(true);
+		Object ret = m.invoke(target, args);
+		m.setAccessible(access);
+		return ret;
+	}*/
+	
+	public static Object invokeWithNativeTypes(Object target, String methodName, Class<?>[] types, Object[] args) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException{
+		Method m = target.getClass().getDeclaredMethod(methodName, types);
 		boolean access = m.isAccessible();
 		m.setAccessible(true);
 		Object ret = m.invoke(target, args);
@@ -175,7 +208,7 @@ public class ClassUtils {
 		return null;
 	}*/
 	
-	public static List<CtField> getListFieldAnotated(CtClass target, Class<? extends Annotation> annotation) throws ClassNotFoundException{
+	public static List<CtField> getListFieldAnnotated(CtClass target, Class<? extends Annotation> annotation) throws ClassNotFoundException{
 		List<CtField> roleObjects = new LinkedList<>();
 		for(CtField field : target.getFields()){//Class.forName(target.getName()).getFields();
 			if(field.getAnnotation(annotation)!=null){
@@ -191,7 +224,7 @@ public class ClassUtils {
 		}
 		return roleObjects;
 	}
-	public static List<Field> getListFieldAnotated(Class<?> target, Class<? extends Annotation> annotation) throws ClassNotFoundException{
+	public static List<Field> getListFieldAnnotated(Class<?> target, Class<? extends Annotation> annotation) throws ClassNotFoundException{
 		List<Field> roleObjects = new LinkedList<>();
 		for(Field field : target.getFields()){//Class.forName(target.getName()).getFields();
 			if(field.getAnnotation(annotation)!=null){
@@ -219,7 +252,7 @@ public class ClassUtils {
 	public static List<CtField> getListFieldAnotated(Object target, Class<? extends Annotation> annotation) throws ClassNotFoundException, NotFoundException{
 		ClassPool pool = ClassPool.getDefault();
 		CtClass cc = pool.get(target.getClass().getName());
-		return getListFieldAnotated(cc, annotation);
+		return getListFieldAnnotated(cc, annotation);
 	}
 	public static <T extends Annotation> HashMap<String, Field> getTypeFieldAnotatedNative(Object target, Class<T> annotation){
 		HashMap<String, Field> roleObjects = new HashMap<String, Field>();
@@ -257,7 +290,7 @@ public class ClassUtils {
 	
 	
 	
-	public static List<String> getAllClassNames(){
+	public static Collection<String> getAllClassNames(){
 		Set<String> classNames = new HashSet<>();
 		String classpath = System.getProperty("java.class.path");
 		String[] classpathEntries = classpath.split(File.pathSeparator);
@@ -265,7 +298,7 @@ public class ClassUtils {
 			Logger.getLogger(RoleBus.class).debug("classpath element: "+classPathEntry);
 			classNames.addAll( getAllClassNamesFolder(classPathEntry) );
 		}
-		return new LinkedList<String>(Arrays.asList(classNames.toArray(new String[classNames.size()])));
+		return classNames;
 	}
 	
 	public static List<String> getAllClassNamesFolder(String path){
@@ -378,4 +411,32 @@ public class ClassUtils {
         attr.addAnnotation(annotAssist);
         cmethod.getMethodInfo().addAttribute(attr);
     }
+	
+	
+	
+	public static List<CtClass> extendz(CtClass clazz, CtClass possibleExtends){
+		
+		List<CtClass> l =  new LinkedList<CtClass>();
+		
+		ClassPool pool = ClassPool.getDefault();
+		
+		if(clazz.equals(possibleExtends)) return l;
+		
+		try {
+			final Object objectCt = pool.get(Object.class.getName());
+			do{
+				l.add(possibleExtends);
+				possibleExtends = possibleExtends.getSuperclass();
+				if(clazz.equals(possibleExtends)){
+					return l;
+				}
+			}while(!possibleExtends.equals(objectCt));
+		} catch (NotFoundException e) {
+			// No problem some classes like javax.mail.Authenticator are not found
+			//throw new RuntimeException(e);
+		}
+		
+		l.clear();
+		return l;
+	}
 }

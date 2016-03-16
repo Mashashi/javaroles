@@ -14,7 +14,7 @@ public class InjectionStrategySingle extends InjectionStrategy {
 	
 	@Override
 	protected void referenceSetCode(StringBuffer injectionCode) {
-		injectionCode.append(List.class.getName()+" l = "+ClassUtils.class.getName()+".getListFieldAnotated(");
+		injectionCode.append(List.class.getName()+" l = "+ClassUtils.class.getName()+".getListFieldAnnotated(");
 			injectionCode.append("o.getClass(), "+InjObjRigid.class.getName()+".class");
 		injectionCode.append(");");
 		injectionCode.append("boolean setIt = true;");

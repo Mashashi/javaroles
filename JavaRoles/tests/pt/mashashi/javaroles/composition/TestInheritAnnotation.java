@@ -118,7 +118,7 @@ public class TestInheritAnnotation {
 		
 		new RoleRegisterComposition(TestInheritAnnotation.class.getName())
 				.excludeGiven(Lisboeta2.class)
-				.extendAnnots()
+				.inheritAnnots()
 				.registerRoles();
 		
 		

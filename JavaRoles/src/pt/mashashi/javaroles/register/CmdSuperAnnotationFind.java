@@ -4,11 +4,11 @@ import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtMethod;
 import javassist.NotFoundException;
-import pt.mashashi.javaroles.annotations.sprinkles.InheritAnnots;
+import pt.mashashi.javaroles.annotations.sprinkles.CallSuper;
 
-public class CmdExtendAnnotationFind implements Cmd{
+public class CmdSuperAnnotationFind implements Cmd{
 	private RoleRegister roleRegister;
-	public CmdExtendAnnotationFind(RoleRegister roleRegister) {
+	public CmdSuperAnnotationFind(RoleRegister roleRegister) {
 		this.roleRegister = roleRegister;
 	}
 	@Override
@@ -19,8 +19,8 @@ public class CmdExtendAnnotationFind implements Cmd{
 				CtClass ctClazz = pool.get(clazz);
 				
 				for(CtMethod m : ctClazz.getDeclaredMethods()){
-					if(m.getAnnotation(InheritAnnots.class)!=null){
-						roleRegister.classScheduler.scheduleNextCmd(CmdExtendAnnotation.neu(roleRegister, m));
+					if(m.getAnnotation(CallSuper.class)!=null){
+						roleRegister.classScheduler.scheduleNextCmd(CmdSuperAnnotation.neu(roleRegister, m));
 					}
 				}
 				

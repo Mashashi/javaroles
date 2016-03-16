@@ -90,7 +90,7 @@ public class RoleBusComposition extends RoleBus{
 				    	useIt = useIt && o!=null;
 				    	if(useIt){
 					    	// BLOCK Exclude object roles that require the rigid and it is not set on them
-					    	for(Field f : ClassUtils.getListFieldAnotated(o.getClass(), InjObjRigid.class)){
+					    	for(Field f : ClassUtils.getListFieldAnnotated(o.getClass(), InjObjRigid.class)){
 					    		InjObjRigid a = f.getAnnotation(InjObjRigid.class);
 					    		if(f.getType().isInstance(target) && a.required()){
 					    			Object o2 = FieldUtils.readField(f, o, true);

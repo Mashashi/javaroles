@@ -64,14 +64,13 @@ public class CmdExtendAnnotation implements Cmd{
 		public void cmd(){
 			if(!executed){
 				try {
-					List<String> classes = roleRegister.getAllClassesForPkgs();
 					ClassPool pool = ClassPool.getDefault();
-					for(String clazz : classes){
+					for(String clazz : roleRegister.getAllClassesForPkgs()){
 						CtClass ctClazz = pool.get(clazz);
 						
 						for(ProcessUnit pu : pus){
 						
-							List<CtClass> extendz = extendz(pu.c,ctClazz); 
+							List<CtClass> extendz = ClassUtils.extendz(pu.c,ctClazz); 
 							for(CtClass extend : extendz){
 								CtMethod extendMethod = extend.getDeclaredMethod(pu.m.getName(), pu.m.getParameterTypes()); 
 								for(Object a: pu.anots){
@@ -95,29 +94,4 @@ public class CmdExtendAnnotation implements Cmd{
 			}
 		}
 		
-		public List<CtClass> extendz(CtClass clazz, CtClass possibleExtends){
-			
-			List<CtClass> l =  new LinkedList<CtClass>();
-			
-			ClassPool pool = ClassPool.getDefault();
-			
-			if(clazz.equals(possibleExtends)) return l;
-			
-			try {
-				final Object objectCt = pool.get(Object.class.getName());
-				do{
-					l.add(possibleExtends);
-					possibleExtends = possibleExtends.getSuperclass();
-					if(clazz.equals(possibleExtends)){
-						return l;
-					}
-				}while(!possibleExtends.equals(objectCt));
-			} catch (NotFoundException e) {
-				// No problem some classes like javax.mail.Authenticator are not found
-				//throw new RuntimeException(e);
-			}
-			
-			l.clear();
-			return l;
-		}
 	}
