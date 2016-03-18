@@ -116,11 +116,11 @@ public class TestInheritAnnotation {
 
 	public static void test(){
 		
-		new RoleRegisterComposition(TestInheritAnnotation.class.getName())
+		new RoleRegisterComposition()
+				.includeGiven(TestInheritAnnotation.class)
 				.excludeGiven(Lisboeta2.class)
 				.inheritAnnots()
 				.registerRoles();
-		
 		
 		AnimalRoles1 a = new AnimalRoles1();
 		assertNotNull(((Portuguese)a.human).animalRoles);

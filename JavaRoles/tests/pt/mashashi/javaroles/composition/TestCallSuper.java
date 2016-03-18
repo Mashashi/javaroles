@@ -81,7 +81,8 @@ public class TestCallSuper {
 
 	public static void test(){
 		
-		new RoleRegisterComposition(TestCallSuper.class.getName())
+		new RoleRegisterComposition()
+				.includeGiven(TestCallSuper.class)
 				.inheritAnnots()
 				.callSuperAnnots()
 				.registerRoles();

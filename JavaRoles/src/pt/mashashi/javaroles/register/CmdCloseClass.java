@@ -26,6 +26,7 @@ public class CmdCloseClass implements Cmd{
 		}
 		
 		public static CmdCloseClass neu(CtClass clazz, String classesDir){
+			
 			for(CmdCloseClass close : closes){
 				if(close.clazz.equals(clazz)){
 					return close;
@@ -48,6 +49,7 @@ public class CmdCloseClass implements Cmd{
 					Logger.getLogger(RoleBus.class.getName()).debug("error processing class: "+clazzName+" "+e.getMessage());
 					e.printStackTrace();
 					throw new RuntimeException();
+					
 				}
 				executed = true;
 			}

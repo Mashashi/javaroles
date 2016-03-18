@@ -17,7 +17,6 @@ public class CmdExtendAnnotationFind implements Cmd{
 			ClassPool pool = ClassPool.getDefault();
 			for(String clazz : roleRegister.getAllClassesForPkgs()){
 				CtClass ctClazz = pool.get(clazz);
-				
 				for(CtMethod m : ctClazz.getDeclaredMethods()){
 					if(m.getAnnotation(InheritAnnots.class)!=null){
 						roleRegister.classScheduler.scheduleNextCmd(CmdExtendAnnotation.neu(roleRegister, m));

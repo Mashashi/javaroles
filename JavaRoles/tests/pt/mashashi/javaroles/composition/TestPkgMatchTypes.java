@@ -6,7 +6,7 @@ import pt.mashashi.javaroles.annotations.ObjRole;
 import pt.mashashi.javaroles.annotations.Player;
 import pt.mashashi.javaroles.impl.composition.RoleRegisterComposition;
 import pt.mashashi.javaroles.register.RoleRegister;
-import pt.mashashi.javaroles.register.RoleRegister.MATCH_TYPE;
+import pt.mashashi.javaroles.register.RoleRegister.MatchType;
 
 public class TestPkgMatchTypes {
 	
@@ -23,75 +23,70 @@ public class TestPkgMatchTypes {
 	
 	
 	
-	
-	
-	
-	
-	
-	
-	@Player
-	public static class AnimalRolesStartsImplicit1 implements Human, Monkey{
-		@ObjRole public Human human;
-		@ObjRole public Monkey monkey;
+	public static class AnimalRolesStartsImplicit{
 		
-		public AnimalRolesStartsImplicit1(Human human, Monkey monkey){
-			this.human = human;
-			this.monkey = monkey;
+		@Player
+		public static class AnimalRolesStartsImplicit1 implements Human, Monkey{
+			@ObjRole public Human human;
+			@ObjRole public Monkey monkey;
+			
+			public AnimalRolesStartsImplicit1(Human human, Monkey monkey){
+				this.human = human;
+				this.monkey = monkey;
+			}
+			
+			@Override
+			public String hello1() { return "Default hello "+this.getClass().getName(); }
 		}
 		
-		@Override
-		public String hello1() { return "Default hello "+this.getClass().getName(); }
+		@Player
+		public static class AnimalRolesStartsImplicit2 implements Human, Monkey{
+			@ObjRole public Human human;
+			@ObjRole public Monkey monkey;
+			
+			public AnimalRolesStartsImplicit2(Human human, Monkey monkey){
+				this.human = human;
+				this.monkey = monkey;
+			}
+			
+			@Override
+			public String hello1() { return "Default hello "+this.getClass().getName(); }
+		}
+		
 	}
 	
 	
-	@Player
-	public static class AnimalRolesStartsImplicit2 implements Human, Monkey{
-		@ObjRole public Human human;
-		@ObjRole public Monkey monkey;
+	public static class AnimalRolesStartsExplicit {
 		
-		public AnimalRolesStartsImplicit2(Human human, Monkey monkey){
-			this.human = human;
-			this.monkey = monkey;
+		@Player
+		public static class AnimalRolesStartsExplicit1 implements Human, Monkey{
+			@ObjRole public Human human;
+			@ObjRole public Monkey monkey;
+			
+			public AnimalRolesStartsExplicit1(Human human, Monkey monkey){
+				this.human = human;
+				this.monkey = monkey;
+			}
+			
+			@Override
+			public String hello1() { return "Default hello "+this.getClass().getName(); }
 		}
 		
-		@Override
-		public String hello1() { return "Default hello "+this.getClass().getName(); }
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	@Player
-	public static class AnimalRolesStartsExplicit1 implements Human, Monkey{
-		@ObjRole public Human human;
-		@ObjRole public Monkey monkey;
 		
-		public AnimalRolesStartsExplicit1(Human human, Monkey monkey){
-			this.human = human;
-			this.monkey = monkey;
+		@Player
+		public static class AnimalRolesStartsExplicit2 implements Human, Monkey{
+			@ObjRole public Human human;
+			@ObjRole public Monkey monkey;
+			
+			public AnimalRolesStartsExplicit2(Human human, Monkey monkey){
+				this.human = human;
+				this.monkey = monkey;
+			}
+			
+			@Override
+			public String hello1() { return "Default hello "+this.getClass().getName(); }
 		}
 		
-		@Override
-		public String hello1() { return "Default hello "+this.getClass().getName(); }
-	}
-	
-	
-	@Player
-	public static class AnimalRolesStartsExplicit2 implements Human, Monkey{
-		@ObjRole public Human human;
-		@ObjRole public Monkey monkey;
-		
-		public AnimalRolesStartsExplicit2(Human human, Monkey monkey){
-			this.human = human;
-			this.monkey = monkey;
-		}
-		
-		@Override
-		public String hello1() { return "Default hello "+this.getClass().getName(); }
 	}
 	
 	
@@ -104,36 +99,40 @@ public class TestPkgMatchTypes {
 	
 	
 	
-	
-	
-	@Player
-	public static class AnimalRolesExact1 implements Human, Monkey{
-		@ObjRole public Human human;
-		@ObjRole public Monkey monkey;
+	public static class AnimalRolesExact {
 		
-		public AnimalRolesExact1(Human human, Monkey monkey){
-			this.human = human;
-			this.monkey = monkey;
+		@Player
+		public static class AnimalRolesExact1 implements Human, Monkey{
+			@ObjRole public Human human;
+			@ObjRole public Monkey monkey;
+			
+			public AnimalRolesExact1(Human human, Monkey monkey){
+				this.human = human;
+				this.monkey = monkey;
+			}
+			
+			@Override
+			public String hello1() { return "Default hello "+this.getClass().getName(); }
 		}
 		
-		@Override
-		public String hello1() { return "Default hello "+this.getClass().getName(); }
+		
+		@Player
+		public static class AnimalRolesExact2 implements Human, Monkey{
+			@ObjRole public Human human;
+			@ObjRole public Monkey monkey;
+			
+			public AnimalRolesExact2(Human human, Monkey monkey){
+				this.human = human;
+				this.monkey = monkey;
+			}
+			
+			@Override
+			public String hello1() { return "Default hello "+this.getClass().getName(); }
+		}
+		
 	}
 	
 	
-	@Player
-	public static class AnimalRolesExact2 implements Human, Monkey{
-		@ObjRole public Human human;
-		@ObjRole public Monkey monkey;
-		
-		public AnimalRolesExact2(Human human, Monkey monkey){
-			this.human = human;
-			this.monkey = monkey;
-		}
-		
-		@Override
-		public String hello1() { return "Default hello "+this.getClass().getName(); }
-	}
 	
 	
 	
@@ -242,46 +241,50 @@ public class TestPkgMatchTypes {
 		RoleRegister rr = null;
 		boolean  r = false;
 		
-		rr = new RoleRegisterComposition(
-				"pt.mashashi.javaroles.composition.TestPkgMatchTypes$AnimalRolesStartsImplicit"
-		);
+		rr = new RoleRegisterComposition()
+				.includeGiven(AnimalRolesStartsImplicit.class);
 		rr.registerRoles();
-		r = rr.getClassReport().contains("pt.mashashi.javaroles.composition.TestPkgMatchTypes$AnimalRolesStartsImplicit1") && rr.getClassReport().contains("pt.mashashi.javaroles.composition.TestPkgMatchTypes$AnimalRolesStartsImplicit2");
+		r = rr.getClassReport().contains(AnimalRolesStartsImplicit.AnimalRolesStartsImplicit1.class.getName()) && 
+			rr.getClassReport().contains(AnimalRolesStartsImplicit.AnimalRolesStartsImplicit2.class.getName());
 		assertEquals(true, r);
 		
-		rr = new RoleRegisterComposition(
-				"pt.mashashi.javaroles.composition.TestPkgMatchTypes$AnimalRolesStartsExplicit"
-		).setPkgMatchType(MATCH_TYPE.STARTS_WITH);
+		rr = new RoleRegisterComposition()
+				.includeGiven(AnimalRolesStartsExplicit.class)
+				.setMatchType(MatchType.STARTS_WITH);
 		rr.registerRoles();
-		r = rr.getClassReport().contains("pt.mashashi.javaroles.composition.TestPkgMatchTypes$AnimalRolesStartsExplicit1") && rr.getClassReport().contains("pt.mashashi.javaroles.composition.TestPkgMatchTypes$AnimalRolesStartsExplicit2");
+		r = rr.getClassReport().contains(AnimalRolesStartsExplicit.AnimalRolesStartsExplicit1.class.getName()) &&
+			rr.getClassReport().contains(AnimalRolesStartsExplicit.AnimalRolesStartsExplicit2.class.getName());
 		assertEquals(true, r && rr.getClassReport().size()==2);
 		
-		rr = new RoleRegisterComposition(
-				"pt.mashashi.javaroles.composition.TestPkgMatchTypes$AnimalRolesExact"
-		).setPkgMatchType(MATCH_TYPE.EXACT);
+		rr = new RoleRegisterComposition()
+				.includeGiven(AnimalRolesExact.class)
+				.setMatchType(MatchType.EXACT);
 		rr.registerRoles();
 		assertEquals(true, rr.getClassReport().size()==0);
 		
-		rr = new RoleRegisterComposition(
-				"pt.mashashi.javaroles.composition.TestPkgMatchTypes$AnimalRolesExact1"
-		).setPkgMatchType(MATCH_TYPE.EXACT);
+		rr =new RoleRegisterComposition()
+				.includeGivenRaw("pt.mashashi.javaroles.composition.TestPkgMatchTypes$AnimalRolesExact$AnimalRolesExact1")
+				.setMatchType(MatchType.EXACT);
 		rr.registerRoles();
-		r = rr.getClassReport().contains("pt.mashashi.javaroles.composition.TestPkgMatchTypes$AnimalRolesExact1");		
+		rr.registerRoles();
+		r = rr.getClassReport().contains(AnimalRolesExact.AnimalRolesExact1.class.getName());		
 		assertEquals(true, r && rr.getClassReport().size()==1);
 		
-		rr = new RoleRegisterComposition(
-				"^pt\\.mashashi\\.javaroles\\.composition\\.TestPkgMatchTypes\\$AnimalRolesRegex\\d$"
-		).setPkgMatchType(MATCH_TYPE.REGEX);
-		rr.registerRoles();
-		r = rr.getClassReport().contains("pt.mashashi.javaroles.composition.TestPkgMatchTypes$AnimalRolesRegex1") && rr.getClassReport().contains("pt.mashashi.javaroles.composition.TestPkgMatchTypes$AnimalRolesRegex2");		
-		assertEquals(true, r && rr.getClassReport().size()==2);
 		
 		
-		rr = new RoleRegisterComposition(
-				"pt.mashashi.javaroles.composition.TestPkgMatchTypes$AnimalRolesExactSelective"
-		).setPkgMatchType(0, MATCH_TYPE.EXACT);
+		
+//		rr = new RoleRegisterComposition(
+//				"^pt\\.mashashi\\.javaroles\\.composition\\.TestPkgMatchTypes\\$AnimalRolesRegex\\d$"
+//		).setPkgMatchType(MATCH_TYPE_PKG.REGEX);
+//		rr.registerRoles();
+//		r = rr.getClassReport().contains("pt.mashashi.javaroles.composition.TestPkgMatchTypes$AnimalRolesRegex1") && rr.getClassReport().contains("pt.mashashi.javaroles.composition.TestPkgMatchTypes$AnimalRolesRegex2");		
+//		assertEquals(true, r && rr.getClassReport().size()==2);
+		
+		rr = new RoleRegisterComposition()		
+				.includeGivenRaw("pt.mashashi.javaroles.composition.TestPkgMatchTypes$AnimalRolesExactSelective")
+				.setMatchType(MatchType.EXACT);
 		rr.registerRoles();
-		r = rr.getClassReport().contains("pt.mashashi.javaroles.composition.TestPkgMatchTypes$AnimalRolesExactSelective");		
+		r = rr.getClassReport().contains(AnimalRolesExactSelective.class.getName());		
 		assertEquals(true, r && rr.getClassReport().size()==1);
 		
 	}

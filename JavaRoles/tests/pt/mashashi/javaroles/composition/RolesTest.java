@@ -80,7 +80,10 @@ public class RolesTest {
 				TestInheritAnnotation.class,
 				TestCallSuper.class
 		};
-		new RoleRegisterComposition("pt.mashashi.javaroles.composition").excludeGiven(exclude).registerRoles();
+		
+		new RoleRegisterComposition()
+			.includeGivenPkg(RolesTest.class)
+			.excludeGiven(exclude).registerRoles();
 		
 	}
 	
@@ -135,7 +138,9 @@ public class RolesTest {
 	public void testRigidObjectExceptions(){
 		
 		try{
-			new RoleRegisterComposition(TestRigidObjectExceptions.AnimalRoles.class).registerRoles();
+			new RoleRegisterComposition()
+				.includeGiven(TestRigidObjectExceptions.AnimalRoles.class)
+				.registerRoles();
 			fail("no exception thrown");
 		}catch(MissUseAnnotationExceptionException e){
 			if(	
@@ -148,7 +153,9 @@ public class RolesTest {
 		}
 		
 		try{
-			new RoleRegisterComposition(TestRigidObjectExceptions.AnimalRoles2.class).registerRoles();
+			new RoleRegisterComposition()
+				.includeGiven(TestRigidObjectExceptions.AnimalRoles2.class)
+				.registerRoles();
 			fail("no exception thrown");
 		}catch(MissUseAnnotationExceptionException e){
 			if(		
@@ -164,7 +171,9 @@ public class RolesTest {
 	
 	@Test
 	public void testOriginalRigidTurnOffRoleMethod() {
-		new RoleRegisterComposition(TestOriginalRigidTurnOffRoleMethod.class).registerRoles();
+		new RoleRegisterComposition()
+			.includeGiven(TestOriginalRigidTurnOffRoleMethod.class)
+			.registerRoles();
 		TestOriginalRigidTurnOffRoleMethod.test();
 	}
 	
@@ -197,7 +206,9 @@ public class RolesTest {
 	@Test
 	public void testMissProcessingWrongObjectType() {
 		try {
-			new RoleRegisterComposition(TestMissProcessingWrongObjectType.class).registerRoles();
+			new RoleRegisterComposition()
+				.includeGiven(TestMissProcessingWrongObjectType.class)
+				.registerRoles();
 			fail("no exception thrown");
 		} catch (MissUseAnnotationExceptionException e) {
 			if(

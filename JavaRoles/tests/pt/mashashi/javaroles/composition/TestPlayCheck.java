@@ -119,7 +119,8 @@ public class TestPlayCheck {
 
 	public static void test(){
 		
-		new RoleRegisterComposition("pt.mashashi.javaroles.composition.TestPlayCheck")
+		new RoleRegisterComposition()
+			.includeGiven(TestPlayCheck.class)
 			.setRigidInjectionStrategy(InjectionStrategy.getInstanceMultiple())
 			.registerRoles();
 		
