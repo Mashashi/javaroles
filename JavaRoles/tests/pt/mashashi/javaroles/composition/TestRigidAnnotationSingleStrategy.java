@@ -69,7 +69,8 @@ public class TestRigidAnnotationSingleStrategy {
 		public String hello4() { return "Default hello "+this.getClass().getName(); }
 	}*/
 	public static void test(){
-		new RoleRegisterComposition(TestRigidAnnotationSingleStrategy.class)
+		new RoleRegisterComposition()
+			.includeGiven(TestRigidAnnotationSingleStrategy.class)
 			.registerRoles();
 		
 		Portuguese p = new Portuguese();

@@ -41,34 +41,28 @@ import pt.mashashi.javaroles.injection.InjectionStrategy;
  */
 public abstract class RoleRegister {
 	
+	public enum MatchType{ 
+		EXACT
+		,STARTS_WITH
+		//,REGEX
+	}
+	
 	protected String roleBusVarName;
+	
 	private ClassPool cp;
 	private List<String> onlyFor;
 	private List<String> excludeGiven;
-	private String[] pkgs;
-	String classesDir;
-	
+	private HashMap<String, MatchType> matchType;
+	private List<String> pkgs;
 	private InjectionStrategy injRigStrategy  = InjectionStrategy.getInstanceSingle();
 	//protected InjectionStrategy injRigStrategy = new InjectionStrategyMultiple();
-	
-	ClassScheduler classScheduler; 
-	
-	
-	
-	
-	
-	
-	
-	public enum MATCH_TYPE{ EXACT, STARTS_WITH, REGEX }
-	private HashMap<String, MATCH_TYPE> matchTypePkg;
-	
+	private Collection<String> clazzesForPkgs;
 	private List<String> classReport;
 	
-	public RoleRegister(){
-		this(new String[]{""});
-	}
+	String classesDir;
+	ClassScheduler classScheduler;
 	
-	public RoleRegister(String[] pkgs){
+	public RoleRegister(){
 		{
 			// CONFIG Suppress console output from log4j missing config file 
 			// log4j:WARN No appenders could be found for logger... When log4j config file is not set
@@ -76,33 +70,10 @@ public abstract class RoleRegister {
 		}
 		roleBusVarName = ClassUtils.generateIdentifier();
 		cp = ClassPool.getDefault();
-		{
-			this.pkgs = pkgs;
-			if(pkgs==null){ this.pkgs = new String[0]; }
-			if(this.pkgs.length==0){ throw new IllegalArgumentException("Supply at least one package perfix."); }
-			matchTypePkg = new HashMap<>();
-			setPkgMatchType(MATCH_TYPE.STARTS_WITH);
-		}
+		matchType = new HashMap<>();
 		classReport = new LinkedList<>();
 		classScheduler = new ClassScheduler();
 		excludeGiven = new LinkedList<String>();
-		
-	}
-	
-	public RoleRegister(String[] pkgs, Class<?>... clazzes){
-		this(pkgs);
-		this.onlyFor = new LinkedList<String>();
-		for(Class<?> clazz : clazzes){
-			onlyFor.add(clazz.getName());
-		}
-	}
-	
-	public RoleRegister(Class<?>... clazzes){
-		this();
-		this.onlyFor = new LinkedList<String>();
-		for(Class<?> clazz : clazzes){
-			onlyFor.add(clazz.getName());
-		}
 	}
 	
 	/**
@@ -149,7 +120,6 @@ public abstract class RoleRegister {
 	 * @param clazzName The qualified class name. It is a string because we can not use {@link Class} at this point. 
 	 */
 	private void registerRool(String clazzName){
-		
 		CtClass cn = cp.getOrNull(clazzName);
 		boolean wasInjected = false;
 		
@@ -451,22 +421,60 @@ public abstract class RoleRegister {
 	
 	
 	
-	public RoleRegister setPkgMatchType(MATCH_TYPE matchType){
-		for(String pkg : pkgs){ 
-			matchTypePkg.put(pkg, matchType); 
+	public RoleRegister setMatchType(MatchType matchT){
+		if(pkgs!=null){
+			for(String pkg : pkgs){ 
+				matchType.put(pkg, matchT); 
+			}
+		}
+		if(onlyFor!=null){
+			for(String clazz : onlyFor){ 
+				matchType.put(clazz, matchT); 
+			}
 		}
 		return this;
 	}
-	public RoleRegister setPkgMatchType(int pkgIdx, MATCH_TYPE matchType){
-		matchTypePkg.put(pkgs[pkgIdx], matchType);
+	/*public RoleRegister setPkgMatchType(int pkgIdx, MATCH_TYPE_PKG matchType){
+		matchTypePkg.put(pkgs.get(pkgIdx), matchType);
 		return this;
-	}
+	}*/
 	public RoleRegister writeClasses(String dir){
 		classesDir = dir;
 		return this;
 	}
 	public RoleRegister setRigidInjectionStrategy(InjectionStrategy injRigStrategy){
 		this.injRigStrategy = injRigStrategy;
+		return this;
+	}
+	
+	public RoleRegister includeGiven(Class<?>... clazzes){
+		//this.onlyFor = new LinkedList<String>();
+		if(this.onlyFor==null){
+			this.onlyFor = new LinkedList<>();
+		}
+		for(Class<?> clazz : clazzes){
+			onlyFor.add(clazz.getName());
+		}
+		setMatchType(MatchType.STARTS_WITH);
+		return this;
+	}
+	
+	/**
+	 * Sometimes when using classes some problems may arise to to the class loader. When so try to use a string identifying the
+	 * class to workaround the problem.
+	 * 
+	 * @param clazzes
+	 * @return
+	 */
+	public RoleRegister includeGivenRaw(String... clazzes){
+		//this.onlyFor = new LinkedList<String>();
+		if(this.onlyFor==null){
+			this.onlyFor = new LinkedList<>();
+		}
+		for(String clazz : clazzes){
+			onlyFor.add(clazz);
+		}
+		setMatchType(MatchType.STARTS_WITH);
 		return this;
 	}
 	
@@ -480,11 +488,32 @@ public abstract class RoleRegister {
 		return this;
 	}
 	
-	public RoleRegister excludeGivenPkg(String... pkgs){	
+	public RoleRegister excludeGivenRaw(String... clazzes){	
+		//excludeGiven.clear();
+		if(clazzes!=null){
+			for(String clazz : clazzes){
+				excludeGiven.add(clazz);
+			}
+		}
+		return this;
+	}
+	
+	public RoleRegister includeGivenPkg(Class<?>... pkgs){	
+		if(pkgs!=null){
+			this.pkgs = new LinkedList<>();
+			for(Class<?> pkg : pkgs){
+				this.pkgs.add(pkg.getPackage().getName());
+			}
+		}
+		setMatchType(MatchType.STARTS_WITH);
+		return this;
+	}
+	
+	public RoleRegister excludeGivenPkg(Class<?>... pkgs){	
 		//excludeGiven.clear();
 		if(pkgs!=null){
-			for(String pkg : pkgs){
-				excludeGiven.add(pkg);
+			for(Class<?> pkg : pkgs){
+				excludeGiven.add(pkg.getPackage().getName());
 			}
 		}
 		return this;
@@ -522,11 +551,12 @@ public abstract class RoleRegister {
 		*/
 		
 		if(onlyFor!=null){
+			
 			{ // BLOCK Free up reference in the class loader
-			  /*
+				  /*
 			   This will unload the classes from the class loader if the roles for unloading a class are verified
 			   */
-				System.gc(); 
+				System.gc(); // Doesn't work for inner inner classes
 			}
 			
 			List<String> computedOnlyFor = new LinkedList<String>(onlyFor);
@@ -540,7 +570,8 @@ public abstract class RoleRegister {
 					}
 				}
 			}
-			registerRools(computedOnlyFor.toArray(new String[computedOnlyFor.size()]));
+			
+			registerRools(computedOnlyFor);
 			
 		}else{
 			
@@ -553,7 +584,7 @@ public abstract class RoleRegister {
 		classScheduler.finalize();
 	}
 	
-	private void registerRools(String... clazzes){
+	private void registerRools(List<String> clazzes){
 		for(String clazz :clazzes){
 			CtClass c = null;
 			try {
@@ -562,9 +593,17 @@ public abstract class RoleRegister {
 				throw new RuntimeException(e.getMessage());
 			}
 			try {
-				for(CtClass i : c.getDeclaredClasses()){
-					registerRool(i.getName());
+				final MatchType match = matchType.get(clazz);
+				if(match!=null && match.equals(MatchType.EXACT)){
+					// Don't register inner classes
+				}else{ //if(match.equals(MatchType.STARTS_WITH)){
+					for(CtClass i : c.getDeclaredClasses()){
+						List<String> t = new LinkedList<String>();
+						t.add(i.getName());
+						registerRools(t);
+					}
 				}
+				
 			} catch (NotFoundException e) {
 				throw new RuntimeException(e.getMessage());
 			}
@@ -572,24 +611,49 @@ public abstract class RoleRegister {
 		}
 	}
 	
-	
-	
-	
-	
-	private Collection<String> clazzesForPkgs;
+	/**
+	 * Memoization was applied
+	 * 
+	 * @return
+	 */
 	Collection<String> getAllClassesForPkgs(){
 		
+		
 		if(clazzesForPkgs==null){
+			
+			{ // TODO
+				if(this.pkgs==null || this.pkgs.size()==0){ 
+					//this.pkgs = new String[0]; 
+					this.pkgs = new LinkedList<String>();
+					this.pkgs.add("");
+				}
+				if(this.pkgs.size()==0){ throw new IllegalArgumentException("Supply at least one package perfix."); }
+				setMatchType(MatchType.STARTS_WITH);
+			}
+			
 			clazzesForPkgs = ClassUtils.getAllClassNames();
+			
 			Iterator<String> i = clazzesForPkgs.iterator();
 			for(String pkg:pkgs){
-				final MATCH_TYPE matchType = matchTypePkg.get(pkg);
+				//final MATCH_TYPE_PKG matchType = matchTypePkg.get(pkg);
 				next: while(i.hasNext()){	
 					final String next = i.next();
 					
-					
 					boolean exclude = false;
-					{ // BLOCK 
+					
+					if(onlyFor!=null){
+						// BLOCK just process classes that are on only for if setted
+						checkOnlyFor: {
+							for(String o : onlyFor){
+								if(match(next,o))
+									break checkOnlyFor;
+							}
+							exclude = true;
+						}
+					}
+					
+					if(!exclude){
+						// BLOCK exclude classes block
 						for(String clazzNameExclude : excludeGiven){
 							if(next.startsWith(clazzNameExclude)){ 
 								// BLOCK The condition is with .startsWith because we want to stop registration of inner classes
@@ -598,34 +662,40 @@ public abstract class RoleRegister {
 						}
 					}
 					
-					if(!exclude){
-						switch(matchType){
-							case STARTS_WITH: 
-								if(next.startsWith(pkg)){ 
-									continue next;
-								}/*else{assert(!pkg.startsWith(next));}*/
-								break;
-							case EXACT: 
-								if(next.equals(pkg)){ 
-									continue next; 
-								}/*else{assert(!pkg.equals(next));}*/
-								break;
-							case REGEX: 
-								if(next.matches(pkg)){
-									continue next; 
-								}/*else{assert(!pkg.equals(next));}*/
-								break;
-						}
-					}
+					if(!exclude)
+						if(match(next, pkg)) 
+							continue next;
 					
 					i.remove();
 				}
 			}
 		}
 		
-		
-		
 		return clazzesForPkgs;
+	}
+	
+	
+	private boolean match(String current, String matcher){
+		
+		final MatchType match = matchType.get(matcher);
+		boolean r = false;
+		switch(match){
+			case STARTS_WITH: 
+				r = current.startsWith(matcher);
+				break;
+			case EXACT: 
+				r = current.equals(matcher);
+				break;
+			/*
+			case REGEX: 
+				r = next.matches(pkg));
+				break;
+			*/
+			default:
+				throw new RuntimeException("Match type is undefined for: "+matcher);
+		}
+		
+		return r;
 	}
 	
 }

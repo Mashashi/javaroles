@@ -53,7 +53,8 @@ public class TestRigidAnnotationMultipleStrategy {
 	
 	public static void test(){
 		
-		new RoleRegisterComposition(TestRigidAnnotationMultipleStrategy.class)
+		new RoleRegisterComposition()
+				.includeGiven(TestRigidAnnotationMultipleStrategy.class)
 				.setRigidInjectionStrategy(InjectionStrategy.getInstanceMultiple())
 				.registerRoles();
 		

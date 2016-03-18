@@ -4,7 +4,6 @@ import org.junit.BeforeClass;
 
 import org.junit.Test;
 
-import pt.mashashi.javaroles.composition.TestMissProcessingWrongObjectType;
 import pt.mashashi.javaroles.impl.typed.RoleRegisterTyped;
 
 /*
@@ -53,7 +52,9 @@ public class RolesTest {
 	@BeforeClass
 	public static void setup(){
 		//Role.registerRool("Animal");
-		new RoleRegisterTyped("tests/","pt.mashashi.javaroles.typed").registerRoles();
+		new RoleRegisterTyped("tests/")
+			.includeGivenPkg(RolesTest.class)
+			.registerRoles();
 	}
 	
 	

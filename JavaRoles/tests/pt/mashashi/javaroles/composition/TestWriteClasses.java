@@ -41,7 +41,10 @@ public class TestWriteClasses {
 	
 	public static void test(){
 		String dir = "C:"+File.separatorChar+"ouputDir";
-		new RoleRegisterComposition("pt.mashashi.javaroles.composition.TestWriteClasses").writeClasses(dir).registerRoles();
+		new RoleRegisterComposition()
+				.includeGiven(TestWriteClasses.class)
+				.writeClasses(dir)
+				.registerRoles();
 		String path = dir+File.separatorChar+"pt"+File.separatorChar+"mashashi"+File.separatorChar+"javaroles"+File.separatorChar+"composition"+File.separatorChar+"TestWriteClasses$AnimalRoles.class";
 		File f = new File(path);
 		if(!f.exists()){
