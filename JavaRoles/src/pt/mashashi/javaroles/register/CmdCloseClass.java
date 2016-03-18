@@ -14,7 +14,6 @@ import pt.mashashi.javaroles.RoleBus;
 public class CmdCloseClass implements Cmd{
 		
 		private final static List<CmdCloseClass> closes = new LinkedList<>();
-		private static RoleRegister roleRegister;
 		
 		private CtClass clazz; 
 		private String classesDir;
@@ -29,7 +28,6 @@ public class CmdCloseClass implements Cmd{
 		}
 		
 		public static CmdCloseClass neu(RoleRegister roleRegister, CtClass clazz){
-			CmdCloseClass.roleRegister = roleRegister;
 			Iterator<CmdCloseClass> i = closes.iterator();
 			CmdCloseClass n = null;
 			
@@ -43,15 +41,10 @@ public class CmdCloseClass implements Cmd{
 						n = close;
 						break findCommand;
 					}
-					
-					{ // BLOCK Write only the deeper class the other will be written on the class hierarchy to
-						if(close.clazz.subclassOf(clazz)){
-							//System.out.println(close.clazz.getName()+" "+clazz.getName());
-							//close.executed = true;
-							dependencies.add(close);
-						}/*else if(clazz.subclassOf(close.clazz)){
-							return close;
-						}*/
+					 
+					if(close.clazz.subclassOf(clazz)){
+						// BLOCK Write only the deeper class the other will be written on the class hierarchy to
+						dependencies.add(close);
 					}
 				}
 				n = new CmdCloseClass(clazz);
@@ -73,7 +66,6 @@ public class CmdCloseClass implements Cmd{
 				}
 				
 				String clazzName = clazz.getName();
-				System.out.println(clazz.getName());
 				try {
 					if(classesDir!=null){
 						clazz.writeFile(classesDir);
