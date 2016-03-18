@@ -174,7 +174,7 @@ public abstract class RoleRegister {
 				 We want to put the class on the class path after modifications if it was injected with new methods or if 
 				 it was some fields annotated with original. In the later case we change the constructor.
 				 */
-				classScheduler.scheduleFinalCmd(CmdCloseClass.neu(cn,classesDir));
+				classScheduler.scheduleFinalCmd(CmdCloseClass.neu(this,cn));
 				classReport.add(clazzName);
 			}
 			
@@ -636,7 +636,7 @@ public abstract class RoleRegister {
 			Iterator<String> i = clazzesForPkgs.iterator();
 			for(String pkg:pkgs){
 				//final MATCH_TYPE_PKG matchType = matchTypePkg.get(pkg);
-				next: while(i.hasNext()){	
+				next: while(i.hasNext()){
 					final String next = i.next();
 					
 					boolean exclude = false;

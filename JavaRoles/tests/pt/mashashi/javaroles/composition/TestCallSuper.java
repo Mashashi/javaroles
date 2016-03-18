@@ -60,7 +60,7 @@ public class TestCallSuper {
 		
 		@Player
 		public AnimalRoles(){
-			this.human = new Lisboeta();
+			this.human = new Talense();
 			this.monkey = new Bonobo();
 		}
 		
@@ -78,7 +78,37 @@ public class TestCallSuper {
 		}
 		
 	}
-
+	
+	public static class Sacavenense extends Lisboeta{
+		
+		@Override
+		public void callback(AnimalRoles animalRoles) {
+			//super.callback(animalRoles);
+			super.flag+="extended";
+		}
+		
+	}
+	
+	public static class Palmense extends Sacavenense{
+		
+		@Override
+		public void callback(AnimalRoles animalRoles) {
+			//super.callback(animalRoles);
+			super.flag+="extended";
+		}
+		
+	}
+	
+	public static class Talense extends Palmense{
+		
+		@Override
+		public void callback(AnimalRoles animalRoles) {
+			//super.callback(animalRoles);
+			super.flag+="extended";
+		}
+		
+	}
+	
 	public static void test(){
 		
 		new RoleRegisterComposition()
@@ -88,7 +118,7 @@ public class TestCallSuper {
 				.registerRoles();
 		
 		AnimalRoles animalroles = new AnimalRoles();
-		assertEquals("setextended",((Portuguese)animalroles.human).flag);
+		assertEquals("setextendedextendedextendedextended",((Portuguese)animalroles.human).flag);
 		
 	}
 	

@@ -59,7 +59,6 @@ public class CmdSuperAnnotation implements Cmd{
 									ClassUtils.getMethodCall("super."+extendMethod.getName(), extendMethod.getParameterTypes(), "$args")
 								+"}";
 								extendMethod.insertBefore(code);
-								
 							}
 							
 						}
@@ -68,6 +67,11 @@ public class CmdSuperAnnotation implements Cmd{
 				} catch (NotFoundException | CannotCompileException e) {
 					throw new RuntimeException(e.getMessage());
 				}
+				/*if(iterate){
+					roleRegister.classScheduler.scheduleNextCmd(new CmdSuperAnnotationFind(roleRegister));
+					iterate = false;
+					System.out.println("false");
+				}*/
 				executed = true;
 			}
 		}
