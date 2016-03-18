@@ -2,7 +2,6 @@ package pt.mashashi.javaroles.register;
 
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -11,7 +10,6 @@ import javassist.CtClass;
 import javassist.CtMethod;
 import javassist.NotFoundException;
 import pt.mashashi.javaroles.ClassUtils;
-import pt.mashashi.javaroles.annotations.sprinkles.InheritAnnots;
 
 public class CmdExtendAnnotation implements Cmd{
 	
@@ -29,10 +27,10 @@ public class CmdExtendAnnotation implements Cmd{
 				} catch (ClassNotFoundException e) {
 					throw new RuntimeException(e);
 				}
-				removeCmdAnnotation(anots);
+				//removeCmdAnnotation(anots);
 			}
 			
-			private static void removeCmdAnnotation(List<Object> anots) {
+			/*private static void removeCmdAnnotation(List<Object> anots) {
 				Iterator<Object> ite = anots.iterator();
 				while(ite.hasNext()){
 					Object a = ite.next();
@@ -40,7 +38,7 @@ public class CmdExtendAnnotation implements Cmd{
 						ite.remove();
 					}
 				}
-			}
+			}*/
 		} 
 	
 		private static List<ProcessUnit> pus = new LinkedList<>();
@@ -69,17 +67,21 @@ public class CmdExtendAnnotation implements Cmd{
 						CtClass ctClazz = pool.get(clazz);
 						
 						for(ProcessUnit pu : pus){
-						
+							
 							List<CtClass> extendz = ClassUtils.extendz(pu.c,ctClazz); 
 							for(CtClass extend : extendz){
 								CtMethod extendMethod = extend.getDeclaredMethod(pu.m.getName(), pu.m.getParameterTypes()); 
 								for(Object a: pu.anots){
 									final Annotation annotType = ((Annotation)a);
 									Annotation ag = (Annotation) extendMethod.getAnnotation(annotType.annotationType());
+								
+									
+									
 									if(ag==null){
 										ClassUtils.addAnnotation(extendMethod, annotType);
-										roleRegister.classScheduler.scheduleFinalCmd(CmdCloseClass.neu(extend, roleRegister.classesDir));
+										roleRegister.classScheduler.scheduleFinalCmd(CmdCloseClass.neu(roleRegister, extend));
 										//System.out.println(extendMethod.getLongName());
+										//System.out.println("true");
 									}
 								}
 							}
