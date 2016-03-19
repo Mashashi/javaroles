@@ -16,9 +16,9 @@ import pt.mashashi.javaroles.RoleBus;
 public class CmdCloseClass implements Cmd{
 		
 		private final static List<CmdCloseClass> closes = new LinkedList<>();
+		private static RoleRegister roleRegister;
 		
-		private CtClass clazz; 
-		private String classesDir;
+		private CtClass clazz;
 		private Set<Cmd> dependencies;
 		private boolean executed;
 		
@@ -30,6 +30,8 @@ public class CmdCloseClass implements Cmd{
 		}
 		
 		public static CmdCloseClass neu(RoleRegister roleRegister, CtClass clazz){
+			CmdCloseClass.roleRegister = roleRegister;
+			
 			Iterator<CmdCloseClass> i = closes.iterator();
 			CmdCloseClass n = null;
 			
@@ -61,16 +63,12 @@ public class CmdCloseClass implements Cmd{
 		public void cmd(){
 			if(!executed){
 				
-				{ // BLOCK Execute dependencies
-					for(Cmd d : dependencies){
-						d.cmd();
-					}
-				}
+				execDependencies();
 				
 				String clazzName = clazz.getName();
 				try {
-					if(classesDir!=null){
-						clazz.writeFile(classesDir);
+					if(roleRegister.classesDir!=null){
+						clazz.writeFile(roleRegister.classesDir);
 					}
 					clazz.toClass();
 					
@@ -86,4 +84,11 @@ public class CmdCloseClass implements Cmd{
 				executed = true;
 			}
 		}
+		
+		private void execDependencies(){
+			for(Cmd d : dependencies){
+				d.cmd();
+			}
+		}
+		
 	}
