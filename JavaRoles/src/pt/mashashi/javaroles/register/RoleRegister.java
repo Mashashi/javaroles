@@ -44,7 +44,7 @@ public abstract class RoleRegister {
 	public enum MatchType{ 
 		EXACT
 		,STARTS_WITH
-		//,REGEX
+		,REGEX
 	}
 	
 	protected String roleBusVarName;
@@ -571,7 +571,7 @@ public abstract class RoleRegister {
 				}
 			}
 			
-			registerRools(computedOnlyFor);
+			registerRoles(computedOnlyFor);
 			
 		}else{
 			
@@ -584,7 +584,7 @@ public abstract class RoleRegister {
 		classScheduler.finalize();
 	}
 	
-	private void registerRools(List<String> clazzes){
+	private void registerRoles(List<String> clazzes){
 		for(String clazz :clazzes){
 			CtClass c = null;
 			try {
@@ -600,7 +600,7 @@ public abstract class RoleRegister {
 					for(CtClass i : c.getDeclaredClasses()){
 						List<String> t = new LinkedList<String>();
 						t.add(i.getName());
-						registerRools(t);
+						registerRoles(t);
 					}
 				}
 				

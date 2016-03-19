@@ -30,52 +30,52 @@ Defining rigid type AnimalRoles...
 ```java
 package pt.mashashi.example;
 
-import pt.mashashi.javaroles.ObjRole;
-import pt.mashashi.javaroles.ObjRigid;
-import pt.mashashi.javaroles.Rigid;
-import pt.mashashi.javaroles.composition.TurnOffRole;
+import pt.mashashi.javaroles.annotations.ObjRigid;
+import pt.mashashi.javaroles.annotations.ObjRole;
+import pt.mashashi.javaroles.annotations.Player;
+import pt.mashashi.javaroles.impl.composition.TurnOffRole;
 
-@Rigid
+@Player
 public class AnimalRoles implements Human, Monkey{
 
-	@ObjRole public Human human;
+    @ObjRole public Human human;
 
-	@ObjRole public Monkey monkey;
+    @ObjRole public Monkey monkey;
 
-	@ObjRigid public Human original;
+    @ObjRigid public Human original;
 
-	public AnimalRoles(Human human, Monkey monkey){
-	    this.human = human;
-	    this.monkey = monkey;
-	    //if(this.human!=null){
-	    //    ((Portuguese)this.human).core = this;
-	    //}
-	}
+    public AnimalRoles(Human human, Monkey monkey){
+        this.human = human;
+        this.monkey = monkey;
+        //if(this.human!=null){
+        //    ((Portuguese)this.human).core = this;
+        //}
+    }
 
-	@Override
-	public String hello() {
-	    return "Default hallo";
-	}
+    @Override
+    public String hello() {
+        return "Default hallo";
+    }
 
-	@Override
-	public String die(String age) {
-	    return "Default they kill me..."+age;
-	}
+    @Override
+    public String die(String age) {
+        return "Default they kill me..."+age;
+    }
 
-	@Override
-	@TurnOffRole
-	public String eat() {
-	    return "Default eat...";
-	}
+    @Override
+    @TurnOffRole
+    public String eat() {
+        return "Default eat...";
+    }
 
-	@Override
-	public String dance() {
-	    return "Just dance";
-	}
+    @Override
+    public String dance() {
+        return "Just dance";
+    }
 
-	public String notInRole(){
-	    return "Oh oh";
-	}
+    public String notInRole(){
+        return "Oh oh";
+    }
 
 }
 ```
@@ -84,33 +84,33 @@ Defining class role Portuguese with injected AnimalRoles rigid type...
 ```java
 package pt.mashashi.example;
 
-import pt.mashashi.javaroles.InjObjRigid;
+import pt.mashashi.javaroles.annotations.InjObjRigid;
 
 public class Portuguese implements Human{
 
-	@InjObjRigid public AnimalRoles core;
+    @InjObjRigid public AnimalRoles core;
 
-	public Portuguese() {}
+    public Portuguese() {}
 
-	@Override
-	public String hello() {
-	    return "Hey there";
-	}
+    @Override
+    public String hello() {
+        return "Hey there";
+    }
 
-	@Override
-	public String die(String age) {
-	    return "They killed me "+age;
-	}
+    @Override
+    public String die(String age) {
+        return "They killed me "+age;
+    }
 
-	@Override
-	public String eat() {
-	    return "Eating boiled pork now";
-	}
+    @Override
+    public String eat() {
+        return "Eating boiled pork now";
+    }
 
-	@Override
-	public String dance() {
-	    return core.original.dance()+" modified!";
-	}
+    @Override
+    public String dance() {
+        return core.original.dance()+" modified!";
+    }
 
 }
 ```
@@ -122,20 +122,20 @@ package pt.mashashi.example;
 
 public class Bonobo implements Monkey{
 
-	public static final String HALLO = "Ugauga";
-	public static final String EAT = "Nhamnham";
-	
-	public Bonobo() {}
-	
-	@Override
-	public String hello(){
-		return "Ugauga";
-	}
+    public static final String HALLO = "Ugauga";
+    public static final String EAT = "Nhamnham";
 
-	@Override
-	public String eat() {
-		return EAT;
-	}
+    public Bonobo() {}
+
+    @Override
+    public String hello(){
+        return "Ugauga";
+    }
+
+    @Override
+    public String eat() {
+        return EAT;
+    }
 
 }
 ```
@@ -144,11 +144,13 @@ Putting it all together...
 ```java
 package pt.mashashi.example;
 
-import pt.mashashi.javaroles.composition.RoleRegisterComposition;
+import pt.mashashi.javaroles.impl.composition.RoleRegisterComposition;
 
 public class Main {
     public static void main(String[] args) {
-        new RoleRegisterComposition(new String[]{"pt.mashashi.example"}).registerRools();
+        new RoleRegisterComposition()
+        		.includeGivenPkg(Main.class)
+        		.registerRoles();
         AnimalRoles a = new AnimalRoles(new Portuguese(), new Bonobo());
         System.out.println(a.hello());
         System.out.println(a.dance());

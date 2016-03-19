@@ -1,0 +1,4 @@
+-Dlog4j.configuration=file:log4j.properties -ea
+
+Go to Window->Preferences->Java->Installed JREs. Select the JRE you're using, click Edit, 
+and there will be a line for Default VM Arguments which will apply to every execution.
