@@ -25,6 +25,7 @@ public class CmdSuperAnnotation implements Cmd{
 		} 
 	
 		private static List<ProcessUnit> pus = new LinkedList<>();
+		private static List<String> methodsProcessed = new LinkedList<>();
 		
 		private static RoleRegister roleRegister;
 		private static boolean executed = false;
@@ -34,6 +35,7 @@ public class CmdSuperAnnotation implements Cmd{
 		public static CmdSuperAnnotation neu(RoleRegister roleRegister, CtMethod m) {
 			if(executed){
 				pus.clear();
+				methodsProcessed.clear();
 				roleRegister = null;
 				executed = false;
 			}
@@ -52,13 +54,17 @@ public class CmdSuperAnnotation implements Cmd{
 						for(ProcessUnit pu : pus){
 						
 							List<CtClass> extendz = ClassUtils.extendz(pu.c,ctClazz);
+							
 							for(CtClass extend : extendz){
 								CtMethod extendMethod = extend.getDeclaredMethod(pu.m.getName(), pu.m.getParameterTypes());
-								String code = 
-								"{"+								
-									ClassUtils.getMethodCall("super."+extendMethod.getName(), extendMethod.getParameterTypes(), "$args")
-								+"}";
-								extendMethod.insertBefore(code);
+								if(!methodsProcessed.contains(extendMethod.getLongName())){
+									methodsProcessed.add(extendMethod.getLongName());
+									String code = 
+									"{"+
+										ClassUtils.getMethodCall("super."+extendMethod.getName(), extendMethod.getParameterTypes(), "$args")
+									+"}";
+									extendMethod.insertBefore(code);
+								}
 							}
 							
 						}
@@ -67,11 +73,6 @@ public class CmdSuperAnnotation implements Cmd{
 				} catch (NotFoundException | CannotCompileException e) {
 					throw new RuntimeException(e.getMessage());
 				}
-				/*if(iterate){
-					roleRegister.classScheduler.scheduleNextCmd(new CmdSuperAnnotationFind(roleRegister));
-					iterate = false;
-					System.out.println("false");
-				}*/
 				executed = true;
 			}
 		}

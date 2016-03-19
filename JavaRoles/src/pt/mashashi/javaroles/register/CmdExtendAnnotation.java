@@ -74,9 +74,6 @@ public class CmdExtendAnnotation implements Cmd{
 								for(Object a: pu.anots){
 									final Annotation annotType = ((Annotation)a);
 									Annotation ag = (Annotation) extendMethod.getAnnotation(annotType.annotationType());
-								
-									
-									
 									if(ag==null){
 										ClassUtils.addAnnotation(extendMethod, annotType);
 										roleRegister.classScheduler.scheduleFinalCmd(CmdCloseClass.neu(roleRegister, extend));

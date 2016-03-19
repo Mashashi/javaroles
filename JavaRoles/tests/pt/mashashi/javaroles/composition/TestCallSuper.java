@@ -23,14 +23,14 @@ public class TestCallSuper {
 		
 		@InjObjRigid public AnimalRoles animalRoles;
 		
-		public String flag = null;
+		public String flag = "";
 		
 		@InheritAnnots
 		@CallSuper
 		@InjObjRigidPos
 		public void callback(AnimalRoles animalRoles){
 			assertEquals(this.animalRoles, animalRoles);
-			flag = "set";
+			flag += "set";
 		}
 		
 		@Override public String hello() { return "Hello buddy"; }
@@ -74,7 +74,7 @@ public class TestCallSuper {
 		@Override
 		public void callback(AnimalRoles animalRoles) {
 			//super.callback(animalRoles);
-			super.flag+="extended";
+			super.flag+="extended1";
 		}
 		
 	}
@@ -84,7 +84,7 @@ public class TestCallSuper {
 		@Override
 		public void callback(AnimalRoles animalRoles) {
 			//super.callback(animalRoles);
-			super.flag+="extended";
+			super.flag+="extended2";
 		}
 		
 	}
@@ -94,7 +94,7 @@ public class TestCallSuper {
 		@Override
 		public void callback(AnimalRoles animalRoles) {
 			//super.callback(animalRoles);
-			super.flag+="extended";
+			super.flag+="extended3";
 		}
 		
 	}
@@ -104,7 +104,7 @@ public class TestCallSuper {
 		@Override
 		public void callback(AnimalRoles animalRoles) {
 			//super.callback(animalRoles);
-			super.flag+="extended";
+			super.flag+="extended4";
 		}
 		
 	}
@@ -118,7 +118,7 @@ public class TestCallSuper {
 				.registerRoles();
 		
 		AnimalRoles animalroles = new AnimalRoles();
-		assertEquals("setextendedextendedextendedextended",((Portuguese)animalroles.human).flag);
+		assertEquals("setextended1extended2extended3extended4",((Portuguese)animalroles.human).flag);
 		
 	}
 	
