@@ -16,6 +16,11 @@ public class TestInheritAnnotation {
 	public interface Human{ String hello(); }
 	public interface Monkey{ String hello(); }
 	
+	
+	
+	
+	
+	
 	public static class Portuguese implements Human{
 		
 		@InjObjRigid public AnimalRoles animalRoles;
@@ -51,6 +56,13 @@ public class TestInheritAnnotation {
 	}
 	
 	public interface AnimalRoles{}
+	
+	
+	
+	
+	
+	
+	
 	
 	public static class AnimalRoles1 implements AnimalRoles, Human, Monkey{
 		

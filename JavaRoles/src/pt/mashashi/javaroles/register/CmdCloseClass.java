@@ -1,9 +1,11 @@
 package pt.mashashi.javaroles.register;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -17,14 +19,14 @@ public class CmdCloseClass implements Cmd{
 		
 		private CtClass clazz; 
 		private String classesDir;
-		private List<Cmd> dependencies;
+		private Set<Cmd> dependencies;
 		private boolean executed;
 		
 		private CmdCloseClass(){}
 		private CmdCloseClass(CtClass clazz) {
 			this.clazz = clazz;
 			this.executed = false;
-			this.dependencies = new LinkedList<Cmd>();
+			this.dependencies = new HashSet<Cmd>();
 		}
 		
 		public static CmdCloseClass neu(RoleRegister roleRegister, CtClass clazz){
@@ -32,7 +34,6 @@ public class CmdCloseClass implements Cmd{
 			CmdCloseClass n = null;
 			
 			List<CmdCloseClass> dependencies = new LinkedList<>();
-			
 			findCommand: {
 				while(i.hasNext()){
 					CmdCloseClass close = i.next();
@@ -44,6 +45,7 @@ public class CmdCloseClass implements Cmd{
 					 
 					if(close.clazz.subclassOf(clazz)){
 						// BLOCK Write only the deeper class the other will be written on the class hierarchy to
+						//System.out.println("first: "+clazz.getName()+" after:"+close.clazz.getName());
 						dependencies.add(close);
 					}
 				}
