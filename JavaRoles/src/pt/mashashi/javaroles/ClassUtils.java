@@ -19,8 +19,6 @@ import java.util.jar.JarFile;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Logger;
-
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtField;
@@ -74,7 +72,6 @@ public class ClassUtils {
 			}
 		} catch (NotFoundException e) {
 			// This should not be a problem. Happens when going through all the class path for some internal java classes.
-			Logger.getLogger(RoleBus.class).debug(clazz.getName()+" not found interfaces: "+e.getMessage());
 		}
 		return returned;
 	}
@@ -295,7 +292,6 @@ public class ClassUtils {
 		String classpath = System.getProperty("java.class.path");
 		String[] classpathEntries = classpath.split(File.pathSeparator);
 		for(String classPathEntry: classpathEntries){
-			Logger.getLogger(RoleBus.class).debug("classpath element: "+classPathEntry);
 			classNames.addAll( getAllClassNamesFolder(classPathEntry) );
 		}
 		return classNames;
@@ -356,7 +352,7 @@ public class ClassUtils {
 	            }
 	            jarFile.close();
 			} catch (IOException e) {
-				Logger.getLogger(RoleBus.class).debug("Not processing jar file: "+fName);
+				throw new RuntimeException(e);
 			}
 			
 		}

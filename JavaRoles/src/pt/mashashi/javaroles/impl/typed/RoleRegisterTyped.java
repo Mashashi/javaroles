@@ -2,7 +2,6 @@ package pt.mashashi.javaroles.impl.typed;
 
 import java.util.HashMap;
 
-import org.apache.log4j.Logger;
 
 import javassist.CannotCompileException;
 import javassist.CtClass;
@@ -12,7 +11,6 @@ import javassist.CtNewMethod;
 import javassist.NotFoundException;
 import pt.mashashi.javaroles.ClassUtils;
 import pt.mashashi.javaroles.MissProcessingException;
-import pt.mashashi.javaroles.RoleBus;
 import pt.mashashi.javaroles.register.RoleRegister;
 
 
@@ -71,7 +69,6 @@ public class RoleRegisterTyped extends RoleRegister{
 		
 		method.setBody(
 			"{"+	
-					Logger.class.getName()+".getLogger("+RoleBus.class.getName()+".class.getName()).debug(\"invoking injected "+roleBusVarName+".resolve() on method: "+name+"\");"+
 					CtMethod.class.getName()+" "+varM+" = "+ClassUtils.class.getName()+".getExecutingMethod("+
 												"\""+clazzName+"\","+
 												"\""+name+"\","+

@@ -7,7 +7,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
-import org.apache.log4j.Logger;
 
 import javassist.CtField;
 import javassist.CtMethod;
@@ -29,10 +28,10 @@ import pt.mashashi.javaroles.annotations.ObjRole;
  */
 public class RoleBusComposition extends RoleBus{
 	
+	@SuppressWarnings("unused")
 	private RoleBusComposition() {}
 	
 	public RoleBusComposition(Object target) {
-		this();
 		this.target = target;
 	}
 	
@@ -53,7 +52,7 @@ public class RoleBusComposition extends RoleBus{
 		    	Field fieldRole = Class.forName(declaringClass).getDeclaredField(ctFieldRole.getName());
 		    	try{
 		    		returnByRole = invokeRoleMethod(methodInvoked, params, fieldRole, details);
-		    		done=true;
+		    		done = true;
 		    	}catch(MissProcessingException e){
 		    		// TODO Pass hashmap parameter
 		    		fieldsTried.add(ctFieldRole);
@@ -61,9 +60,7 @@ public class RoleBusComposition extends RoleBus{
 		    	}
 	    	}while(!done);
 		} catch (NotFoundException | NoSuchFieldException | SecurityException | ClassNotFoundException e) {
-			Logger.getLogger(RoleBus.class.getName()).debug("error resolving method: "+methodInvoked.getLongName()+" "+e.getMessage());
-			e.printStackTrace();
-			throw new RuntimeException();
+			throw new RuntimeException(e);
 		}
 	    	    
 	    return returnByRole;
@@ -77,53 +74,49 @@ public class RoleBusComposition extends RoleBus{
 			
 			CtMethod[] fieldMethods = field.getType().getMethods();
 			for(CtMethod fieldMethod : fieldMethods){
-				boolean useIt = fieldMethod.getName().equals(methodInvoked.getName()) &&  fieldMethod.getSignature().equals(methodInvoked.getSignature());
+				
 				Field fieldRole = null;
-				{ // check if it is not null
-					Object o = null;
+				useIt: {
+					//boolean useIt = fieldMethod.getName().equals(methodInvoked.getName()) && fieldMethod.getSignature().equals(methodInvoked.getSignature());
+					if(!fieldMethod.equals(methodInvoked)) 
+						break useIt;
+					
 			    	try {
-			    		
+			    		// check if it is not null
+			    		Object o = null;
 			    		String declaringClass = field.getDeclaringClass().getName();
 						fieldRole = Class.forName(declaringClass).getDeclaredField(field.getName());
 						o = FieldUtils.readField(fieldRole, target, true);
 						
-				    	useIt = useIt && o!=null;
-				    	if(useIt){
-					    	// BLOCK Exclude object roles that require the rigid and it is not set on them
-					    	for(Field f : ClassUtils.getListFieldAnnotated(o.getClass(), InjObjRigid.class)){
-					    		InjObjRigid a = f.getAnnotation(InjObjRigid.class);
-					    		if(f.getType().isInstance(target) && a.required()){
-					    			Object o2 = FieldUtils.readField(f, o, true);
-					    			if(o2== null || !o2.equals(target)){
-					    				useIt = false;
-					    				break;
-					    			}
-					    		}
-					    	}
+				    	if(o==null) 
+				    		break useIt;
+				    	
+				    	// BLOCK Exclude object roles that require the rigid and it is not set on them
+				    	for(Field f : ClassUtils.getListFieldAnnotated(o.getClass(), InjObjRigid.class)){
+				    		InjObjRigid a = f.getAnnotation(InjObjRigid.class);
+				    		if(f.getType().isInstance(target) && a.required()){
+				    			Object o2 = FieldUtils.readField(f, o, true);
+				    			if(o2 == null || !o2.equals(target)) 
+				    				break useIt;
+				    		}
 				    	}
 			    	
-			    	} catch (NoSuchFieldException | SecurityException | IllegalAccessException e) {}
+			    	} catch (NoSuchFieldException | SecurityException | IllegalAccessException e) {
+			    		throw new RuntimeException(e);
+			    	}
 			    	
-				}
-				
-				if(useIt){
-					// Exclude fields given has parameter
-					for(CtField e:exclude){
-						if(e.getName().equals(fieldRole.getName())){
-							useIt = false;
-							break;
-						}
+			    	
+			    	for(CtField e:exclude){
+						// Exclude fields given has parameter
+						if(e.getName().equals(fieldRole.getName()))
+							break useIt;
 					}
-				}
-				
-				
-				
-				if(useIt){
-					
-					
-					ctFieldRole = field;
+			    	
+			    	ctFieldRole = field;
 					break roleSearch;
+					
 				}
+				
 			}
 		}
 		return ctFieldRole;
@@ -142,7 +135,6 @@ public class RoleBusComposition extends RoleBus{
 							
 			{// Set miss msg receptor
 				HashMap<String, Field> tmsg = ClassUtils.getTypeFieldAnotatedNative(o, MissMsgReceptor.class);
-				// Set
 				for(Field v : tmsg.values()){
 					v.set(o, details);
 				}
@@ -154,7 +146,7 @@ public class RoleBusComposition extends RoleBus{
 
 		}catch (NotFoundException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
 			
-			// TODO Enhance error handling
+			// TODO Enhance error handling code elegance
 			
 			if(e.getClass().equals(InvocationTargetException.class)){
 				Throwable cause = e.getCause();
@@ -172,9 +164,7 @@ public class RoleBusComposition extends RoleBus{
 				}
 			}else{
 				// Unknown error
-				Logger.getLogger(RoleBus.class.getName()).debug("error calling "+methodInvoked.getLongName()+" "+e.getMessage());
-				e.printStackTrace();
-				throw new RuntimeException();
+				throw new RuntimeException(e);
 			}
 			
 			

@@ -151,7 +151,6 @@ public abstract class RoleRegister {
 						 This happens when running multiple test cases via "mvn test"
 						 The registerRool method will be called multiple times
 						*/
-						Logger.getLogger(RoleBus.class.getName()).debug(cn.getName()+" is frozen");
 						break methodInj;
 					}
 					
@@ -166,8 +165,6 @@ public abstract class RoleRegister {
 					
 					List<CtClass> inters = ClassUtils.definedOnInterfaces(method, cn);
 					applyIndirect(method, created, originals, inters);
-					
-					Logger.getLogger(RoleBus.class.getName()).debug(cn.getName()+" add code injected in method "+method.getName()+" done");
 					
 				}
 				
@@ -189,7 +186,6 @@ public abstract class RoleRegister {
 			}
 			
 		} catch (CannotCompileException | NotFoundException | ClassNotFoundException e) {
-			Logger.getLogger(RoleBus.class.getName()).debug("error processing class: "+clazzName+" "+e.getMessage());
 			throw new RuntimeException(e);
 		}
 		
