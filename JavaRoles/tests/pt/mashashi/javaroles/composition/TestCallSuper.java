@@ -110,6 +110,10 @@ public class TestCallSuper {
 		
 	}
 	
+	public static class Gajo extends Talense{
+		
+	}
+
 	public static void test(){
 		
 		new RoleRegisterAssembler(new RoleRegisterComposition())
