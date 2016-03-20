@@ -2,9 +2,15 @@ package pt.mashashi.javaroles.composition;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.List;
+
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+
 import pt.mashashi.javaroles.annotations.ObjRole;
 import pt.mashashi.javaroles.annotations.Player;
 import pt.mashashi.javaroles.impl.composition.RoleRegisterComposition;
+import pt.mashashi.javaroles.logging.LoggerTarget;
 import pt.mashashi.javaroles.register.RoleRegister;
 import pt.mashashi.javaroles.register.RoleRegisterAssembler;
 import pt.mashashi.javaroles.register.RoleRegister.MatchType;
@@ -240,41 +246,58 @@ public class TestPkgMatchTypes {
 	public static void test(){
 		
 		RoleRegister rr = null;
-		boolean  r = false;
+		
+		boolean  r;
+		List<String> report;
+		final String preId = "Test:"+TestPkgMatchTypes.class.getName()+"-";
 		
 		rr = new RoleRegisterAssembler(new RoleRegisterComposition())
 				.includeGiven(AnimalRolesStartsImplicit.class)
 				.get();
+		Logger.getRootLogger().setLevel(Level.ALL);
 		rr.registerRoles();
-		r = rr.getClassReport().contains(AnimalRolesStartsImplicit.AnimalRolesStartsImplicit1.class.getName()) && 
-			rr.getClassReport().contains(AnimalRolesStartsImplicit.AnimalRolesStartsImplicit2.class.getName());
+		report = LoggerTarget.string(preId);
+		r = report.contains(AnimalRolesStartsImplicit.AnimalRolesStartsImplicit1.class.getName()) && 
+			report.contains(AnimalRolesStartsImplicit.AnimalRolesStartsImplicit2.class.getName());
 		assertEquals(true, r);
+		
+		LoggerTarget.clear();
 		
 		rr = new RoleRegisterAssembler(new RoleRegisterComposition())
 				.includeGiven(AnimalRolesStartsExplicit.class)
 				.setMatchType(MatchType.STARTS_WITH)
 				.get();
+		Logger.getRootLogger().setLevel(Level.ALL);
 		rr.registerRoles();
-		r = rr.getClassReport().contains(AnimalRolesStartsExplicit.AnimalRolesStartsExplicit1.class.getName()) &&
-			rr.getClassReport().contains(AnimalRolesStartsExplicit.AnimalRolesStartsExplicit2.class.getName());
-		assertEquals(true, r && rr.getClassReport().size()==2);
+		report = LoggerTarget.string(preId);
+		r = report.contains(AnimalRolesStartsExplicit.AnimalRolesStartsExplicit1.class.getName()) &&
+			report.contains(AnimalRolesStartsExplicit.AnimalRolesStartsExplicit2.class.getName());
+		assertEquals(true, r && report.size()==2);
+		
+		LoggerTarget.clear();
 		
 		rr = new RoleRegisterAssembler(new RoleRegisterComposition())
 				.includeGiven(AnimalRolesExact.class)
 				.setMatchType(MatchType.EXACT)
 				.get();
+		Logger.getRootLogger().setLevel(Level.ALL);
 		rr.registerRoles();
-		assertEquals(true, rr.getClassReport().size()==0);
+		report = LoggerTarget.string(preId);
+		assertEquals(true, report.size()==0);
+		
+		LoggerTarget.clear();
 		
 		rr = new RoleRegisterAssembler(new RoleRegisterComposition())
 				.includeGivenRaw("pt.mashashi.javaroles.composition.TestPkgMatchTypes$AnimalRolesExact$AnimalRolesExact1")
 				.setMatchType(MatchType.EXACT)
 				.get();
+		Logger.getRootLogger().setLevel(Level.ALL);
 		rr.registerRoles();
-		r = rr.getClassReport().contains(AnimalRolesExact.AnimalRolesExact1.class.getName());		
-		assertEquals(true, r && rr.getClassReport().size()==1);
+		report = LoggerTarget.string(preId);
+		r = report.contains(AnimalRolesExact.AnimalRolesExact1.class.getName());		
+		assertEquals(true, r && report.size()==1);
 		
-		
+		LoggerTarget.clear();
 		
 		
 		/*
@@ -290,9 +313,11 @@ public class TestPkgMatchTypes {
 				.includeGivenRaw("pt.mashashi.javaroles.composition.TestPkgMatchTypes$AnimalRolesExactSelective")
 				.setMatchType(MatchType.EXACT)
 				.get();
+		Logger.getRootLogger().setLevel(Level.ALL);
 		rr.registerRoles();
-		r = rr.getClassReport().contains(AnimalRolesExactSelective.class.getName());		
-		assertEquals(true, r && rr.getClassReport().size()==1);
+		report = LoggerTarget.string(preId);
+		r = report.contains(AnimalRolesExactSelective.class.getName());		
+		assertEquals(true, r && report.size()==1);
 		
 	}
 	

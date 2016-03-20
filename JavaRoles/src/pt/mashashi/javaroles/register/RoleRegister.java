@@ -30,6 +30,7 @@ import pt.mashashi.javaroles.annotations.ObjRole;
 import pt.mashashi.javaroles.annotations.Play;
 import pt.mashashi.javaroles.annotations.Player;
 import pt.mashashi.javaroles.annotations.Play.Place;
+import pt.mashashi.javaroles.composition.TestPkgMatchTypes;
 import pt.mashashi.javaroles.composition.TestPlay;
 import pt.mashashi.javaroles.injection.InjectionStrategy;
 
@@ -63,7 +64,6 @@ public abstract class RoleRegister {
 	List<String> computedOnlyFor;
 	
 	private Collection<String> clazzesForPkgs; // memoization of copmuted classes for enhancement
-	private List<String> classReport; // TODO delete this var replace the test by the log checking 
 	
 	public RoleRegister(){
 		{
@@ -74,7 +74,6 @@ public abstract class RoleRegister {
 		roleBusVarName = ClassUtils.generateIdentifier();
 		cp = ClassPool.getDefault();
 		matchType = new HashMap<>();
-		classReport = new LinkedList<>();
 		classScheduler = new ClassScheduler();
 		excludeGiven = new LinkedList<String>();
 		execInTermBeforeRegister = new LinkedList<>();
@@ -178,7 +177,7 @@ public abstract class RoleRegister {
 				 it was some fields annotated with original. In the later case we change the constructor.
 				 */
 				classScheduler.scheduleFinalCmd(CmdCloseClass.neu(this,cn));
-				classReport.add(clazzName);
+				Logger.getLogger(RoleBus.class.getName()).trace("Test:"+TestPkgMatchTypes.class.getName()+"-"+clazzName);
 			}
 			
 			{ // BLOCK freeze originals
@@ -398,15 +397,6 @@ public abstract class RoleRegister {
 		}
 		return originals;
 	}
-	
-	
-	
-	
-	
-	public List<String> getClassReport() {
-		return new LinkedList<>(classReport);
-	}
-	
 	
 	
 	

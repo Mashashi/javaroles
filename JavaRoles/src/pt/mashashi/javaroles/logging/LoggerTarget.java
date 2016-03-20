@@ -37,8 +37,8 @@ public class LoggerTarget extends WriterAppender{
 		return lastBaus.toString();
 	}
 	
-	public static List<String> string(String regex){
-		return grep(string(), regex);
+	public static List<String> string(String startsWith){
+		return grep(string(), startsWith);
 	}
 	
 	private static List<String> grep(String log, String start){
@@ -50,6 +50,10 @@ public class LoggerTarget extends WriterAppender{
 			}
 		}
 		return l;
+	}
+	
+	public static void clear() {
+		lastBaus.reset();
 	}
 	
 	private static class SystemOutStream extends OutputStream {
@@ -77,5 +81,7 @@ public class LoggerTarget extends WriterAppender{
         }
         
     }
+
+
 	
 }
