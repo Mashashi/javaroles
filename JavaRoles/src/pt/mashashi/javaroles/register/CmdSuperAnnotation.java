@@ -56,22 +56,26 @@ public class CmdSuperAnnotation implements Cmd{
 						}
 						
 						for(ProcessUnit pu : pus){
-						
+							
 							/*
-							//private static List<String> methodsProcessed = new LinkedList<>();methodsProcessed.clear();
+							private static List<String> methodsProcessed = new LinkedList<>();
+							methodsProcessed.clear();
 							List<CtClass> extendz = ClassUtils.extendz(pu.c,ctClazz);
 							for(CtClass extend : extendz){
-								CtMethod extendMethod = extend.getDeclaredMethod(pu.m.getName(), pu.m.getParameterTypes());
-								if(!methodsProcessed.contains(extendMethod.getLongName())){
-									methodsProcessed.add(extendMethod.getLongName());
-									String code = 
-									"{"+
-										ClassUtils.getMethodCall("super."+extendMethod.getName(), extendMethod.getParameterTypes(), "$args")
-									+"}";
-									extendMethod.insertBefore(code);
+								try{
+									CtMethod extendMethod = extend.getDeclaredMethod(pu.m.getName(), pu.m.getParameterTypes());
+									if(!methodsProcessed.contains(extendMethod.getLongName())){
+										methodsProcessed.add(extendMethod.getLongName());
+										String code = 
+										"{"+
+											ClassUtils.getMethodCall("super."+extendMethod.getName(), extendMethod.getParameterTypes(), "$args")
+										+"}";
+										extendMethod.insertBefore(code);
+									}
+								}catch(NotFoundException e){
+									// This is normal the method was not declared on that class
 								}
-							}
-							*/
+							}*/
 							
 							if(ctClazz.subclassOf(pu.c) && !ctClazz.equals(pu.c)){
 								try{

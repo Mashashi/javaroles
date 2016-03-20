@@ -7,11 +7,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 
 import javassist.CannotCompileException;
 import javassist.CtClass;
-import pt.mashashi.javaroles.RoleBus;
 
 public class CmdCloseClass implements Cmd{
 		
@@ -36,6 +34,8 @@ public class CmdCloseClass implements Cmd{
 			CmdCloseClass n = null;
 			
 			List<CmdCloseClass> dependencies = new LinkedList<>();
+			List<CmdCloseClass> depends = new LinkedList<>();
+			
 			findCommand: {
 				while(i.hasNext()){
 					CmdCloseClass close = i.next();
@@ -49,6 +49,8 @@ public class CmdCloseClass implements Cmd{
 						// BLOCK Write only the deeper class the other will be written on the class hierarchy to
 						//System.out.println("first: "+clazz.getName()+" after:"+close.clazz.getName());
 						dependencies.add(close);
+					}else{
+						depends.add(close);
 					}
 				}
 				n = new CmdCloseClass(clazz);
@@ -56,6 +58,9 @@ public class CmdCloseClass implements Cmd{
 			}
 			for(CmdCloseClass d : dependencies){
 				d.dependencies.add(n);
+			}
+			for(CmdCloseClass d : depends){
+				n.dependencies.add(d);
 			}
 			return n;
 		}
@@ -65,7 +70,8 @@ public class CmdCloseClass implements Cmd{
 				
 				execDependencies();
 				
-				String clazzName = clazz.getName();
+				//System.out.println(clazz.getName());
+				
 				try {
 					if(roleRegister.classesDir!=null){
 						clazz.writeFile(roleRegister.classesDir);
@@ -76,10 +82,7 @@ public class CmdCloseClass implements Cmd{
 					// by saving one that extends the current.
 					
 				} catch (CannotCompileException|IOException e) {
-					Logger.getLogger(RoleBus.class.getName()).debug("error processing class: "+clazzName+" "+e.getMessage());
-					e.printStackTrace();
-					throw new RuntimeException();
-					
+					throw new RuntimeException(e);
 				}
 				executed = true;
 			}

@@ -79,7 +79,8 @@ public class RolesTest {
 				TestPkgMatchTypes.class,
 				TestPlay.class,
 				TestInheritAnnotation.class,
-				TestCallSuper.class
+				TestCallSuper.class,
+				TestSeal.class
 		};
 		
 		

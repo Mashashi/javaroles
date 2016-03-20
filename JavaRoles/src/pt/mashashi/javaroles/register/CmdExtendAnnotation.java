@@ -75,6 +75,7 @@ public class CmdExtendAnnotation implements Cmd{
 						
 						for(ProcessUnit pu : pus){
 							
+							/*
 							List<CtClass> extendz = ClassUtils.extendz(pu.c,ctClazz); 
 							for(CtClass extend : extendz){
 								try{
@@ -87,6 +88,23 @@ public class CmdExtendAnnotation implements Cmd{
 											roleRegister.classScheduler.scheduleFinalCmd(CmdCloseClass.neu(roleRegister, extend));
 											//System.out.println(extendMethod.getLongName());
 											//System.out.println("true");
+										}
+									}
+								}catch(NotFoundException e){
+									// Normal method not found in the class beacause it was not overriden
+								}
+								System.out.println("-->"+ctClazz.getName());
+							}*/
+							
+							if(ctClazz.subclassOf(pu.c) && !ctClazz.equals(pu.c)){
+								try{
+									for(Object a: pu.anots){
+										CtMethod extendMethod = ctClazz.getDeclaredMethod(pu.m.getName(), pu.m.getParameterTypes());
+										final Annotation annotType = ((Annotation)a);
+										Annotation ag = (Annotation) extendMethod.getAnnotation(annotType.annotationType());
+										if(ag==null){
+											ClassUtils.addAnnotation(extendMethod, annotType);
+											roleRegister.classScheduler.scheduleFinalCmd(CmdCloseClass.neu(roleRegister, ctClazz));
 										}
 									}
 								}catch(NotFoundException e){
