@@ -25,7 +25,7 @@ public class CmdSuperAnnotation implements Cmd{
 		} 
 	
 		private static List<ProcessUnit> pus = new LinkedList<>();
-		private static List<String> methodsProcessed = new LinkedList<>();
+		
 		
 		private static RoleRegister roleRegister;
 		private static boolean executed = false;
@@ -35,7 +35,6 @@ public class CmdSuperAnnotation implements Cmd{
 		public static CmdSuperAnnotation neu(RoleRegister roleRegister, CtMethod m) {
 			if(executed){
 				pus.clear();
-				methodsProcessed.clear();
 				roleRegister = null;
 				executed = false;
 			}
@@ -49,12 +48,18 @@ public class CmdSuperAnnotation implements Cmd{
 				try {
 					ClassPool pool = ClassPool.getDefault();
 					for(String clazz : roleRegister.getAllClassesForPkgs()){
-						CtClass ctClazz = pool.get(clazz);
+						CtClass ctClazz = null;
+						try {
+							ctClazz = pool.get(clazz);
+						} catch (NotFoundException e) {
+							throw new RuntimeException(e);
+						}
 						
 						for(ProcessUnit pu : pus){
 						
+							/*
+							//private static List<String> methodsProcessed = new LinkedList<>();methodsProcessed.clear();
 							List<CtClass> extendz = ClassUtils.extendz(pu.c,ctClazz);
-							
 							for(CtClass extend : extendz){
 								CtMethod extendMethod = extend.getDeclaredMethod(pu.m.getName(), pu.m.getParameterTypes());
 								if(!methodsProcessed.contains(extendMethod.getLongName())){
@@ -66,12 +71,26 @@ public class CmdSuperAnnotation implements Cmd{
 									extendMethod.insertBefore(code);
 								}
 							}
+							*/
+							
+							if(ctClazz.subclassOf(pu.c) && !ctClazz.equals(pu.c)){
+								try{
+									CtMethod extendMethod = ctClazz.getDeclaredMethod(pu.m.getName(), pu.m.getParameterTypes());
+									String code = 
+									"{"+
+										ClassUtils.getMethodCall("super."+extendMethod.getName(), extendMethod.getParameterTypes(), "$args")
+									+"}";
+									extendMethod.insertBefore(code);
+								}catch(NotFoundException e){
+									// This is normal the method was not declared on that class
+								}
+							}
 							
 						}
 						
 					}
-				} catch (NotFoundException | CannotCompileException e) {
-					throw new RuntimeException(e.getMessage());
+				} catch (CannotCompileException e) {
+					throw new RuntimeException(e);
 				}
 				executed = true;
 			}
