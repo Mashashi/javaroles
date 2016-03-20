@@ -168,7 +168,7 @@ Results in the output...
 
 ### standalone
 
-Check the [releases](https://github.com/Mashashi/javaroles)
+Check the [releases](https://github.com/Mashashi/javaroles/releases)
 
 ### via `jipack.io`
 If you use maven, gradel or other build tool you can easily add this library to any project via `jipack.io`.
