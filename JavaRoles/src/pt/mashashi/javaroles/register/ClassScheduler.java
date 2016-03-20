@@ -2,12 +2,13 @@ package pt.mashashi.javaroles.register;
 
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 public class ClassScheduler {
 	
-	private LinkedList<Cmd> actual;
-	private LinkedList<Cmd> next;
-	private LinkedList<Cmd> finalize;
+	private List<Cmd> actual;
+	private List<Cmd> next;
+	private List<Cmd> finalize;
 	
 	public ClassScheduler(){
 		
@@ -16,7 +17,15 @@ public class ClassScheduler {
 		finalize = new LinkedList<>();
 		
 	}
-	
+	public void execInTerm(List<Cmd> l){
+		List<Cmd> hideNext = new LinkedList<Cmd>(next); 
+		for(Cmd c : l){
+			next.clear();
+			next.add(c);
+			execSchedule();
+		}
+		next = hideNext;
+	}
 	public void scheduleNextCmd(Cmd cmd){
 		next.add(cmd);
 	}

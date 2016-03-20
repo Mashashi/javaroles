@@ -60,6 +60,8 @@ public abstract class RoleRegister {
 	//InjectionStrategy injRigStrategy = new InjectionStrategyMultiple();
 	String classesDir;
 	ClassScheduler classScheduler;
+	List<Cmd> execInTermBeforeRegister;
+	List<String> computedOnlyFor;
 	
 	private Collection<String> clazzesForPkgs; // memoization of copmuted classes for enhancement
 	private List<String> classReport; // TODO delete this var replace the test by the log checking 
@@ -79,6 +81,8 @@ public abstract class RoleRegister {
 		classReport = new LinkedList<>();
 		classScheduler = new ClassScheduler();
 		excludeGiven = new LinkedList<String>();
+		execInTermBeforeRegister = new LinkedList<>();
+		computedOnlyFor = new LinkedList<String>();
 	}
 	
 	/**
@@ -414,121 +418,6 @@ public abstract class RoleRegister {
 	
 	
 	
-	/*
-	public RoleRegister setMatchType(MatchType matchT){
-		if(pkgs!=null){
-			for(String pkg : pkgs){ 
-				matchType.put(pkg, matchT); 
-			}
-		}
-		if(onlyFor!=null){
-			for(String clazz : onlyFor){ 
-				matchType.put(clazz, matchT); 
-			}
-		}
-		return this;
-	}
-	*/
-//	public RoleRegister setPkgMatchType(int pkgIdx, MATCH_TYPE_PKG matchType){
-//		matchTypePkg.put(pkgs.get(pkgIdx), matchType);
-//		return this;
-//	}
-	/*public RoleRegister writeClasses(String dir){
-		classesDir = dir;
-		return this;
-	}*/
-	/*public RoleRegister setRigidInjectionStrategy(InjectionStrategy injRigStrategy){
-		this.injRigStrategy = injRigStrategy;
-		return this;
-	}*/
-	
-	/*public RoleRegister includeGiven(Class<?>... clazzes){
-		//this.onlyFor = new LinkedList<String>();
-		if(this.onlyFor==null){
-			this.onlyFor = new LinkedList<>();
-		}
-		for(Class<?> clazz : clazzes){
-			onlyFor.add(clazz.getName());
-		}
-		setMatchType(MatchType.STARTS_WITH);
-		return this;
-	}*/
-	
-	/**
-	 * Sometimes when using classes some problems may arise to to the class loader. When so try to use a string identifying the
-	 * class to workaround the problem.
-	 * 
-	 * @param clazzes
-	 * @return
-	 */
-	/*public RoleRegister includeGivenRaw(String... clazzes){
-		//this.onlyFor = new LinkedList<String>();
-		if(this.onlyFor==null){
-			this.onlyFor = new LinkedList<>();
-		}
-		for(String clazz : clazzes){
-			onlyFor.add(clazz);
-		}
-		setMatchType(MatchType.STARTS_WITH);
-		return this;
-	}*/
-	
-	/*public RoleRegister excludeGiven(Class<?>... clazzes){	
-		//excludeGiven.clear();
-		if(clazzes!=null){
-			for(Class<?> clazz : clazzes){
-				excludeGiven.add(clazz.getName());
-			}
-		}
-		return this;
-	}*/
-	
-	/*public RoleRegister excludeGivenRaw(String... clazzes){	
-		//excludeGiven.clear();
-		if(clazzes!=null){
-			for(String clazz : clazzes){
-				excludeGiven.add(clazz);
-			}
-		}
-		return this;
-	}*/
-	
-	/*public RoleRegister includeGivenPkg(Class<?>... pkgs){	
-		if(pkgs!=null){
-			this.pkgs = new LinkedList<>();
-			for(Class<?> pkg : pkgs){
-				this.pkgs.add(pkg.getPackage().getName());
-			}
-		}
-		setMatchType(MatchType.STARTS_WITH);
-		return this;
-	}*/
-	
-	/*public RoleRegister excludeGivenPkg(Class<?>... pkgs){	
-		//excludeGiven.clear();
-		if(pkgs!=null){
-			for(Class<?> pkg : pkgs){
-				excludeGiven.add(pkg.getPackage().getName());
-			}
-		}
-		return this;
-	}*/
-
-	/*public RoleRegister inheritAnnots(){
-		classScheduler.scheduleNextCmd(new CmdExtendAnnotationFind(this));
-		classScheduler.execSchedule();
-		return this;
-	}*/
-	
-	/*public RoleRegister callSuperAnnots(){
-		classScheduler.scheduleNextCmd(new CmdSuperAnnotationFind(this));
-		classScheduler.execSchedule();
-		return this;
-	}*/
-	
-	
-	
-	
 	
 	/**
 	 * Before invoking this method be sure that:
@@ -539,7 +428,7 @@ public abstract class RoleRegister {
 	 */
 	public void registerRoles(){
 		
-		//classScheduler.execSchedule();
+		classScheduler.execInTerm(execInTermBeforeRegister);
 		
 		if(onlyFor!=null){
 			
@@ -548,18 +437,6 @@ public abstract class RoleRegister {
 			   This will unload the classes from the class loader if the roles for unloading a class are verified
 			   */
 				System.gc(); // Doesn't work for inner inner classes
-			}
-			
-			List<String> computedOnlyFor = new LinkedList<String>(onlyFor);
-			
-			{ // BLOCK Remove classes to exclude
-				for(String o : onlyFor){
-					for(String e : excludeGiven){
-						if(o.startsWith(e)){
-							 computedOnlyFor.remove(o);
-						}
-					}
-				}
 			}
 			
 			registerRoles(computedOnlyFor);
@@ -605,24 +482,13 @@ public abstract class RoleRegister {
 	}
 	
 	/**
-	 * Memoization was applied
+	 * Memoization was applied on the return
 	 * 
-	 * @return
+	 * @return All classes to which the selection roles on the building process verify
 	 */
 	public Collection<String> getAllClassesForPkgs(){
-		
-		
-		if(clazzesForPkgs==null){
-			
-			{ // TODO
-				if(this.pkgs==null || this.pkgs.size()==0){ 
-					//this.pkgs = new String[0]; 
-					this.pkgs = new LinkedList<String>();
-					this.pkgs.add("");
-				}
-				if(this.pkgs.size()==0){ throw new IllegalArgumentException("Supply at least one package perfix."); }
-				//setMatchType(MatchType.STARTS_WITH);
-			}
+		 
+		if(clazzesForPkgs == null){
 			
 			clazzesForPkgs = ClassUtils.getAllClassNames();
 			
@@ -632,33 +498,29 @@ public abstract class RoleRegister {
 				next: while(i.hasNext()){
 					final String next = i.next();
 					
-					boolean exclude = false;
+					checkOnlyFor: {
 					
-					if(onlyFor!=null){
-						// BLOCK just process classes that are on only for if setted
-						checkOnlyFor: {
+						if(onlyFor!=null){
+							// BLOCK just process classes that are on only for if setted
 							for(String o : onlyFor){
-								if(match(next,o))
+								if(!match(next,o))
 									break checkOnlyFor;
 							}
-							exclude = true;
 						}
-					}
-					
-					if(!exclude){
-						// BLOCK exclude classes block
+						
+						
 						for(String clazzNameExclude : excludeGiven){
+							// BLOCK exclude classes block
 							if(next.startsWith(clazzNameExclude)){ 
 								// BLOCK The condition is with .startsWith because we want to stop registration of inner classes
-								exclude = true;
+								break checkOnlyFor;
 							}
 						}
-					}
-					
-					if(!exclude)
+						
 						if(match(next, pkg)) 
 							continue next;
-					
+						
+					}
 					i.remove();
 				}
 			}

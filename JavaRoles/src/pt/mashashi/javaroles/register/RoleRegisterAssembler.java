@@ -110,18 +110,44 @@ public class RoleRegisterAssembler {
 	}
 	
 	public RoleRegisterAssembler inheritAnnots(){
-		rr.classScheduler.scheduleNextCmd(new CmdExtendAnnotationFind(rr));
-		rr.classScheduler.execSchedule();
+		rr.execInTermBeforeRegister.add(new CmdExtendAnnotationFind(rr));
+		//rr.classScheduler.scheduleNextCmd(new CmdExtendAnnotationFind(rr));
+		//rr.classScheduler.execSchedule();
 		return this;
 	}
 	
 	public RoleRegisterAssembler callSuperAnnots(){
-		rr.classScheduler.scheduleNextCmd(new CmdSuperAnnotationFind(rr));
-		rr.classScheduler.execSchedule();
+		rr.execInTermBeforeRegister.add(new CmdSuperAnnotationFind(rr));
+		//rr.classScheduler.scheduleNextCmd(new CmdSuperAnnotationFind(rr));
+		//rr.classScheduler.execSchedule();
 		return this;
 	}
 	
 	public RoleRegister get(){
+		{ // TODO
+			if(rr.pkgs==null || rr.pkgs.size()==0){ 
+				//this.pkgs = new String[0]; 
+				rr.pkgs = new LinkedList<String>();
+				rr.pkgs.add("");
+			}
+			if(rr.pkgs.size()==0){ 
+				throw new IllegalArgumentException("Supply at least one package perfix."); 
+			}
+			//setMatchType(MatchType.STARTS_WITH);
+		}
+		
+		
+		if(rr.onlyFor!=null){ // BLOCK Remove classes to exclude
+			rr.computedOnlyFor.addAll(rr.onlyFor);
+			for(String o : rr.onlyFor){
+				for(String e : rr.excludeGiven){
+					if(o.startsWith(e)){
+						 rr.computedOnlyFor.remove(o);
+					}
+				}
+			}
+		}
+		
 		return rr;
 	}
 }
