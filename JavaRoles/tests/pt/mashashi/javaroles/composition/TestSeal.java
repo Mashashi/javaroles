@@ -12,7 +12,10 @@ public class TestSeal {
 	
 	public static class Human{
 		
+		private final static String TIME_OUT_SEALED = "A timeout caused this class to get sealed";
+		
 		@Seal public boolean seal;
+		@Seal(msgSeal=Human.TIME_OUT_SEALED) public boolean sealDueToTimeOut;
 		
 		public Human() {
 			seal = false;
@@ -50,6 +53,14 @@ public class TestSeal {
 			fail("Exception should be thrown");
 		}catch(RuntimeException e){
 			assertEquals("This class is sealed",e.getMessage());
+		}
+		
+		h.sealDueToTimeOut = true;
+		try{
+			System.out.println(h.hello());
+			fail("Exception should be thrown");
+		}catch(RuntimeException e){
+			assertEquals(Human.TIME_OUT_SEALED, e.getMessage());
 		}
 		
 		Student s = new Student();

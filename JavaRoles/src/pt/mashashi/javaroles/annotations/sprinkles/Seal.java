@@ -7,4 +7,6 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
-public @interface Seal {}
+public @interface Seal {
+	String msgSeal() default "This class is sealed";
+}

@@ -10,6 +10,7 @@ import javassist.CtField;
 import javassist.CtMethod;
 import javassist.Modifier;
 import javassist.NotFoundException;
+import pt.mashashi.javaroles.annotations.sprinkles.Seal;
 
 public class CmdSealAnnotation implements Cmd{
 	
@@ -17,10 +18,12 @@ public class CmdSealAnnotation implements Cmd{
 			
 			public CtField f;
 			public CtClass c;
+			public Seal s;
 			
-			public ProcessUnit(CtField f) {
+			public ProcessUnit(CtField f, Seal s) {
 				this.f = f;
 				this.c = f.getDeclaringClass();
+				this.s = s;
 			}
 			
 		} 
@@ -33,13 +36,13 @@ public class CmdSealAnnotation implements Cmd{
 		
 		private CmdSealAnnotation(){}
 		
-		public static CmdSealAnnotation neu(RoleRegister roleRegister, CtField f) {
+		public static CmdSealAnnotation neu(RoleRegister roleRegister, CtField f, Seal s) {
 			if(executed){
 				pus.clear();
 				roleRegister = null;
 				executed = false;
 			}
-			pus.add(new ProcessUnit(f));
+			pus.add(new ProcessUnit(f, s));
 			CmdSealAnnotation.roleRegister = roleRegister;
 			return new CmdSealAnnotation();
 		}
@@ -65,7 +68,7 @@ public class CmdSealAnnotation implements Cmd{
 										String code = 
 										"{"+
 											"if("+pu.f.getName()+"){"+
-												"throw new RuntimeException(\"This class is sealed\");"+
+												"throw new RuntimeException(\""+pu.s.msgSeal()+"\");"+
 											"}"
 										+"}";
 										m.insertBefore(code);

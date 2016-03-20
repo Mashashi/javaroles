@@ -19,8 +19,9 @@ public class CmdSealAnnotationFind implements Cmd{
 				CtClass ctClazz = pool.get(clazz);
 				
 				for(CtField f : ctClazz.getDeclaredFields()){
-					if(f.getAnnotation(Seal.class)!=null){
-						roleRegister.classScheduler.scheduleNextCmd(CmdSealAnnotation.neu(roleRegister, f));
+					Seal s = (Seal) f.getAnnotation(Seal.class);
+					if(s!=null){
+						roleRegister.classScheduler.scheduleNextCmd(CmdSealAnnotation.neu(roleRegister, f,  s));
 					}
 				}
 				
