@@ -81,6 +81,7 @@ public class CmdSuperAnnotation implements Cmd{
 										ClassUtils.getMethodCall("super."+extendMethod.getName(), extendMethod.getParameterTypes(), "$args")
 									+"}";
 									extendMethod.insertBefore(code);
+									roleRegister.classScheduler.scheduleFinalCmd(CmdCloseClass.neu(roleRegister, ctClazz));
 								}catch(NotFoundException e){
 									// This is normal the method was not declared on that class
 								}

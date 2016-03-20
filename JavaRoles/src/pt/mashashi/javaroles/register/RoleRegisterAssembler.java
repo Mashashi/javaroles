@@ -11,6 +11,7 @@ public class RoleRegisterAssembler {
 	
 	public RoleRegisterAssembler(RoleRegister roleRegister){
 		this.rr = roleRegister;
+		rr.injRigStrategy = InjectionStrategy.getInstanceSingle();
 	}
 	
 	public RoleRegisterAssembler setMatchType(MatchType matchT){
@@ -111,20 +112,21 @@ public class RoleRegisterAssembler {
 	
 	public RoleRegisterAssembler inheritAnnots(){
 		rr.execInTermBeforeRegister.add(new CmdExtendAnnotationFind(rr));
-		//rr.classScheduler.scheduleNextCmd(new CmdExtendAnnotationFind(rr));
-		//rr.classScheduler.execSchedule();
 		return this;
 	}
 	
 	public RoleRegisterAssembler callSuperAnnots(){
 		rr.execInTermBeforeRegister.add(new CmdSuperAnnotationFind(rr));
-		//rr.classScheduler.scheduleNextCmd(new CmdSuperAnnotationFind(rr));
-		//rr.classScheduler.execSchedule();
+		return this;
+	}
+	
+	public RoleRegisterAssembler sealClasses(){
+		rr.execInTermBeforeRegister.add(new CmdSealAnnotationFind(rr));
 		return this;
 	}
 	
 	public RoleRegister get(){
-		{ // TODO
+		{ // TODO This code is not elegant
 			if(rr.pkgs==null || rr.pkgs.size()==0){ 
 				//this.pkgs = new String[0]; 
 				rr.pkgs = new LinkedList<String>();
@@ -135,7 +137,6 @@ public class RoleRegisterAssembler {
 			}
 			//setMatchType(MatchType.STARTS_WITH);
 		}
-		
 		
 		if(rr.onlyFor!=null){ // BLOCK Remove classes to exclude
 			rr.computedOnlyFor.addAll(rr.onlyFor);

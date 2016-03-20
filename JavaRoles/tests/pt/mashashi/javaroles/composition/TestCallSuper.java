@@ -61,7 +61,7 @@ public class TestCallSuper {
 		
 		@Player
 		public AnimalRoles(){
-			this.human = new Talense();
+			this.human = new Duende();
 			this.monkey = new Bonobo();
 		}
 		
@@ -113,6 +113,17 @@ public class TestCallSuper {
 	public static class Gajo extends Talense{
 		
 	}
+	
+	
+	public static class Duende extends Gajo{
+		
+		@Override
+		public void callback(AnimalRoles animalRoles) {
+			//super.callback(animalRoles);
+			super.flag+="extended5";
+		}
+		
+	}
 
 	public static void test(){
 		
@@ -124,7 +135,7 @@ public class TestCallSuper {
 				.registerRoles();
 		
 		AnimalRoles animalroles = new AnimalRoles();
-		assertEquals("setextended1extended2extended3extended4",((Portuguese)animalroles.human).flag);
+		assertEquals("setextended1extended2extended3extended4extended5",((Portuguese)animalroles.human).flag);
 		
 	}
 	

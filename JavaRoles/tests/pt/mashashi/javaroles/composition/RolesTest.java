@@ -275,4 +275,9 @@ public class RolesTest {
 		TestCallSuper.test();
 	}
 	
+	@Test
+	public void testSeal() {
+		TestSeal.test();
+	}
+	
 }

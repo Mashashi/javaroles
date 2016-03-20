@@ -56,8 +56,7 @@ public abstract class RoleRegister {
 	List<String> excludeGiven;
 	HashMap<String, MatchType> matchType;
 	List<String> pkgs;
-	InjectionStrategy injRigStrategy  = InjectionStrategy.getInstanceSingle();
-	//InjectionStrategy injRigStrategy = new InjectionStrategyMultiple();
+	InjectionStrategy injRigStrategy;
 	String classesDir;
 	ClassScheduler classScheduler;
 	List<Cmd> execInTermBeforeRegister;
@@ -65,9 +64,6 @@ public abstract class RoleRegister {
 	
 	private Collection<String> clazzesForPkgs; // memoization of copmuted classes for enhancement
 	private List<String> classReport; // TODO delete this var replace the test by the log checking 
-	
-	
-	
 	
 	public RoleRegister(){
 		{
