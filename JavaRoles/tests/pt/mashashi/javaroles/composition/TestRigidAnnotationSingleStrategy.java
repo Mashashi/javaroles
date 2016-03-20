@@ -9,6 +9,7 @@ import pt.mashashi.javaroles.annotations.InjObjRigid;
 import pt.mashashi.javaroles.annotations.ObjRole;
 import pt.mashashi.javaroles.annotations.Player;
 import pt.mashashi.javaroles.impl.composition.RoleRegisterComposition;
+import pt.mashashi.javaroles.register.RoleRegisterAssembler;
 
 public class TestRigidAnnotationSingleStrategy {
 	
@@ -69,8 +70,9 @@ public class TestRigidAnnotationSingleStrategy {
 		public String hello4() { return "Default hello "+this.getClass().getName(); }
 	}*/
 	public static void test(){
-		new RoleRegisterComposition()
+		new RoleRegisterAssembler(new RoleRegisterComposition())
 			.includeGiven(TestRigidAnnotationSingleStrategy.class)
+			.get()
 			.registerRoles();
 		
 		Portuguese p = new Portuguese();

@@ -7,6 +7,7 @@ import java.io.File;
 import pt.mashashi.javaroles.annotations.ObjRigid;
 import pt.mashashi.javaroles.annotations.ObjRole;
 import pt.mashashi.javaroles.impl.composition.RoleRegisterComposition;
+import pt.mashashi.javaroles.register.RoleRegisterAssembler;
 
 public class TestWriteClasses {
 	
@@ -41,9 +42,10 @@ public class TestWriteClasses {
 	
 	public static void test(){
 		String dir = "C:"+File.separatorChar+"ouputDir";
-		new RoleRegisterComposition()
+		new RoleRegisterAssembler(new RoleRegisterComposition())
 				.includeGiven(TestWriteClasses.class)
 				.writeClasses(dir)
+				.get()
 				.registerRoles();
 		String path = dir+File.separatorChar+"pt"+File.separatorChar+"mashashi"+File.separatorChar+"javaroles"+File.separatorChar+"composition"+File.separatorChar+"TestWriteClasses$AnimalRoles.class";
 		File f = new File(path);

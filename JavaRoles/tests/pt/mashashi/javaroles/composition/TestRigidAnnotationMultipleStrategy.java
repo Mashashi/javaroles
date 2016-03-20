@@ -10,6 +10,7 @@ import pt.mashashi.javaroles.annotations.ObjRole;
 import pt.mashashi.javaroles.annotations.Player;
 import pt.mashashi.javaroles.impl.composition.RoleRegisterComposition;
 import pt.mashashi.javaroles.injection.InjectionStrategy;
+import pt.mashashi.javaroles.register.RoleRegisterAssembler;
 
 public class TestRigidAnnotationMultipleStrategy {
 	
@@ -53,9 +54,10 @@ public class TestRigidAnnotationMultipleStrategy {
 	
 	public static void test(){
 		
-		new RoleRegisterComposition()
+		new RoleRegisterAssembler(new RoleRegisterComposition())
 				.includeGiven(TestRigidAnnotationMultipleStrategy.class)
 				.setRigidInjectionStrategy(InjectionStrategy.getInstanceMultiple())
+				.get()
 				.registerRoles();
 		
 		Portuguese p = new Portuguese();

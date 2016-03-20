@@ -44,23 +44,28 @@ public abstract class RoleRegister {
 	public enum MatchType{ 
 		EXACT
 		,STARTS_WITH
-		,REGEX
+		//,REGEX
 	}
+	
+	private ClassPool cp;
 	
 	protected String roleBusVarName;
 	
-	private ClassPool cp;
-	private List<String> onlyFor;
-	private List<String> excludeGiven;
-	private HashMap<String, MatchType> matchType;
-	private List<String> pkgs;
-	private InjectionStrategy injRigStrategy  = InjectionStrategy.getInstanceSingle();
-	//protected InjectionStrategy injRigStrategy = new InjectionStrategyMultiple();
-	private Collection<String> clazzesForPkgs;
-	private List<String> classReport;
-	
+	// configuration
+	List<String> onlyFor;
+	List<String> excludeGiven;
+	HashMap<String, MatchType> matchType;
+	List<String> pkgs;
+	InjectionStrategy injRigStrategy  = InjectionStrategy.getInstanceSingle();
+	//InjectionStrategy injRigStrategy = new InjectionStrategyMultiple();
 	String classesDir;
 	ClassScheduler classScheduler;
+	
+	private Collection<String> clazzesForPkgs; // memoization of copmuted classes for enhancement
+	private List<String> classReport; // TODO delete this var replace the test by the log checking 
+	
+	
+	
 	
 	public RoleRegister(){
 		{
@@ -119,11 +124,12 @@ public abstract class RoleRegister {
 	 * 
 	 * @param clazzName The qualified class name. It is a string because we can not use {@link Class} at this point. 
 	 */
-	private void registerRool(String clazzName){
-		CtClass cn = cp.getOrNull(clazzName);
-		boolean wasInjected = false;
+	private void registerRole(String clazzName){
 		
 		try {
+			
+			CtClass cn = cp.get(clazzName);
+			boolean wasInjected = false;
 			
 			checkMsgReceptorTypes(cn);
 			
@@ -184,8 +190,7 @@ public abstract class RoleRegister {
 			
 		} catch (CannotCompileException | NotFoundException | ClassNotFoundException e) {
 			Logger.getLogger(RoleBus.class.getName()).debug("error processing class: "+clazzName+" "+e.getMessage());
-			e.printStackTrace();
-			throw new RuntimeException();
+			throw new RuntimeException(e);
 		}
 		
 	}
@@ -274,18 +279,6 @@ public abstract class RoleRegister {
 						}
 					}
 				}
-				
-				/*{ // TODO Inherit annotations
-					for(CtMethod m: cn.getDeclaredMethods()){
-						InheritAnnots a = (InheritAnnots) m.getAnnotation(InheritAnnots.class);
-						if(a!=null){
-							classScheduler.scheduleNextCommand(new CmdExtendAnnotation(this, m));
-						}
-					}
-				}*/
-				
-				
-				
 				
 			} catch (SecurityException|CannotCompileException|NotFoundException e) {
 				throw new RuntimeException(e.getMessage());
@@ -421,6 +414,7 @@ public abstract class RoleRegister {
 	
 	
 	
+	/*
 	public RoleRegister setMatchType(MatchType matchT){
 		if(pkgs!=null){
 			for(String pkg : pkgs){ 
@@ -434,20 +428,21 @@ public abstract class RoleRegister {
 		}
 		return this;
 	}
-	/*public RoleRegister setPkgMatchType(int pkgIdx, MATCH_TYPE_PKG matchType){
-		matchTypePkg.put(pkgs.get(pkgIdx), matchType);
-		return this;
-	}*/
-	public RoleRegister writeClasses(String dir){
+	*/
+//	public RoleRegister setPkgMatchType(int pkgIdx, MATCH_TYPE_PKG matchType){
+//		matchTypePkg.put(pkgs.get(pkgIdx), matchType);
+//		return this;
+//	}
+	/*public RoleRegister writeClasses(String dir){
 		classesDir = dir;
 		return this;
-	}
-	public RoleRegister setRigidInjectionStrategy(InjectionStrategy injRigStrategy){
+	}*/
+	/*public RoleRegister setRigidInjectionStrategy(InjectionStrategy injRigStrategy){
 		this.injRigStrategy = injRigStrategy;
 		return this;
-	}
+	}*/
 	
-	public RoleRegister includeGiven(Class<?>... clazzes){
+	/*public RoleRegister includeGiven(Class<?>... clazzes){
 		//this.onlyFor = new LinkedList<String>();
 		if(this.onlyFor==null){
 			this.onlyFor = new LinkedList<>();
@@ -457,7 +452,7 @@ public abstract class RoleRegister {
 		}
 		setMatchType(MatchType.STARTS_WITH);
 		return this;
-	}
+	}*/
 	
 	/**
 	 * Sometimes when using classes some problems may arise to to the class loader. When so try to use a string identifying the
@@ -466,7 +461,7 @@ public abstract class RoleRegister {
 	 * @param clazzes
 	 * @return
 	 */
-	public RoleRegister includeGivenRaw(String... clazzes){
+	/*public RoleRegister includeGivenRaw(String... clazzes){
 		//this.onlyFor = new LinkedList<String>();
 		if(this.onlyFor==null){
 			this.onlyFor = new LinkedList<>();
@@ -476,9 +471,9 @@ public abstract class RoleRegister {
 		}
 		setMatchType(MatchType.STARTS_WITH);
 		return this;
-	}
+	}*/
 	
-	public RoleRegister excludeGiven(Class<?>... clazzes){	
+	/*public RoleRegister excludeGiven(Class<?>... clazzes){	
 		//excludeGiven.clear();
 		if(clazzes!=null){
 			for(Class<?> clazz : clazzes){
@@ -486,9 +481,9 @@ public abstract class RoleRegister {
 			}
 		}
 		return this;
-	}
+	}*/
 	
-	public RoleRegister excludeGivenRaw(String... clazzes){	
+	/*public RoleRegister excludeGivenRaw(String... clazzes){	
 		//excludeGiven.clear();
 		if(clazzes!=null){
 			for(String clazz : clazzes){
@@ -496,9 +491,9 @@ public abstract class RoleRegister {
 			}
 		}
 		return this;
-	}
+	}*/
 	
-	public RoleRegister includeGivenPkg(Class<?>... pkgs){	
+	/*public RoleRegister includeGivenPkg(Class<?>... pkgs){	
 		if(pkgs!=null){
 			this.pkgs = new LinkedList<>();
 			for(Class<?> pkg : pkgs){
@@ -507,9 +502,9 @@ public abstract class RoleRegister {
 		}
 		setMatchType(MatchType.STARTS_WITH);
 		return this;
-	}
+	}*/
 	
-	public RoleRegister excludeGivenPkg(Class<?>... pkgs){	
+	/*public RoleRegister excludeGivenPkg(Class<?>... pkgs){	
 		//excludeGiven.clear();
 		if(pkgs!=null){
 			for(Class<?> pkg : pkgs){
@@ -517,19 +512,19 @@ public abstract class RoleRegister {
 			}
 		}
 		return this;
-	}
+	}*/
 
-	public RoleRegister inheritAnnots(){
+	/*public RoleRegister inheritAnnots(){
 		classScheduler.scheduleNextCmd(new CmdExtendAnnotationFind(this));
 		classScheduler.execSchedule();
 		return this;
-	}
+	}*/
 	
-	public RoleRegister callSuperAnnots(){
+	/*public RoleRegister callSuperAnnots(){
 		classScheduler.scheduleNextCmd(new CmdSuperAnnotationFind(this));
 		classScheduler.execSchedule();
 		return this;
-	}
+	}*/
 	
 	
 	
@@ -544,11 +539,7 @@ public abstract class RoleRegister {
 	 */
 	public void registerRoles(){
 		
-		// classScheduler.scheduleCommand(new Class, Order.NEXT);
-		
-		/*
-		classScheduler.executeSchedule();
-		*/
+		//classScheduler.execSchedule();
 		
 		if(onlyFor!=null){
 			
@@ -576,12 +567,13 @@ public abstract class RoleRegister {
 		}else{
 			
 			for(String className : getAllClassesForPkgs()){
-				//System.out.println("-->"+className);
-				registerRool(className);
+				registerRole(className);
 			}
+			
 		}
 		classScheduler.execSchedule();
 		classScheduler.finalize();
+		
 	}
 	
 	private void registerRoles(List<String> clazzes){
@@ -596,7 +588,8 @@ public abstract class RoleRegister {
 				final MatchType match = matchType.get(clazz);
 				if(match!=null && match.equals(MatchType.EXACT)){
 					// Don't register inner classes
-				}else{ //if(match.equals(MatchType.STARTS_WITH)){
+				}else{ 
+					// BLOCK if(match.equals(MatchType.STARTS_WITH))
 					for(CtClass i : c.getDeclaredClasses()){
 						List<String> t = new LinkedList<String>();
 						t.add(i.getName());
@@ -607,7 +600,7 @@ public abstract class RoleRegister {
 			} catch (NotFoundException e) {
 				throw new RuntimeException(e.getMessage());
 			}
-			registerRool(clazz);
+			registerRole(clazz);
 		}
 	}
 	
@@ -616,7 +609,7 @@ public abstract class RoleRegister {
 	 * 
 	 * @return
 	 */
-	Collection<String> getAllClassesForPkgs(){
+	public Collection<String> getAllClassesForPkgs(){
 		
 		
 		if(clazzesForPkgs==null){
@@ -628,7 +621,7 @@ public abstract class RoleRegister {
 					this.pkgs.add("");
 				}
 				if(this.pkgs.size()==0){ throw new IllegalArgumentException("Supply at least one package perfix."); }
-				setMatchType(MatchType.STARTS_WITH);
+				//setMatchType(MatchType.STARTS_WITH);
 			}
 			
 			clazzesForPkgs = ClassUtils.getAllClassNames();
@@ -677,8 +670,9 @@ public abstract class RoleRegister {
 	
 	private boolean match(String current, String matcher){
 		
-		final MatchType match = matchType.get(matcher);
+		MatchType match = matchType.get(matcher);
 		boolean r = false;
+		if(match==null) match = MatchType.STARTS_WITH;
 		switch(match){
 			case STARTS_WITH: 
 				r = current.startsWith(matcher);
@@ -686,11 +680,9 @@ public abstract class RoleRegister {
 			case EXACT: 
 				r = current.equals(matcher);
 				break;
-			/*
-			case REGEX: 
-				r = next.matches(pkg));
-				break;
-			*/
+			/*case REGEX: 
+				r = current.matches(matcher);
+				break;*/
 			default:
 				throw new RuntimeException("Match type is undefined for: "+matcher);
 		}

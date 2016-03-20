@@ -6,6 +6,7 @@ import pt.mashashi.javaroles.annotations.ObjRole;
 import pt.mashashi.javaroles.annotations.Player;
 import pt.mashashi.javaroles.annotations.sprinkles.InheritAnnots;
 import pt.mashashi.javaroles.impl.composition.RoleRegisterComposition;
+import pt.mashashi.javaroles.register.RoleRegisterAssembler;
 
 import static org.junit.Assert.*;
 
@@ -128,10 +129,11 @@ public class TestInheritAnnotation {
 
 	public static void test(){
 		
-		new RoleRegisterComposition()
+		new RoleRegisterAssembler(new RoleRegisterComposition())
 				.includeGiven(TestInheritAnnotation.class)
 				.excludeGiven(Lisboeta2.class)
 				.inheritAnnots()
+				.get()
 				.registerRoles();
 		
 		AnimalRoles1 a = new AnimalRoles1();

@@ -11,6 +11,7 @@ import pt.mashashi.javaroles.annotations.MissMsgReceptor;
 import pt.mashashi.javaroles.annotations.MissUseAnnotationExceptionException;
 import pt.mashashi.javaroles.annotations.ObjRigid;
 import pt.mashashi.javaroles.impl.composition.RoleRegisterComposition;
+import pt.mashashi.javaroles.register.RoleRegisterAssembler;
 
 /*
 import org.junit.Rule;
@@ -81,9 +82,12 @@ public class RolesTest {
 				TestCallSuper.class
 		};
 		
-		new RoleRegisterComposition()
+		
+		new RoleRegisterAssembler(new RoleRegisterComposition())
 			.includeGivenPkg(RolesTest.class)
-			.excludeGiven(exclude).registerRoles();
+			.excludeGiven(exclude)
+			.get()
+			.registerRoles();
 		
 	}
 	
@@ -138,8 +142,9 @@ public class RolesTest {
 	public void testRigidObjectExceptions(){
 		
 		try{
-			new RoleRegisterComposition()
+			new RoleRegisterAssembler(new RoleRegisterComposition())
 				.includeGiven(TestRigidObjectExceptions.AnimalRoles.class)
+				.get()
 				.registerRoles();
 			fail("no exception thrown");
 		}catch(MissUseAnnotationExceptionException e){
@@ -153,8 +158,9 @@ public class RolesTest {
 		}
 		
 		try{
-			new RoleRegisterComposition()
+			new RoleRegisterAssembler(new RoleRegisterComposition())
 				.includeGiven(TestRigidObjectExceptions.AnimalRoles2.class)
+				.get()
 				.registerRoles();
 			fail("no exception thrown");
 		}catch(MissUseAnnotationExceptionException e){
@@ -171,8 +177,9 @@ public class RolesTest {
 	
 	@Test
 	public void testOriginalRigidTurnOffRoleMethod() {
-		new RoleRegisterComposition()
+		new RoleRegisterAssembler(new RoleRegisterComposition())
 			.includeGiven(TestOriginalRigidTurnOffRoleMethod.class)
+			.get()
 			.registerRoles();
 		TestOriginalRigidTurnOffRoleMethod.test();
 	}
@@ -206,8 +213,9 @@ public class RolesTest {
 	@Test
 	public void testMissProcessingWrongObjectType() {
 		try {
-			new RoleRegisterComposition()
+			new RoleRegisterAssembler(new RoleRegisterComposition())
 				.includeGiven(TestMissProcessingWrongObjectType.class)
+				.get()
 				.registerRoles();
 			fail("no exception thrown");
 		} catch (MissUseAnnotationExceptionException e) {

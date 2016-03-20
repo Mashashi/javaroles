@@ -15,6 +15,7 @@ import pt.mashashi.javaroles.annotations.Player;
 import pt.mashashi.javaroles.impl.composition.RoleRegisterComposition;
 import pt.mashashi.javaroles.logging.LoggerTarget;
 import pt.mashashi.javaroles.register.RoleRegister;
+import pt.mashashi.javaroles.register.RoleRegisterAssembler;
 
 public class TestPlay {
 	public interface Human{ String hello(); }
@@ -152,8 +153,10 @@ public class TestPlay {
 	
 	public static void test(){
 		
-		RoleRegister rrc = new RoleRegisterComposition()
-					.includeGiven(TestPlay.class);
+		RoleRegister rrc = 
+					new RoleRegisterAssembler(new RoleRegisterComposition())
+						.includeGiven(TestPlay.class)
+						.get();
 		
 		Logger.getRootLogger().setLevel(Level.ALL);
 		rrc.registerRoles();

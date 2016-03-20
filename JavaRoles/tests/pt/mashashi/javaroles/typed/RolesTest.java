@@ -5,6 +5,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import pt.mashashi.javaroles.impl.typed.RoleRegisterTyped;
+import pt.mashashi.javaroles.register.RoleRegisterAssembler;
 
 /*
 import org.junit.Rule;
@@ -52,8 +53,9 @@ public class RolesTest {
 	@BeforeClass
 	public static void setup(){
 		//Role.registerRool("Animal");
-		new RoleRegisterTyped("tests/")
+		new RoleRegisterAssembler(new RoleRegisterTyped("tests/"))
 			.includeGivenPkg(RolesTest.class)
+			.get()
 			.registerRoles();
 	}
 	
@@ -107,8 +109,6 @@ public class RolesTest {
 	public void testBlock(){
 		TestBlock.test();
 	}
-	
-	
 	
 	@Test
 	public void testBlockAssigment(){
