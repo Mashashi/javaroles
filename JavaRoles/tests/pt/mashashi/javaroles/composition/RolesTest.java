@@ -70,17 +70,18 @@ public class RolesTest {
 		*/
 		
 		Class<?>[] exclude = {
-				TestRigidObjectExceptions.class,
-				TestOriginalRigidTurnOffRoleMethod.class,
-				TestMissProcessingWrongObjectType.class,
-				TestWriteClasses.class,
-				TestRigidAnnotationSingleStrategy.class,
-				TestRigidAnnotationMultipleStrategy.class,
-				TestPkgMatchTypes.class,
-				TestPlay.class,
-				TestInheritAnnotation.class,
-				TestCallSuper.class,
-				TestSeal.class
+				TestRigidObjectExceptions.class
+				,TestOriginalRigidTurnOffRoleMethod.class
+				,TestMissProcessingWrongObjectType.class
+				,TestWriteClasses.class
+				,TestRigidAnnotationSingleStrategy.class
+				,TestRigidAnnotationMultipleStrategy.class
+				,TestPkgMatchTypes.class
+				,TestPlay.class
+				,TestInheritAnnotation.class
+				,TestCallSuper.class
+				,TestSeal.class
+				,TestMethodRoleObjectMethodCallNotInter.class
 		};
 		
 		
@@ -96,6 +97,11 @@ public class RolesTest {
 	@Test
 	public void testMethodRoleObjectMethodCall() {
 		TestMethodRoleObjectMethodCall.test();
+	}
+	
+	@Test
+	public void testMethodRoleObjectMethodCallNotInter() {
+		TestMethodRoleObjectMethodCallNotInter.test();
 	}
 	
 	@Test
@@ -221,8 +227,7 @@ public class RolesTest {
 			fail("no exception thrown");
 		} catch (MissUseAnnotationExceptionException e) {
 			if(
-					!e.getAnotation().equals(MissMsgReceptor.class) 
-					|| 
+					!e.getAnotation().equals(MissMsgReceptor.class) || 
 					e.getAnotationException() != AnnotationException.BAD_TYPE
 					){
 				fail("exception was not thrown correctly");

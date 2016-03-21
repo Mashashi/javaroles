@@ -107,7 +107,6 @@ public class RoleRegisterComposition extends RoleRegister{
 				break;
 			}
 		}
-		//objectRoles.size()!=0
 		return isOnRole && method.getAnnotation(TurnOffRole.class)==null;
 	}
 	

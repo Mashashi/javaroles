@@ -1,6 +1,7 @@
 package pt.mashashi.javaroles.register;
 
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -144,7 +145,9 @@ public abstract class RoleRegister {
 			checkMsgReceptorTypes(cn);
 			
 			CtMethod[] methods = cn.getDeclaredMethods();
-			HashMap<String, CtField> objectRoles = ClassUtils.getTypeFieldAnotatedAssist(cn, ObjRole.class);
+			HashMap<String, CtField> objRoles = ClassUtils.getTypeFieldAnotatedAssist(cn, ObjRole.class);
+			
+			areObjRolesTypesImplemented(objRoles);
 			
 			applyInjections(cn);
 			
@@ -152,7 +155,7 @@ public abstract class RoleRegister {
 			
 			methodInj: for(CtMethod method : methods){
 				
-				boolean isTargetInjection = isToInject(method, objectRoles);	
+				boolean isTargetInjection = isToInject(method, objRoles);	
 				if(isTargetInjection){
 					
 					if(cn.isFrozen()){
@@ -199,6 +202,23 @@ public abstract class RoleRegister {
 			throw new RuntimeException(e);
 		}
 		
+	}
+
+	private void areObjRolesTypesImplemented(HashMap<String, CtField> objRoles) throws NotFoundException {
+		{ // BLOCK check if objroles
+			for(CtField v : objRoles.values()){
+				List<CtClass> a = Arrays.asList(v.getDeclaringClass().getInterfaces());
+				if(!a.contains(v.getType())){
+					throw new MissUseAnnotationExceptionException(
+							ObjRole.class, 
+							AnnotationException.NOT_IMPLEMENTED, 
+							v.getDeclaringClass().getName(), 
+							v.getType().getName(),
+							v.getName()
+					);
+				}
+			}
+		}
 	}
 	
 	/**
@@ -348,10 +368,14 @@ public abstract class RoleRegister {
 		}
 		ClassPool cp = ClassPool.getDefault();
 		List<CtField> objectOriginal = ClassUtils.getListFieldAnnotated(cn, ObjRigid.class);
+		
 		Iterator<CtField> ite = objectOriginal.iterator();
 		while(ite.hasNext()){
 			CtField n = ite.next();
-			CtClass i = cp.getOrNull(n.getType().getName());
+			CtClass i = cp.get(n.getType().getName());
+			
+			
+			
 			
 			if(!i.isInterface()){
 				throw new MissUseAnnotationExceptionException(ObjRigid.class, AnnotationException.MISS_USE, cn.getName(), n.getName(), cn.getSimpleName());
