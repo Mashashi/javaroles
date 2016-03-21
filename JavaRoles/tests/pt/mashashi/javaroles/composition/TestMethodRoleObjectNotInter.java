@@ -1,6 +1,6 @@
 package pt.mashashi.javaroles.composition;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import pt.mashashi.javaroles.annotations.MissUseAnnotationExceptionException;
 import pt.mashashi.javaroles.annotations.ObjRole;
@@ -39,6 +39,7 @@ public class TestMethodRoleObjectNotInter {
 			.includeGiven(TestMethodRoleObjectNotInter.class)
 			.get()
 			.registerRoles();
+			fail("Exception should be thrown");
 		}catch(MissUseAnnotationExceptionException e){
 			assertEquals("The annotation @"+ObjRole.class.getSimpleName()+" was used incorrectly.\n The field \""+TestMethodRoleObjectNotInter.AnimalRoles.class.getName()+".human\" has to be declared as an interface.", e.getMessage());
 		}
