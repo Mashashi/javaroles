@@ -1,8 +1,11 @@
-mvn -Dlog4j.configuration=file:log4j.properties -Dea -e cobertura:cobertura site -Dcobertura.report.format=xml
+Don't forget to add all source code folders
 
+Build the report:
+mvn -Dlog4j.configuration=file:log4j.properties -Dea -e cobertura:cobertura site -Dcobertura.report.format=xml
 mvn -Dlog4j.configuration=file:log4j.properties -Dea -e cobertura:cobertura -Dcobertura.report.format=xml
 mvn -Dlog4j.configuration=file:log4j.properties -Dea -e cobertura:cobertura -Dcobertura.report.format=html
 
+Send the report to coveralls:
 mvn coveralls:report -DcoberturaReports=C:\Users\Rafael\Desktop\javaroles\JavaRoles\target\site\cobertura\index.html -e
 mvn coveralls:report -DcoberturaReports=C:\Users\Rafael\Desktop\javaroles\JavaRoles\target\site\cobertura\coverage.xml -e
 mvn coveralls:report -DcoberturaReports=C:\Users\Rafael\Desktop\javaroles\JavaRoles\target\site\cobertura\coverage.xml -DsourceDirectories=C:\Users\Rafael\Desktop\javaroles\JavaRoles\src
