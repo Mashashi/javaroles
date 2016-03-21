@@ -12,5 +12,4 @@ script: "mvn -f JavaRoles/pom.xml clean && mvn -f JavaRoles/pom.xml -Dlog4j.conf
 #mvn test
 #script: "mvn -f JavaRoles/pom.xml test && mvn -f JavaRoles/pom.xml verify"
 
-after_success:
-  - coveralls
+after_success: coveralls
