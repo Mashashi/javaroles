@@ -207,6 +207,14 @@ public abstract class RoleRegister {
 	private void areObjRolesTypesImplemented(HashMap<String, CtField> objRoles) throws NotFoundException {
 		{ // BLOCK check if objroles
 			for(CtField v : objRoles.values()){
+				if(!v.getType().isInterface()){
+					throw new MissUseAnnotationExceptionException(
+							ObjRole.class, 
+							AnnotationException.NOT_INTERFACE, 
+							v.getDeclaringClass().getName(),
+							v.getName()
+					);
+				}
 				List<CtClass> a = Arrays.asList(v.getDeclaringClass().getInterfaces());
 				if(!a.contains(v.getType())){
 					throw new MissUseAnnotationExceptionException(

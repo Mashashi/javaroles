@@ -82,6 +82,7 @@ public class RolesTest {
 				,TestCallSuper.class
 				,TestSeal.class
 				,TestMethodRoleObjectMethodCallNotInter.class
+				,TestMethodRoleObjectNotInter.class
 		};
 		
 		
@@ -102,6 +103,11 @@ public class RolesTest {
 	@Test
 	public void testMethodRoleObjectMethodCallNotInter() {
 		TestMethodRoleObjectMethodCallNotInter.test();
+	}
+	
+	@Test
+	public void testMethodRoleObjectNotInter() {
+		TestMethodRoleObjectNotInter.test();
 	}
 	
 	@Test
