@@ -304,7 +304,7 @@ public class ClassUtils {
 		
 		List<String> classNames = new LinkedList<>();
 		File d = new File(path);
-		path = FileUtils.separatorAtEnt(path);
+		path = separatorAtEnt(path);
 		
 		if(d.isDirectory()){ 
 			
@@ -327,6 +327,12 @@ public class ClassUtils {
 		}
 		return classNames;
 	}
+		private static String separatorAtEnt(String path){
+			if(!path.endsWith(File.separator)){
+				path += File.separator;
+			}
+			return path;
+		}
 	public static void processFile(List<String> results, String pkg, String fName){
 		if(fName.endsWith(".class")){
 			String className = fName.substring(0, fName.length()-".class".length());
@@ -410,7 +416,7 @@ public class ClassUtils {
 	
 	
 	
-	public static List<CtClass> extendz(CtClass clazz, CtClass possibleExtends){
+	/*public static List<CtClass> extendz(CtClass clazz, CtClass possibleExtends){
 		
 		List<CtClass> l =  new LinkedList<CtClass>();
 		
@@ -434,6 +440,6 @@ public class ClassUtils {
 		
 		l.clear();
 		return l;
-	}
+	}*/
 	
 }

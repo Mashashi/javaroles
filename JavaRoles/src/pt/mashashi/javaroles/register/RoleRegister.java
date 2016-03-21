@@ -429,6 +429,7 @@ public abstract class RoleRegister {
 		isBuilt();
 		
 		classScheduler.scheduleNextCmd(cmdSearch);
+		classScheduler.execSchedule();
 		
 		if(onlyFor!=null){
 			

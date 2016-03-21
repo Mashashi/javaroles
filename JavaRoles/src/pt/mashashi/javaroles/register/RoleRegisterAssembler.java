@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import javassist.CtClass;
 import javassist.CtField;
 import javassist.CtMethod;
-import javassist.NotFoundException;
 import pt.mashashi.javaroles.annotations.sprinkles.CallSuper;
 import pt.mashashi.javaroles.annotations.sprinkles.InheritAnnots;
 import pt.mashashi.javaroles.annotations.sprinkles.Seal;
