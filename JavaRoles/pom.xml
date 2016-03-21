@@ -9,14 +9,11 @@
     <plugins>
 		
 		<plugin>
-		    <groupId>org.codehaus.mojo</groupId>
-		    <artifactId>cobertura-maven-plugin</artifactId>
-		    <version>2.7</version>
+		    <groupId>org.eluder.coveralls</groupId>
+		    <artifactId>coveralls-maven-plugin</artifactId>
+		    <version>4.1.0</version>
 		    <configuration>
-		        <format>xml</format>
-		        <maxmem>256m</maxmem>
-		        <!-- aggregated reports for multi-module projects -->
-		        <aggregate>true</aggregate>
+		        <repoToken>0uSG7oO1ix9oV1UQw527hxr2nI5kMxK4q</repoToken>
 		    </configuration>
 		</plugin>
 		
