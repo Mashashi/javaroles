@@ -5,20 +5,30 @@
   <version>0.8.0</version>
   
   <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.build.sourceEncoding>Cp1252</project.build.sourceEncoding>
   </properties>
   
   <build>
     <sourceDirectory>src</sourceDirectory>
     <plugins>
 		
+
+		
+		
 		<plugin>
+			<!-- <groupId>org.codehaus.mojo</groupId> -->
 		    <groupId>org.eluder.coveralls</groupId>
 		    <artifactId>coveralls-maven-plugin</artifactId>
 		    <version>4.1.0</version>
+		    <!--<version>2.6</version> -->
 		    <configuration>
 		        <repoToken>0uSG7oO1ix9oV1UQw527hxr2nI5kMxK4q</repoToken>
-		        <sourceEncoding>UTF8</sourceEncoding>
+		        <sourceEncoding>Cp1252</sourceEncoding>
+		        <dataFile>${coveralls.basedir}/target/cobertura.ser</dataFile>
+		        <formats>
+		        	<format>html</format>
+		        	<format>xml</format>
+		        </formats>
 		    </configuration>
 		</plugin>
 		
