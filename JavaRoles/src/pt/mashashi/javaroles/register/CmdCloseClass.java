@@ -11,20 +11,20 @@ import java.util.Set;
 import javassist.CannotCompileException;
 import javassist.CtClass;
 
-public class CmdCloseClass implements Cmd{
+public class CmdCloseClass implements ICmd{
 		
 		private final static List<CmdCloseClass> closes = new LinkedList<>();
 		private static RoleRegister roleRegister;
 		
 		private CtClass clazz;
-		private Set<Cmd> dependencies;
+		private Set<ICmd> dependencies;
 		private boolean executed;
 		
 		private CmdCloseClass(){}
 		private CmdCloseClass(CtClass clazz) {
 			this.clazz = clazz;
 			this.executed = false;
-			this.dependencies = new HashSet<Cmd>();
+			this.dependencies = new HashSet<ICmd>();
 		}
 		
 		public static CmdCloseClass neu(RoleRegister roleRegister, CtClass clazz){
@@ -89,7 +89,7 @@ public class CmdCloseClass implements Cmd{
 		}
 		
 		private void execDependencies(){
-			for(Cmd d : dependencies){
+			for(ICmd d : dependencies){
 				d.cmd();
 			}
 		}

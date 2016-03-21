@@ -6,9 +6,9 @@ import java.util.List;
 
 public class ClassScheduler {
 	
-	private List<Cmd> actual;
-	private List<Cmd> next;
-	private List<Cmd> finalize;
+	private List<ICmd> actual;
+	private List<ICmd> next;
+	private List<ICmd> finalize;
 	
 	public ClassScheduler(){
 		
@@ -17,7 +17,7 @@ public class ClassScheduler {
 		finalize = new LinkedList<>();
 		
 	}
-	public void execInTerm(List<Cmd> l){
+	/*public void execInTerm(List<Cmd> l){
 		List<Cmd> hideNext = new LinkedList<Cmd>(next); 
 		for(Cmd c : l){
 			next.clear();
@@ -25,11 +25,11 @@ public class ClassScheduler {
 			execSchedule();
 		}
 		next = hideNext;
-	}
-	public void scheduleNextCmd(Cmd cmd){
+	}*/
+	public void scheduleNextCmd(ICmd cmd){
 		next.add(cmd);
 	}
-	public void scheduleFinalCmd(Cmd cmd){
+	public void scheduleFinalCmd(ICmd cmd){
 		finalize.add(cmd);
 	}
 	
@@ -37,9 +37,9 @@ public class ClassScheduler {
 		while(next.size()!=0){
 			actual = next;
 			next = new LinkedList<>();
-			Iterator<Cmd> ite = actual.iterator();
+			Iterator<ICmd> ite = actual.iterator();
 			while(ite.hasNext()){
-				Cmd cmd = ite.next();
+				ICmd cmd = ite.next();
 				cmd.cmd();
 			}
 		}
@@ -47,7 +47,7 @@ public class ClassScheduler {
 	}
 	
 	public void finalize(){
-		for(Cmd f : finalize){
+		for(ICmd f : finalize){
 			f.cmd();
 		}
 		finalize.clear();

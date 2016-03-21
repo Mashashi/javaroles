@@ -2,9 +2,22 @@ package pt.mashashi.javaroles.register;
 
 import java.util.LinkedList;
 
+import javassist.CtClass;
+import javassist.CtField;
+import javassist.CtMethod;
+import javassist.NotFoundException;
+import pt.mashashi.javaroles.annotations.sprinkles.CallSuper;
+import pt.mashashi.javaroles.annotations.sprinkles.InheritAnnots;
+import pt.mashashi.javaroles.annotations.sprinkles.Seal;
 import pt.mashashi.javaroles.injection.InjectionStrategy;
 import pt.mashashi.javaroles.register.RoleRegister.MatchType;
 
+/**
+ * Encapsulates the algorithm methods for constructing a role register.
+ * 
+ * @author Rafael
+ *
+ */
 public class RoleRegisterAssembler {
 	
 	private RoleRegister rr;
@@ -111,20 +124,66 @@ public class RoleRegisterAssembler {
 	}
 	
 	public RoleRegisterAssembler inheritAnnots(){
-		rr.execInTermBeforeRegister.add(new CmdExtendAnnotationFind(rr));
+		rr.cmdSearch.addFinder(new IFindCmd() {
+			@Override
+			public void analyze(CtClass clazz, RoleRegister roleRegister) {
+				try {
+					for(CtMethod m : clazz.getDeclaredMethods()){
+						if(m.getAnnotation(InheritAnnots.class)!=null){
+							roleRegister.classScheduler.scheduleNextCmd(CmdExtendAnnotation.neu(roleRegister, m));
+						}					
+					}
+				} catch (ClassNotFoundException e) {
+					throw new RuntimeException(e);
+				}
+			}
+		});
 		return this;
 	}
 	
 	public RoleRegisterAssembler callSuperAnnots(){
-		rr.execInTermBeforeRegister.add(new CmdSuperAnnotationFind(rr));
+		rr.cmdSearch.addFinder(new IFindCmd() {
+			@Override
+			public void analyze(CtClass clazz, RoleRegister roleRegister) {
+				try {
+					for(CtMethod m : clazz.getDeclaredMethods()){
+						if(m.getAnnotation(CallSuper.class)!=null){
+							roleRegister.classScheduler.scheduleNextCmd(CmdSuperAnnotation.neu(roleRegister, m));
+						}
+					}
+				} catch (ClassNotFoundException e) {
+					throw new RuntimeException(e);
+				}
+			}
+		});
 		return this;
 	}
 	
 	public RoleRegisterAssembler sealClasses(){
-		rr.execInTermBeforeRegister.add(new CmdSealAnnotationFind(rr));
+		rr.cmdSearch.addFinder(new IFindCmd() {
+			@Override
+			public void analyze(CtClass clazz, RoleRegister roleRegister) {
+				try {
+					for(CtField f : clazz.getDeclaredFields()){
+						Seal s = (Seal) f.getAnnotation(Seal.class);
+						if(s!=null){
+							roleRegister.classScheduler.scheduleNextCmd(CmdSealAnnotation.neu(roleRegister, f,  s));
+						}
+					}
+				} catch (ClassNotFoundException e) {
+					throw new RuntimeException(e);
+				}
+			}
+		});
 		return this;
 	}
 	
+	/**
+	 * After this method is called the object is considered built and calls to this same object 
+	 * will fail by throwing a null pointer exception.
+	 * 
+	 * @return The built role register
+	 */
 	public RoleRegister get(){
 		{ // TODO This code is not elegant
 			if(rr.pkgs==null || rr.pkgs.size()==0){ 
@@ -149,6 +208,10 @@ public class RoleRegisterAssembler {
 			}
 		}
 		
-		return rr;
+		rr.built = true;
+		RoleRegister ret = rr;
+		rr = null;
+		
+		return ret;
 	}
 }

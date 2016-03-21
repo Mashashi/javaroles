@@ -6,7 +6,7 @@ import java.util.Collection;
 import javassist.CannotCompileException;
 import javassist.CtClass;
 
-public class CmdCloseClasses implements Cmd{
+public class CmdCloseClasses implements ICmd{
 		private Collection<CtClass> clazzes; 
 		private String classesDir;
 		@SuppressWarnings("unused")

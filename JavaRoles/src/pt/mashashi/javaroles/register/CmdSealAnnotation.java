@@ -12,7 +12,7 @@ import javassist.Modifier;
 import javassist.NotFoundException;
 import pt.mashashi.javaroles.annotations.sprinkles.Seal;
 
-public class CmdSealAnnotation implements Cmd{
+public class CmdSealAnnotation implements ICmd{
 	
 		private static class ProcessUnit{
 			

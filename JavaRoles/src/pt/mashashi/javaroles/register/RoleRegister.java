@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -52,16 +53,25 @@ public abstract class RoleRegister {
 	
 	protected String roleBusVarName;
 	
-	// configuration
+	// -------------------
+	// start: configuration
+	// -------------------
 	List<String> onlyFor;
 	List<String> excludeGiven;
-	HashMap<String, MatchType> matchType;
+	Map<String, MatchType> matchType;
 	List<String> pkgs;
 	InjectionStrategy injRigStrategy;
 	String classesDir;
 	ClassScheduler classScheduler;
-	List<Cmd> execInTermBeforeRegister;
+	CmdSearch cmdSearch;
 	List<String> computedOnlyFor;
+	boolean built;
+	// -------------------
+	// end: configuration
+	// -------------------
+	
+	
+	
 	
 	private Collection<String> clazzesForPkgs; // memoization of copmuted classes for enhancement
 	
@@ -76,8 +86,9 @@ public abstract class RoleRegister {
 		matchType = new HashMap<>();
 		classScheduler = new ClassScheduler();
 		excludeGiven = new LinkedList<String>();
-		execInTermBeforeRegister = new LinkedList<>();
+		cmdSearch = new CmdSearch(this);
 		computedOnlyFor = new LinkedList<String>();
+		built = false;
 	}
 	
 	/**
@@ -299,7 +310,8 @@ public abstract class RoleRegister {
 			CtClass o = originals.get(i.getName());
 			if(o!=null){
 				for(CtMethod mo: o.getMethods()){
-					if(method.getName().equals(mo.getName()) && method.getSignature().equals(mo.getSignature())){
+					//method.getName().equals(mo.getName()) && method.getSignature().equals(mo.getSignature())
+					if(method.equals(mo)){
 						final String varLocal = ClassUtils.generateIdentifier();
 						
 						// COMMENT #1.1 Hear we complete with the code for each method
@@ -398,8 +410,11 @@ public abstract class RoleRegister {
 		return originals;
 	}
 	
-	
-	
+	public void isBuilt(){
+		if(!this.built){
+			throw new RuntimeException("This RoleRegister has yet to be built.");
+		}
+	}
 	
 	/**
 	 * Before invoking this method be sure that:
@@ -407,10 +422,13 @@ public abstract class RoleRegister {
 	 * - Their owning classloader has still instances in existence (has not been GC-ed).
 	 * - The java.lang.Class object is not referenced from anywhere (same goes for reflective access to their members).
 	 * 
+	 * If it is not built it throws a runtime exception.
 	 */
 	public void registerRoles(){
 		
-		classScheduler.execInTerm(execInTermBeforeRegister);
+		isBuilt();
+		
+		classScheduler.scheduleNextCmd(cmdSearch);
 		
 		if(onlyFor!=null){
 			
@@ -466,10 +484,14 @@ public abstract class RoleRegister {
 	/**
 	 * Memoization was applied on the return
 	 * 
+	 * Throws a runtime exception if this is instance was not submitted to the build process
+	 * 
 	 * @return All classes to which the selection roles on the building process verify
 	 */
 	public Collection<String> getAllClassesForPkgs(){
-		 
+		
+		isBuilt();
+		
 		if(clazzesForPkgs == null){
 			
 			clazzesForPkgs = ClassUtils.getAllClassNames();
@@ -512,26 +534,26 @@ public abstract class RoleRegister {
 	}
 	
 	
-	private boolean match(String current, String matcher){
-		
-		MatchType match = matchType.get(matcher);
-		boolean r = false;
-		if(match==null) match = MatchType.STARTS_WITH;
-		switch(match){
-			case STARTS_WITH: 
-				r = current.startsWith(matcher);
-				break;
-			case EXACT: 
-				r = current.equals(matcher);
-				break;
-			/*case REGEX: 
-				r = current.matches(matcher);
-				break;*/
-			default:
-				throw new RuntimeException("Match type is undefined for: "+matcher);
+		private boolean match(String current, String matcher){
+			
+			MatchType match = matchType.get(matcher);
+			boolean r = false;
+			if(match==null) match = MatchType.STARTS_WITH;
+			switch(match){
+				case STARTS_WITH: 
+					r = current.startsWith(matcher);
+					break;
+				case EXACT: 
+					r = current.equals(matcher);
+					break;
+				/*case REGEX: 
+					r = current.matches(matcher);
+					break;*/
+				default:
+					throw new RuntimeException("Match type is undefined for: "+matcher);
+			}
+			
+			return r;
 		}
-		
-		return r;
-	}
 	
 }

@@ -11,7 +11,7 @@ import javassist.CtMethod;
 import javassist.NotFoundException;
 import pt.mashashi.javaroles.ClassUtils;
 
-public class CmdExtendAnnotation implements Cmd{
+public class CmdExtendAnnotation implements ICmd{
 	
 		private static class ProcessUnit{
 			
