@@ -39,9 +39,9 @@ public class TestSeal {
 		
 		new RoleRegisterAssembler(new RoleRegisterComposition())
 				.includeGiven(TestSeal.class)
-				.sealClasses()
 				//.inheritAnnots()
 				//.callSuperAnnots()
+				.sealClasses()
 				.get()
 				.registerRoles();
 		

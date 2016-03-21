@@ -12,6 +12,12 @@ import javassist.Modifier;
 import javassist.NotFoundException;
 import pt.mashashi.javaroles.annotations.sprinkles.Seal;
 
+/**
+ * Applies to every public method of the class to which is applied and subclasses on the reach.
+ * 
+ * @author Rafael
+ *
+ */
 public class CmdSealAnnotation implements ICmd{
 	
 		private static class ProcessUnit{

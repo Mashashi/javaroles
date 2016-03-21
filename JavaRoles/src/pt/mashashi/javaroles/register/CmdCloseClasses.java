@@ -6,6 +6,15 @@ import java.util.Collection;
 import javassist.CannotCompileException;
 import javassist.CtClass;
 
+/**
+ * 
+ * WARNING: this class doesn't have implement a planner for saving class hierarchies if a subclass is saved first and later on
+ * a super class is saved a exception will be thrown stating duplicate.
+ * 
+ * To use the planner instead of using this cmd use the one that acts on a single class.
+ * 
+ * @author Rafael
+ */
 public class CmdCloseClasses implements ICmd{
 		private Collection<CtClass> clazzes; 
 		private String classesDir;

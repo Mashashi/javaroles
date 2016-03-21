@@ -281,4 +281,9 @@ public class RolesTest {
 		TestSeal.test();
 	}
 	
+	@Test
+	public void testNotNullParams() {
+		TestNotNullParams.test();
+	}
+	
 }

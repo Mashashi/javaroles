@@ -7,6 +7,7 @@ import javassist.CtField;
 import javassist.CtMethod;
 import pt.mashashi.javaroles.annotations.sprinkles.CallSuper;
 import pt.mashashi.javaroles.annotations.sprinkles.InheritAnnots;
+import pt.mashashi.javaroles.annotations.sprinkles.NotNullParams;
 import pt.mashashi.javaroles.annotations.sprinkles.Seal;
 import pt.mashashi.javaroles.injection.InjectionStrategy;
 import pt.mashashi.javaroles.register.RoleRegister.MatchType;
@@ -168,6 +169,23 @@ public class RoleRegisterAssembler {
 						if(s!=null){
 							roleRegister.classScheduler.scheduleNextCmd(CmdSealAnnotation.neu(roleRegister, f,  s));
 						}
+					}
+				} catch (ClassNotFoundException e) {
+					throw new RuntimeException(e);
+				}
+			}
+		});
+		return this;
+	}
+	
+	public RoleRegisterAssembler notNullParams(){
+		rr.cmdSearch.addFinder(new IFindCmd() {
+			@Override
+			public void analyze(CtClass clazz, RoleRegister roleRegister) {
+				try {
+					NotNullParams s = (NotNullParams) clazz.getAnnotation(NotNullParams.class);
+					if(s!=null){
+						roleRegister.classScheduler.scheduleNextCmd(CmdNotNullParams.neu(roleRegister, clazz,  s));
 					}
 				} catch (ClassNotFoundException e) {
 					throw new RuntimeException(e);
