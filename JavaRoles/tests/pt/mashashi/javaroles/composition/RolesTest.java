@@ -32,7 +32,7 @@ import org.junit.runners.model.Statement;
 
 
 /**
- * 
+ * Tests documented named bug after the method prefix test denote a bug. They pass but ideally the error would not happen.
  * @author Rafael
  *
  */
@@ -83,6 +83,8 @@ public class RolesTest {
 				,TestSeal.class
 				,TestMethodRoleObjectMethodCallNotInter.class
 				,TestMethodRoleObjectNotInter.class
+				,TestMethodRoleObjectExtend.class
+				,TestMethodRigidInaccessibleInterface.class
 		};
 		
 		
@@ -108,6 +110,17 @@ public class RolesTest {
 	@Test
 	public void testMethodRoleObjectNotInter() {
 		TestMethodRoleObjectNotInter.test();
+	}
+	
+	
+	@Test
+	public void testMethodRoleObjectExtend() {
+		TestMethodRoleObjectExtend.test();
+	}
+	
+	@Test
+	public void testBugMethodRigidInaccessibleInterface() {
+		TestMethodRigidInaccessibleInterface.test();
 	}
 	
 	@Test

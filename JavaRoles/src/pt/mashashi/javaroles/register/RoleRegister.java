@@ -1,5 +1,6 @@
 package pt.mashashi.javaroles.register;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Collection;
@@ -386,11 +387,24 @@ public abstract class RoleRegister {
 			
 			
 			if(!i.isInterface()){
-				throw new MissUseAnnotationExceptionException(ObjRigid.class, AnnotationException.MISS_USE, cn.getName(), n.getName(), cn.getSimpleName());
+				throw new MissUseAnnotationExceptionException(
+						ObjRigid.class, 
+						AnnotationException.MISS_USE, 
+						cn.getName(), 
+						n.getName(), 
+						cn.getSimpleName()
+				);
 			}
 			
-			if(!ClassUtils.classImplementsInterface(cn, i)){
-				throw new MissUseAnnotationExceptionException(ObjRigid.class, AnnotationException.NOT_IMPLEMENTED, cn.getName(), n.getName(), cn.getSimpleName());
+			//if(!ClassUtils.classImplementsInterface(cn, i)){
+			if(!ClassUtils.classImplementsInterface(n.getDeclaringClass(), i)){
+				throw new MissUseAnnotationExceptionException(
+						ObjRigid.class, 
+						AnnotationException.NOT_IMPLEMENTED, 
+						cn.getName(), 
+						n.getName(), 
+						cn.getSimpleName()
+				);
 			}		
 					
 			CtClass evalClass = originals.get(i.getName());
@@ -419,11 +433,15 @@ public abstract class RoleRegister {
 																				"\""+evalClass.getName()+"\","+
 																				"\""+method.getName()+"\","+
 																				"\""+method.getSignature()+"\");"+
-									"return ($r) "+ClassUtils.class.getName()+".invokeWithNativeTypes("+
-									"core,"+
-									"\""+method.getName()+"\","+
-									var+".getParameterTypes(),"+
-									"$args);"+
+									"try{"+
+										"return ($r) "+ClassUtils.class.getName()+".invokeWithNativeTypes("+
+										"core,"+
+										"\""+method.getName()+"\","+
+										var+".getParameterTypes(),"+
+										"$args);"+
+									"}catch("+InvocationTargetException.class.getName()+" e){"+
+										"throw e.getCause();"+
+									"}"+
 								"}"
 							);
 						}
