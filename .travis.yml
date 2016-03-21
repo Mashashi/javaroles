@@ -13,4 +13,4 @@ script: "mvn -f JavaRoles/pom.xml clean && mvn -f JavaRoles/pom.xml -Dlog4j.conf
 #script: "mvn -f JavaRoles/pom.xml test && mvn -f JavaRoles/pom.xml verify"
 
 after_success:
-  - mvn -X -f JavaRoles/pom.xml -Dlog4j.configuration=file:log4j.properties -Dea clean cobertura:cobertura coveralls:report -Dtest=pt.mashashi.javaroles.composition.RolesTest test
+  - mvn -f JavaRoles/pom.xml -Dlog4j.configuration=file:log4j.properties -Dea clean cobertura:cobertura -Dtest=pt.mashashi.javaroles.composition.RolesTest test coveralls:report  #-X
