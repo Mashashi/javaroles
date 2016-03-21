@@ -1,4 +1,4 @@
-# JavaRoles [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/Mashashi/javaroles/master/LICENSE) [![Coverage Status](http://img.shields.io/coveralls/Mashashi/javaroles/master.svg?style=flat-square)](https://coveralls.io/r/Mashashi/javaroles?branch=master) ![travis-ci-branch:master](https://travis-ci.org/Mashashi/javaroles.svg?branch=master) 
+# JavaRoles [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/Mashashi/javaroles/master/LICENSE) [![Coverage Status](https://coveralls.io/repos/github/Mashashi/javaroles/badge.svg?branch=master)](https://coveralls.io/github/Mashashi/javaroles?branch=master) ![travis-ci-branch:master](https://travis-ci.org/Mashashi/javaroles.svg?branch=master) 
 
 A very rudimentary and light weighted implementation of role object modelling for Java.
 
@@ -191,7 +191,7 @@ For maven just add the following to your `pom.xml`.
 	</dependencies>
 ```
 
-Look through the tags to pick a version. Any that as the format `vX.X.X` will work.
+Look through the tags to pick a version. Any that has the format `vX.X.X` will work.
 
 ## implementations
 These are the two operation modes available.
