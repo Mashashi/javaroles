@@ -25,7 +25,13 @@
 		    	<instrumentation>
 	                <excludes>
 	                    <exclude>pt/mashashi/javaroles/test/**/*.class</exclude>
+	                    <exclude>tests/pt/mashashi/javaroles/test/**/*.class</exclude>
+	                    <exclude>pt/mashashi/javaroles/test/**/*</exclude>
+	                    <exclude>tests/pt/mashashi/javaroles/test/**/*</exclude>
 	                </excludes>
+	                <ignores>
+				      <ignore>pt.mashashi.javaroles.test.*</ignore>
+				    </ignores>
 	            </instrumentation>
 		        <repoToken>0uSG7oO1ix9oV1UQw527hxr2nI5kMxK4q</repoToken>
 		        <sourceEncoding>Cp1252</sourceEncoding>
