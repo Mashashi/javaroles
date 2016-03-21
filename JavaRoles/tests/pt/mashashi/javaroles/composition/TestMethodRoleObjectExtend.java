@@ -1,8 +1,9 @@
 package pt.mashashi.javaroles.composition;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import pt.mashashi.javaroles.annotations.ObjRigid;
+import pt.mashashi.javaroles.annotations.ObjRigidTypes;
 import pt.mashashi.javaroles.annotations.ObjRole;
 import pt.mashashi.javaroles.impl.composition.RoleRegisterComposition;
 import pt.mashashi.javaroles.register.RoleRegisterAssembler;
@@ -50,7 +51,6 @@ public class TestMethodRoleObjectExtend {
 	}
 	
 	static class AnimalRoles implements Human, Monkey{
-		
 		@ObjRigid public Human rigid;
 		@ObjRole public Human human;
 		@ObjRole public Monkey monkey;
@@ -67,7 +67,6 @@ public class TestMethodRoleObjectExtend {
 		@Override
 		public String cry() { return "Default cry "+this.getClass().getName(); }
 	}
-	
 	public static class AnimalRolesExtra extends AnimalRoles {
 		
 		@Override
@@ -84,10 +83,44 @@ public class TestMethodRoleObjectExtend {
 		
 		@Override
 		public String cry() {
-			return super.rigid.cry();
+			return super.rigid.cry(); // This calls this very same method cry()
 		}
 	}
 	
+	
+	static class AnimalRolesStatic implements Human, Monkey{
+		@ObjRigid(ObjRigidTypes.STATIC) public Human rigid;
+		@ObjRole public Human human;
+		@ObjRole public Monkey monkey;
+		
+		public AnimalRolesStatic(){
+			human = new Portuguese(); monkey = new Bonobo();
+		}
+		@Override
+		public String hello() { return "Default hello "+this.getClass().getName(); }
+		@Override
+		public String goodbye() { return "Default goodbye "+this.getClass().getName(); }
+		@Override
+		public String walk() { return "Default walk "+this.getClass().getName(); }
+		@Override
+		public String cry() { return "Default cry "+this.getClass().getName(); }
+	}
+	public static class AnimalRolesExtraStatic extends AnimalRolesStatic {
+		@Override
+		public String hello() {
+			return "nop";
+		}
+		@Override
+		public String goodbye() {
+			String result = super.goodbye();
+			result += " extended";
+			return result;
+		}
+		@Override
+		public String cry() {
+			return super.rigid.cry(); // This calls this very same method cry()
+		}
+	}
 	
 	public static void test(){
 			
@@ -101,7 +134,14 @@ public class TestMethodRoleObjectExtend {
 		assertEquals("nop", a.hello());
 		assertEquals("Goodbye buddy extended", a.goodbye());
 		assertEquals("ChepChepChep", a.walk());
-		assertEquals("Default cry "+TestMethodRoleObjectExtend.AnimalRoles.class.getName(), a.cry());
+		try{
+			assertEquals("Default cry "+TestMethodRoleObjectExtend.AnimalRolesExtra.class.getName(), a.cry());
+			fail("A exception is spected");
+		}catch(StackOverflowError e){}
+		
+		AnimalRolesExtraStatic b = new AnimalRolesExtraStatic();
+		assertEquals("Default cry "+TestMethodRoleObjectExtend.AnimalRolesExtraStatic.class.getName(), b.cry());
+		
 	}
 	
 }

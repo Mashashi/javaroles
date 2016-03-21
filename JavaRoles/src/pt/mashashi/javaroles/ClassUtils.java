@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.jar.JarEntry;
@@ -27,6 +28,8 @@ import javassist.NotFoundException;
 import javassist.bytecode.AnnotationsAttribute;
 import javassist.bytecode.ClassFile;
 import javassist.bytecode.ConstPool;
+import javassist.bytecode.annotation.StringMemberValue;
+import pt.mashashi.javaroles.annotations.OriginalMethod;
 
 /**
  * 
@@ -401,20 +404,37 @@ public class ClassUtils {
 
 	public static void addAnnotation(
             CtMethod cmethod,
-            Annotation annot)
+            Annotation annot,
+            Map<String, String> params)
     {
+		
         ClassFile cfile = cmethod.getDeclaringClass().getClassFile();
         ConstPool cpool = cfile.getConstPool();
  
         AnnotationsAttribute attr =
                 new AnnotationsAttribute(cpool, AnnotationsAttribute.visibleTag);
         javassist.bytecode.annotation.Annotation annotAssist = new javassist.bytecode.annotation.Annotation(annot.annotationType().getName(), cpool);
-        //annot.addMemberValue("value", new IntegerMemberValue(ccFile.getConstPool(), 0));
+        if(params!=null){
+	        for(String s : params.keySet()){
+	        	annotAssist.addMemberValue(s, new StringMemberValue(params.get(s),cfile.getConstPool()));
+	        }
+        }
         attr.addAnnotation(annotAssist);
         cmethod.getMethodInfo().addAttribute(attr);
     }
 	
-	
+	public static String newNameOriginalMethod(Object core, String originalName){
+		for(Method m : core.getClass().getMethods()){ // getDeclaredMethods does not work inserted methods not retrieved
+			OriginalMethod a = m.getAnnotation(OriginalMethod.class);
+			if(a!=null){
+				//System.out.println(a.value()+" "+originalName+" "+m.getName());
+				if(a.value().equals(originalName)){
+					return m.getName();
+				}
+			}
+		}
+		return null;
+	}
 	
 	/*public static List<CtClass> extendz(CtClass clazz, CtClass possibleExtends){
 		

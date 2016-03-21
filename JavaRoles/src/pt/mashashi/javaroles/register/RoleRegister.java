@@ -427,6 +427,21 @@ public abstract class RoleRegister {
 						);
 						final String var = ClassUtils.generateIdentifier();
 						{
+							String code = "";
+							
+							ObjRigid a = (ObjRigid) n.getAnnotation(ObjRigid.class);
+							switch(a.value()){
+								case STATIC:
+									code += "String orig = "+ClassUtils.class.getName()+".newNameOriginalMethod(core,\""+method.getName()+"\");"+
+											"if(orig==null){orig=\""+method.getName()+"\";}"; // if the role for a method is turned off orig will be null
+									break;	
+								case DYNAMIC:
+									code += "String orig = \""+method.getName()+"\";";
+									break;
+								default:
+									throw new RuntimeException();
+							}
+							
 							m.setBody(
 								"{"+
 									CtMethod.class.getName()+" "+var+" = "+ClassUtils.class.getName()+".getExecutingMethod("+
@@ -434,14 +449,18 @@ public abstract class RoleRegister {
 																				"\""+method.getName()+"\","+
 																				"\""+method.getSignature()+"\");"+
 									"try{"+
+										code+
 										"return ($r) "+ClassUtils.class.getName()+".invokeWithNativeTypes("+
 										"core,"+
-										"\""+method.getName()+"\","+
+										"orig,"+
 										var+".getParameterTypes(),"+
 										"$args);"+
 									"}catch("+InvocationTargetException.class.getName()+" e){"+
 										"throw e.getCause();"+
 									"}"+
+										
+									
+									
 								"}"
 							);
 						}

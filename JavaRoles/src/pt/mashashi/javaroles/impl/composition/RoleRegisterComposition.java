@@ -1,9 +1,11 @@
 package pt.mashashi.javaroles.impl.composition;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javassist.CannotCompileException;
 import javassist.CtClass;
@@ -14,6 +16,7 @@ import javassist.NotFoundException;
 import pt.mashashi.javaroles.ClassUtils;
 import pt.mashashi.javaroles.MissProcessingException;
 import pt.mashashi.javaroles.annotations.MissMsgReceptor;
+import pt.mashashi.javaroles.annotations.OriginalMethod;
 import pt.mashashi.javaroles.register.RoleRegister;
 
 
@@ -40,6 +43,18 @@ public class RoleRegisterComposition extends RoleRegister{
 		final String varM = ClassUtils.generateIdentifier();
 		
 		methodCreated = CtNewMethod.copy(method, uuid, cn, null);
+		
+		{
+			Map<String, String> map = new HashMap<String, String>(); 
+			map.put("value", method.getName());
+			ClassUtils.addAnnotation(methodCreated, new OriginalMethod(){
+				@Override
+				public Class<? extends Annotation> annotationType() { return OriginalMethod.class; }
+				@Override
+				public String value() { return null; }			
+			}, map);
+		}
+		
 		cn.addMethod(methodCreated);
 		
 		method.setBody(

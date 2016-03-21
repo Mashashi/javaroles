@@ -103,7 +103,7 @@ public class CmdExtendAnnotation implements ICmd{
 										final Annotation annotType = ((Annotation)a);
 										Annotation ag = (Annotation) extendMethod.getAnnotation(annotType.annotationType());
 										if(ag==null){
-											ClassUtils.addAnnotation(extendMethod, annotType);
+											ClassUtils.addAnnotation(extendMethod, annotType, null);
 											roleRegister.classScheduler.scheduleFinalCmd(CmdCloseClass.neu(roleRegister, ctClazz));
 										}
 									}

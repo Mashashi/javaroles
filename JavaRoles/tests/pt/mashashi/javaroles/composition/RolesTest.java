@@ -97,6 +97,16 @@ public class RolesTest {
 	}
 	
 	
+	// Bug tests
+	
+	@Test
+	public void testBugMethodRigidInaccessibleInterface() {
+		TestMethodRigidInaccessibleInterface.test();
+	}
+	
+	// Usual tests
+	
+	
 	@Test
 	public void testMethodRoleObjectMethodCall() {
 		TestMethodRoleObjectMethodCall.test();
@@ -116,11 +126,6 @@ public class RolesTest {
 	@Test
 	public void testMethodRoleObjectExtend() {
 		TestMethodRoleObjectExtend.test();
-	}
-	
-	@Test
-	public void testBugMethodRigidInaccessibleInterface() {
-		TestMethodRigidInaccessibleInterface.test();
 	}
 	
 	@Test
@@ -214,7 +219,6 @@ public class RolesTest {
 	@Test
 	public void testOriginalRigidVoidMethod() {
 		TestOriginalRigidVoidMethod.test();
-		
 	}
 	
 	@Test
