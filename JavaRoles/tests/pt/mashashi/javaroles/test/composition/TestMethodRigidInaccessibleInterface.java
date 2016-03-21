@@ -94,7 +94,7 @@ public class TestMethodRigidInaccessibleInterface {
 				.registerRoles();
 			fail("The reported error is not happening any more.");
 		}catch(RuntimeException e){
-			assertTrue(e.getMessage().contains("cannot access its superinterface pt.mashashi.javaroles.composition.TestMethodRigidInaccessibleInterface$Human"));
+			assertTrue(e.getMessage().contains("cannot access its superinterface "+TestMethodRigidInaccessibleInterface.Human.class.getName()));
 		}
 		
 	}

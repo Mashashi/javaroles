@@ -173,7 +173,7 @@ public class TestPlay {
 		a2.set();
 		assertNotEquals(null, ((Portuguese)a2.human).animalRoles);
 		
-		List<String> t3r = LoggerTarget.string("Test:pt.mashashi.javaroles.composition.TestPlay-TestPlay$AnimalRoles3");
+		List<String> t3r = LoggerTarget.string("Test:"+TestPlay.class.getName()+"-TestPlay$AnimalRoles3");
 		assertEquals(1, t3r.size());
 		assertEquals("-rc", t3r.get(0));
 		

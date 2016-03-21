@@ -66,7 +66,7 @@ public class TestNotNullParams {
 		try{
 			h = new Human(null);
 		}catch(RuntimeException e){
-			assertEquals("Param number 0 on method pt.mashashi.javaroles.composition.TestNotNullParams$Human(java.lang.String) can not be null.", e.getMessage()); 
+			assertEquals("Param number 0 on method "+TestNotNullParams.Human.class.getName()+"(java.lang.String) can not be null.", e.getMessage()); 
 		}
 		h = new Human("x");
 		h.hello("Rafael");
@@ -74,7 +74,7 @@ public class TestNotNullParams {
 			h.hello(null);
 			fail("A runtime exception should be thrown");
 		}catch(RuntimeException e){
-			assertEquals("Param number 0 on method pt.mashashi.javaroles.composition.TestNotNullParams$Human.hello(java.lang.String) can not be null.", e.getMessage());
+			assertEquals("Param number 0 on method "+TestNotNullParams.Human.class.getName()+".hello(java.lang.String) can not be null.", e.getMessage());
 		}
 		h.age(1);
 		
@@ -85,7 +85,7 @@ public class TestNotNullParams {
 			s.study(null);
 			fail("A runtime exception should be thrown");
 		}catch(RuntimeException e){
-			assertEquals("Param number 0 on method pt.mashashi.javaroles.composition.TestNotNullParams$Student.study(java.lang.Long) can not be null.", e.getMessage());
+			assertEquals("Param number 0 on method "+TestNotNullParams.Student.class.getName()+".study(java.lang.Long) can not be null.", e.getMessage());
 		}
 		
 	}

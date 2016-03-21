@@ -288,7 +288,7 @@ public class TestPkgMatchTypes {
 		LoggerTarget.clear();
 		
 		rr = new RoleRegisterAssembler(new RoleRegisterComposition())
-				.includeGivenRaw("pt.mashashi.javaroles.composition.TestPkgMatchTypes$AnimalRolesExact$AnimalRolesExact1")
+				.includeGivenRaw("pt.mashashi.javaroles.test.composition.TestPkgMatchTypes$AnimalRolesExact$AnimalRolesExact1")
 				.setMatchType(MatchType.EXACT)
 				.get();
 		Logger.getRootLogger().setLevel(Level.ALL);
@@ -310,7 +310,7 @@ public class TestPkgMatchTypes {
 		*/
 		
 		rr = new RoleRegisterAssembler(new RoleRegisterComposition())	
-				.includeGivenRaw("pt.mashashi.javaroles.composition.TestPkgMatchTypes$AnimalRolesExactSelective")
+				.includeGivenRaw("pt.mashashi.javaroles.test.composition.TestPkgMatchTypes$AnimalRolesExactSelective")
 				.setMatchType(MatchType.EXACT)
 				.get();
 		Logger.getRootLogger().setLevel(Level.ALL);
