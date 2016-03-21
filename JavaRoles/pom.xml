@@ -44,7 +44,7 @@
 	                    <exclude>/JavaRoles/tests/pt/mashashi/javaroles/test/composition/TestToSecondRoleFirstNull.java</exclude>
 	                    <exclude>/tests/pt/mashashi/javaroles/test/composition/TestToSecondRoleFirstNull.java</exclude>
 	                    -->
-	                    <exclude>/pt/mashashi/javaroles/test/**/Test*.java</exclude>
+	                    <exclude>/pt/mashashi/javaroles/test/composition/Test*.java</exclude>
 	                </excludes>
 	                <ignores>
 				      <ignore>pt.mashashi.javaroles.test.*</ignore>
