@@ -47,7 +47,7 @@ public class TestWriteClasses {
 				.writeClasses(dir)
 				.get()
 				.registerRoles();
-		String path = dir+File.separatorChar+"pt"+File.separatorChar+"mashashi"+File.separatorChar+"javaroles"+File.separatorChar+"composition"+File.separatorChar+"TestWriteClasses$AnimalRoles.class";
+		String path = dir+File.separatorChar+"pt"+File.separatorChar+"mashashi"+File.separatorChar+"javaroles"+File.separatorChar+"test"+File.separatorChar+"composition"+File.separatorChar+"TestWriteClasses$AnimalRoles.class";
 		File f = new File(path);
 		if(!f.exists()){
 			fail("Class file wasn't created");
