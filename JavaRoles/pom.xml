@@ -28,6 +28,16 @@
 	                    <exclude>tests/pt/mashashi/javaroles/test/**/*.class</exclude>
 	                    <exclude>pt/mashashi/javaroles/test/**/*</exclude>
 	                    <exclude>tests/pt/mashashi/javaroles/test/**/*</exclude>
+	                    <exclude>tests/pt/mashashi/javaroles/test/*</exclude>
+	                    <exclude>tests/pt/mashashi/javaroles/test/**</exclude>
+	                    <exclude>pt/mashashi/javaroles/test/**</exclude>
+	                    <exclude>pt/mashashi/javaroles/test/*</exclude>
+	                    <exclude>/JavaRoles/pt/mashashi/javaroles/test/*</exclude>
+	                    <exclude>/JavaRoles/pt/mashashi/javaroles/test/**</exclude>
+	                    <exclude>/JavaRoles/pt/mashashi/javaroles/test/**.class</exclude>
+	                    <exclude>/JavaRoles/tests/pt/mashashi/javaroles/test/*</exclude>
+	                    <exclude>/JavaRoles/tests/pt/mashashi/javaroles/test/**/*</exclude>
+	                    <exclude>/JavaRoles/tests/pt/mashashi/javaroles/test/**/*.class</exclude>
 	                </excludes>
 	                <ignores>
 				      <ignore>pt.mashashi.javaroles.test.*</ignore>
