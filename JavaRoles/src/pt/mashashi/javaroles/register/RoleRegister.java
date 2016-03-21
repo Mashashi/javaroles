@@ -33,9 +33,9 @@ import pt.mashashi.javaroles.annotations.ObjRole;
 import pt.mashashi.javaroles.annotations.Play;
 import pt.mashashi.javaroles.annotations.Player;
 import pt.mashashi.javaroles.annotations.Play.Place;
-import pt.mashashi.javaroles.composition.TestPkgMatchTypes;
-import pt.mashashi.javaroles.composition.TestPlay;
 import pt.mashashi.javaroles.injection.InjectionStrategy;
+import pt.mashashi.javaroles.test.composition.TestPkgMatchTypes;
+import pt.mashashi.javaroles.test.composition.TestPlay;
 
 /**
  * Offers a way to go through all the classes in the class path searching for the points that need code injection

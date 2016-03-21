@@ -24,7 +24,7 @@
 		    <configuration>
 		    	<instrumentation>
 	                <excludes>
-	                    <exclude>tests/**/*.class</exclude>
+	                    <exclude>pt/mashashi/javaroles/test/**/*.class</exclude>
 	                </excludes>
 	            </instrumentation>
 		        <repoToken>0uSG7oO1ix9oV1UQw527hxr2nI5kMxK4q</repoToken>
