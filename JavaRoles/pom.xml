@@ -4,9 +4,11 @@
   <artifactId>javaroles</artifactId>
   <version>0.8.0</version>
   
+  <!--
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
+  -->
   
   <build>
     <sourceDirectory>src</sourceDirectory>
@@ -18,6 +20,7 @@
 		    <version>4.1.0</version>
 		    <configuration>
 		        <repoToken>0uSG7oO1ix9oV1UQw527hxr2nI5kMxK4q</repoToken>
+		        <sourceEncoding>UTF8</sourceEncoding>
 		    </configuration>
 		</plugin>
 		
