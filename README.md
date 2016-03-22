@@ -1,4 +1,4 @@
-# JavaRoles [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/Mashashi/javaroles/master/LICENSE) [![Coverage Status](https://coveralls.io/repos/github/Mashashi/javaroles/badge.svg?branch=master)](https://coveralls.io/github/Mashashi/javaroles?branch=master) ![travis-ci-branch:master](https://travis-ci.org/Mashashi/javaroles.svg?branch=master) 
+# JavaRoles [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/Mashashi/javaroles/master/LICENSE) ![travis-ci-branch:master](https://travis-ci.org/Mashashi/javaroles.svg?branch=master) [![Coverage Status](https://coveralls.io/repos/github/Mashashi/javaroles/badge.svg?branch=master)](https://coveralls.io/github/Mashashi/javaroles?branch=master)
 
 A very rudimentary and light weighted implementation of role object modelling for Java.
 
