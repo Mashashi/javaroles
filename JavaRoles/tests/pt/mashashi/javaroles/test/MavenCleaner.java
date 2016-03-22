@@ -33,7 +33,10 @@ public class MavenCleaner {
 			inner:{ 
 				for(int i=0;i<pkgs.getLength();i++){
 					String pkgName = pkgs.item(i).getAttributes().getNamedItem("name").getNodeValue();
-					if(pkgName.contains(".test")){
+					if(
+							pkgName.contains(".test")||
+							pkgName.contains(".typed")
+					  ){
 						System.out.println("Removed pkg:"+pkgName);
 						pkgs.item(i).getParentNode().removeChild(pkgs.item(i));
 						break inner;
