@@ -2,6 +2,8 @@ package pt.mashashi.javaroles.impl.composition;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -17,6 +19,7 @@ import pt.mashashi.javaroles.RoleBus;
 import pt.mashashi.javaroles.annotations.InjObjRigid;
 import pt.mashashi.javaroles.annotations.MissMsgReceptor;
 import pt.mashashi.javaroles.annotations.ObjRole;
+import pt.mashashi.javaroles.annotations.ProxyRules;
 
 /**
  * Very restricted implementation of role objects the point of this RoleBus is to provide a way to mixin classes
@@ -82,17 +85,20 @@ public class RoleBusComposition extends RoleBus{
 						break useIt;
 					
 			    	try {
-			    		// check if it is not null
 			    		Object o = null;
-			    		String declaringClass = field.getDeclaringClass().getName();
-						fieldRole = Class.forName(declaringClass).getDeclaredField(field.getName());
-						o = FieldUtils.readField(fieldRole, target, true);
-						
-				    	if(o==null) 
-				    		break useIt;
-				    	
-				    	// BLOCK Exclude object roles that require the rigid and it is not set on them
+			    		
+			    		{
+				    		// BLOCK check if it is not null
+				    		String declaringClass = field.getDeclaringClass().getName();
+							fieldRole = Class.forName(declaringClass).getDeclaredField(field.getName());
+							o = FieldUtils.readField(fieldRole, target, true);
+							
+					    	if(o==null) 
+					    		break useIt;
+			    		}
+			    		
 				    	for(Field f : ClassUtils.getListFieldAnnotated(o.getClass(), InjObjRigid.class)){
+				    		// BLOCK Exclude object roles that require the rigid and it is not set on them
 				    		InjObjRigid a = f.getAnnotation(InjObjRigid.class);
 				    		if(f.getType().isInstance(target) && a.required()){
 				    			Object o2 = FieldUtils.readField(f, o, true);
@@ -100,7 +106,47 @@ public class RoleBusComposition extends RoleBus{
 				    				break useIt;
 				    		}
 				    	}
-			    	
+				    	
+				    	// TODO Check rules on the object
+				    	// get all methods which have rigid, role
+				    	ProxyRules proxyRules = target.getClass().getAnnotation(ProxyRules.class);
+				    	if(proxyRules!=null){
+				    		for(Class<?> r : proxyRules.value()){
+				    			List<Method> ms1 = ClassUtils.getMethodsWithParams(r, target.getClass(), o.getClass());
+				    			List<Method> ms2 = ClassUtils.getMethodsWithParams(r, target.getClass());
+				    			List<List<Method>> mss = new LinkedList<>();
+				    			mss.add(ms1);
+				    			mss.add(ms2);
+				    			
+				    			for(List<Method> ms : mss){
+					    			for(Method m : ms){
+					    				if(	
+					    						m.getReturnType().equals(Boolean.class) && 
+					    						Modifier.isStatic(m.getModifiers())
+					    				){
+						    				try {
+						    					Boolean ret =null;
+						    					if(ms==ms1){
+						    						ret = (Boolean) m.invoke(r, target, o); // return might be null
+						    					}else if(ms==ms2){
+						    						ret = (Boolean) m.invoke(r, target); // return might be null
+						    					}
+												if(ret!=true){ 
+													break useIt;
+												}
+											} catch (IllegalArgumentException e) {
+												// This is not supposed to happen
+												throw new RuntimeException(e);
+											} catch (InvocationTargetException e) {
+												// TODO Possible loop nesting of runtime exceptions
+												throw new RuntimeException(e.getCause());
+											}
+					    				}
+					    			}
+				    			}
+				    		}
+				    	}
+				    	
 			    	} catch (NoSuchFieldException | SecurityException | IllegalAccessException e) {
 			    		throw new RuntimeException(e);
 			    	}

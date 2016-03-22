@@ -462,4 +462,23 @@ public class ClassUtils {
 		return l;
 	}*/
 	
+	
+	public static List<Method> getMethodsWithParams(Class<?> clazz, Class<?>... params){
+		List<Method> ms = new LinkedList<>();
+		nextMethod: for(Method m : clazz.getMethods()){
+			Class<?>[] mParams = m.getParameterTypes();
+			if(mParams.length == params.length){
+				int i = Math.max(mParams.length, params.length)-1;
+				while(i>0){
+					if(!mParams[i].equals(params[i])){
+						continue nextMethod;
+					}
+					i--;
+				}
+				ms.add(m);
+			}
+		}
+		return ms;
+	}
+	
 }

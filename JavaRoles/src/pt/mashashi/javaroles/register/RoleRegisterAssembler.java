@@ -10,7 +10,6 @@ import pt.mashashi.javaroles.annotations.sprinkles.InheritAnnots;
 import pt.mashashi.javaroles.annotations.sprinkles.NotNullParams;
 import pt.mashashi.javaroles.annotations.sprinkles.Seal;
 import pt.mashashi.javaroles.injection.InjectionStrategy;
-import pt.mashashi.javaroles.register.RoleRegister.MatchType;
 
 /**
  * Encapsulates the algorithm methods for constructing a role register.

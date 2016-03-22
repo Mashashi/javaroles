@@ -11,9 +11,9 @@ import pt.mashashi.javaroles.annotations.ObjRole;
 import pt.mashashi.javaroles.annotations.Player;
 import pt.mashashi.javaroles.impl.composition.RoleRegisterComposition;
 import pt.mashashi.javaroles.logging.LoggerTarget;
+import pt.mashashi.javaroles.register.MatchType;
 import pt.mashashi.javaroles.register.RoleRegister;
 import pt.mashashi.javaroles.register.RoleRegisterAssembler;
-import pt.mashashi.javaroles.register.RoleRegister.MatchType;
 
 public class TestPkgMatchTypes {
 	

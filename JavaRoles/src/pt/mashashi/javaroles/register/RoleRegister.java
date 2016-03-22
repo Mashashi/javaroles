@@ -45,12 +45,6 @@ import pt.mashashi.javaroles.test.composition.TestPlay;
  */
 public abstract class RoleRegister {
 	
-	public enum MatchType{ 
-		EXACT
-		,STARTS_WITH
-		//,REGEX
-	}
-	
 	private ClassPool cp;
 	
 	protected String roleBusVarName;
@@ -382,8 +376,6 @@ public abstract class RoleRegister {
 		while(ite.hasNext()){
 			CtField n = ite.next();
 			CtClass i = cp.get(n.getType().getName());
-			
-			
 			
 			
 			if(!i.isInterface()){

@@ -314,4 +314,9 @@ public class RolesTest {
 		TestNotNullParams.test();
 	}
 	
+	@Test
+	public void testProxyRules() {
+		TestProxyRules.test();
+	}
+	
 }
