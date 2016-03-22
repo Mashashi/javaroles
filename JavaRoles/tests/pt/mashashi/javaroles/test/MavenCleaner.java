@@ -24,7 +24,7 @@ public class MavenCleaner {
 	public static void main(String[] args) throws FileNotFoundException, IOException, ParserConfigurationException, SAXException {
 		
 		//mvn exec:java -Dexec.mainClass="pt.mashashi.javaroles.test.MavenCleaner"
-		String p = "target"+File.separatorChar+"site"+File.separatorChar+"cobertura"+File.separatorChar+"coverage.xml";
+		String p = "JavaRoles"+File.separatorChar+"target"+File.separatorChar+"site"+File.separatorChar+"cobertura"+File.separatorChar+"coverage.xml";
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = factory.newDocumentBuilder();
 		Document document = builder.parse(new File(p));
