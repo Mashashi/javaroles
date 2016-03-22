@@ -5,9 +5,14 @@ mvn -Dlog4j.configuration=file:log4j.properties -Dea -e cobertura:cobertura site
 mvn -Dlog4j.configuration=file:log4j.properties -Dea -e cobertura:cobertura -Dcobertura.report.format=xml
 mvn -Dlog4j.configuration=file:log4j.properties -Dea -e cobertura:cobertura -Dcobertura.report.format=html
 
+mvn -f JavaRoles/pom.xml -Dlog4j.configuration=file:log4j.properties -Dea -e cobertura:cobertura -Dcobertura.report.format=xml
+
+mvn -f JavaRoles/pom.xml exec:java -Dexec.mainClass="pt.mashashi.javaroles.test.MavenCleaner"
+
 Send the report to coveralls:
 mvn coveralls:report -DcoberturaReports=C:\Users\Rafael\Desktop\javaroles\JavaRoles\target\site\cobertura\index.html -e
 mvn coveralls:report -DcoberturaReports=C:\Users\Rafael\Desktop\javaroles\JavaRoles\target\site\cobertura\coverage.xml -e
 mvn coveralls:report -DcoberturaReports=C:\Users\Rafael\Desktop\javaroles\JavaRoles\target\site\cobertura\coverage.xml -DsourceDirectories=C:\Users\Rafael\Desktop\javaroles\JavaRoles\src
 mvn coveralls:report -DcoberturaReports=C:\Users\Rafael\Desktop\javaroles\JavaRoles\target\site\cobertura\coverage.xml -DsourceDirectories=src,tests
-mvn coveralls:report -DsourceDirectories=src,tests
+
+mvn -f JavaRoles/pom.xml coveralls:report -DsourceDirectories=src,tests

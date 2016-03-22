@@ -5,6 +5,7 @@ A very rudimentary and light weighted implementation of role object modelling fo
 Main features are: 
 * Class composition 
 * Interface name resolution
+* Java class enhancement
 
 See the in code documentation and test cases to get the felling on how it works.
 
