@@ -233,7 +233,7 @@ public abstract class RoleRegister {
 	 */
 	private void checkMsgReceptorTypes(CtClass cn) throws ClassNotFoundException, NotFoundException {
 		List<CtField> objectRoles = ClassUtils.getListFieldAnnotated(cn, MissMsgReceptor.class);
-		for(CtField o:objectRoles){
+		for(CtField o: objectRoles){
 			if(
 					!o.getType().equals((ClassUtils.getMissMsgReceptorType())) && 
 					(

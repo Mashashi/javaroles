@@ -1,30 +1,32 @@
 package pt.mashashi.javaroles.test.composition;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import pt.mashashi.javaroles.annotations.ObjRole;
 import pt.mashashi.javaroles.annotations.ProxyRules;
+import pt.mashashi.javaroles.impl.composition.RoleRegisterComposition;
+import pt.mashashi.javaroles.register.RoleRegisterAssembler;
+import pt.mashashi.javaroles.test.Test;
 
 public class TestProxyRules {
 	
 	public interface Human{ String hello(); }
 	public interface Monkey{ String hello(); }
 	
-	static class Portuguese implements Human{
+	public static class Portuguese implements Human{
 		@Override
 		public String hello() { return "Hello buddy"; }
 	}
-	static class Bonobo implements Monkey{
+	public static class Bonobo implements Monkey{
 		@Override public String hello() { return "Ugauga"; } 
 	}
-	
 	
 	public static Boolean rolesActive(AnimalRoles a){
 		return a.rolesActive;
 	}
 	
 	@ProxyRules({TestProxyRules.class})
-	static class AnimalRoles implements Human, Monkey{
+	public static class AnimalRoles implements Human, Monkey{
 		public boolean rolesActive;
 		@ObjRole public Human human;
 		@ObjRole public Monkey monkey;
@@ -39,12 +41,19 @@ public class TestProxyRules {
 	
 	
 	public static void test(){
-		
-		AnimalRoles a = new AnimalRoles();
-		a.rolesActive=true;
-		assertEquals("Yap", "Hello buddy", a.hello());
-		a.rolesActive=false;
-		assertEquals("Yap",  "Default hello "+AnimalRoles.class.getName(), a.hello());
+	
+		if(Test.doTest(Test.Type.AGGRESSIVE)){
+			new RoleRegisterAssembler(new RoleRegisterComposition())
+					.includeGiven(TestProxyRules.class)
+					.get()
+					.registerRoles();
+			AnimalRoles a = new AnimalRoles();
+			a.rolesActive = true;
+			assertEquals("Yap", "Hello buddy", a.hello());
+			a.rolesActive = false;
+			assertEquals("Yap",  "Default hello pt.mashashi.javaroles.test.composition.TestProxyRules$AnimalRoles", a.hello());
+		}
+		//else{ System.out.println("nop"); }
 		
 	}
 	

@@ -2,7 +2,6 @@ package pt.mashashi.javaroles.test.composition;
 
 import static org.junit.Assert.*;
 
-import pt.mashashi.javaroles.annotations.ObjRigid;
 import pt.mashashi.javaroles.annotations.ObjRole;
 import pt.mashashi.javaroles.impl.composition.RoleRegisterComposition;
 import pt.mashashi.javaroles.register.RoleRegisterAssembler;
@@ -51,7 +50,6 @@ public class TestMethodRigidInaccessibleInterface {
 	
 	static class AnimalRoles implements Human, Monkey{
 		
-		@ObjRigid public Human rigid;
 		@ObjRole public Human human;
 		@ObjRole public Monkey monkey;
 		
@@ -92,8 +90,9 @@ public class TestMethodRigidInaccessibleInterface {
 				.includeGiven(TestMethodRigidInaccessibleInterface.class)
 				.get()
 				.registerRoles();
-			fail("The reported error is not happening any more.");
+			//fail("The reported error is not happening any more.");
 		}catch(RuntimeException e){
+			fail("the error is happens again");
 			assertTrue(e.getMessage().contains("cannot access its superinterface "+TestMethodRigidInaccessibleInterface.Human.class.getName()));
 		}
 		

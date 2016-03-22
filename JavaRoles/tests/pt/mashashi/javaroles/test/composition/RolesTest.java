@@ -85,6 +85,7 @@ public class RolesTest {
 				,TestMethodRoleObjectNotInter.class
 				,TestMethodRoleObjectExtend.class
 				,TestMethodRigidInaccessibleInterface.class
+				,TestProxyRules.class
 		};
 		
 		

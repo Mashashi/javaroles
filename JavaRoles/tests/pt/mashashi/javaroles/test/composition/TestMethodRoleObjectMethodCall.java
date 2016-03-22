@@ -31,7 +31,8 @@ public class TestMethodRoleObjectMethodCall {
 		@ObjRole public Monkey monkey;
 		@ObjRole public Human human;
 		public AnimalRolesSwaped(){
-			human = new Portuguese(); monkey = new Bonobo(); 
+			human = new Portuguese(); 
+			monkey = new Bonobo(); 
 		}
 		@Override 
 		public String hello() { return "Default hello "+this.getClass().getName(); }

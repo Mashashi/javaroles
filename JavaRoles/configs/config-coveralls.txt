@@ -1,11 +1,14 @@
 Don't forget to add all source code folders
 
+Note: With -DargLine="-DaggressiveTests=off" some tests are turned off. This env variable is just used insite the javaroles to turnoff some tests
+which are not compatible with coveralls.
+
 Build the report:
 mvn -Dlog4j.configuration=file:log4j.properties -Dea -e cobertura:cobertura site -Dcobertura.report.format=xml
 mvn -Dlog4j.configuration=file:log4j.properties -Dea -e cobertura:cobertura -Dcobertura.report.format=xml
 mvn -Dlog4j.configuration=file:log4j.properties -Dea -e cobertura:cobertura -Dcobertura.report.format=html
 
-mvn -f JavaRoles/pom.xml -Dlog4j.configuration=file:log4j.properties -Dea -e cobertura:cobertura -Dcobertura.report.format=xml
+mvn -f JavaRoles/pom.xml -Dlog4j.configuration=file:log4j.properties -Dea -e cobertura:cobertura -DargLine="-DtestType=RELAXED" -Dcobertura.report.format=xml
 
 mvn -f JavaRoles/pom.xml exec:java -Dexec.mainClass="pt.mashashi.javaroles.test.MavenCleaner"
 
@@ -15,4 +18,4 @@ mvn coveralls:report -DcoberturaReports=C:\Users\Rafael\Desktop\javaroles\JavaRo
 mvn coveralls:report -DcoberturaReports=C:\Users\Rafael\Desktop\javaroles\JavaRoles\target\site\cobertura\coverage.xml -DsourceDirectories=C:\Users\Rafael\Desktop\javaroles\JavaRoles\src
 mvn coveralls:report -DcoberturaReports=C:\Users\Rafael\Desktop\javaroles\JavaRoles\target\site\cobertura\coverage.xml -DsourceDirectories=src,tests
 
-mvn -f JavaRoles/pom.xml coveralls:report -DsourceDirectories=src,tests
+mvn -f JavaRoles/pom.xml coveralls:report -DcoberturaReports=C:\Users\Rafael\Desktop\javaroles\JavaRoles\target\site\cobertura\coverage.xml -DsourceDirectories=src,tests
