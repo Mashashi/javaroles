@@ -38,7 +38,6 @@ import org.junit.runners.model.Statement;
  */
 public class RolesTest {
 	
-
 	/*public class SingleTestRule implements MethodRule {
 	    private String applyMethod;
 	    public SingleTestRule(String applyMethod) {
@@ -57,7 +56,6 @@ public class RolesTest {
 	    }
 	}
 	@Rule public SingleTestRule test = new SingleTestRule("testCallMultiInput");*/
-
 	
 	@BeforeClass
 	public static void setup(){
@@ -88,7 +86,6 @@ public class RolesTest {
 				,TestProxyRules.class
 		};
 		
-		
 		new RoleRegisterAssembler(new RoleRegisterComposition())
 			.includeGivenPkg(RolesTest.class)
 			.excludeGiven(exclude)
@@ -96,7 +93,6 @@ public class RolesTest {
 			.registerRoles();
 		
 	}
-	
 	
 	// Bug tests
 	

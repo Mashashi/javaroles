@@ -19,10 +19,11 @@ public class TestMethodRoleObjectMethodCall {
 		@Override public String hello() { return "Ugauga"; } 
 	}
 	static class AnimalRoles implements Human, Monkey{
-		@ObjRole public Human human;
+		@ObjRole private Human human;
 		@ObjRole public Monkey monkey;
-		public AnimalRoles(){
-			human = new Portuguese(); monkey = new Bonobo();
+		public AnimalRoles(Human human, Monkey monkey){
+			this.human = human; 
+			this.monkey = monkey;
 		}
 		@Override
 		public String hello() { return "Default hello "+this.getClass().getName(); }
@@ -41,11 +42,14 @@ public class TestMethodRoleObjectMethodCall {
 	
 	public static void test(){
 		
-		AnimalRoles a = new AnimalRoles();
+		AnimalRoles a = new AnimalRoles(new Portuguese(), null);
 		assertEquals("Yap", "Hello buddy", a.hello());
 		
-		AnimalRolesSwaped b = new AnimalRolesSwaped();
+		AnimalRoles b = new AnimalRoles(null, new Bonobo());
 		assertEquals("Yap", "Ugauga", b.hello());
+		
+		AnimalRolesSwaped c = new AnimalRolesSwaped();
+		assertEquals("Yap", "Ugauga", c.hello());
 		
 	}
 	
