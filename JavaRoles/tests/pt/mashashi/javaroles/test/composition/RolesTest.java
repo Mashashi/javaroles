@@ -84,6 +84,11 @@ public class RolesTest {
 				,TestMethodRoleObjectExtend.class
 				,TestMethodRigidInaccessibleInterface.class
 				,TestProxyRules.class
+				
+				,pt.mashashi.javaroles.test.composition.TestObjectRoleDefinitionOnAnnotation.NotImplementedInterfaceOnRigid.class
+				,pt.mashashi.javaroles.test.composition.TestObjectRoleDefinitionOnAnnotation.NotImplementedInterfaceOnRole1.class
+				,pt.mashashi.javaroles.test.composition.TestObjectRoleDefinitionOnAnnotation.NotImplementedInterfaceOnRole2.class
+				
 		};
 		
 		new RoleRegisterAssembler(new RoleRegisterComposition())
@@ -196,7 +201,7 @@ public class RolesTest {
 			if(		
 					!e.getAnotation().equals(ObjRigid.class) 
 					|| 
-					e.getAnotationException() != AnnotationException.NOT_IMPLEMENTED
+					e.getAnotationException() != AnnotationException.NOT_IMPLEMENTED_BY_RIGID
 					){
 				fail("exception was not thrown correctly");
 			}
@@ -315,6 +320,11 @@ public class RolesTest {
 	@Test
 	public void testProxyRules() {
 		TestProxyRules.test();
+	}
+	
+	@Test
+	public void testObjectRoleDefinitionOnAnnotation() {
+		TestObjectRoleDefinitionOnAnnotation.test();
 	}
 	
 }

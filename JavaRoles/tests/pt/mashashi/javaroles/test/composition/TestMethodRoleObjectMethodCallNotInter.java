@@ -43,7 +43,7 @@ public class TestMethodRoleObjectMethodCallNotInter {
 				.registerRoles();
 			fail("Exception should be thrown");
 		}catch(MissUseAnnotationExceptionException e){
-			assertEquals("The annotation @"+ObjRole.class.getSimpleName()+" was used incorrectly.\n The class \""+TestMethodRoleObjectMethodCallNotInter.AnimalRoles.class.getName()+"\" has to implement the interface \""+TestMethodRoleObjectMethodCallNotInter.Human.class.getName()+"\" of the field \"human\".", e.getMessage());
+			assertEquals("The annotation @"+ObjRole.class.getSimpleName()+" was used incorrectly.\n The class \""+TestMethodRoleObjectMethodCallNotInter.AnimalRoles.class.getName()+"\" has to implement the interfaces \""+TestMethodRoleObjectMethodCallNotInter.Human.class.getName()+"\" of the field \"human\".", e.getMessage());
 		}
 		
 		AnimalRoles a = new AnimalRoles();

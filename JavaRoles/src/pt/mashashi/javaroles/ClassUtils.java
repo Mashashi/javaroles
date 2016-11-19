@@ -6,6 +6,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -116,6 +117,14 @@ public class ClassUtils {
 		return nativeTypes;
 	}
 	
+	/**
+	 * When this is called the class is written.
+	 * 
+	 * Use only after the classes are written.
+	 * 
+	 * @param jaType
+	 * @return
+	 */
 	public static Class<?> getNativeType(CtClass jaType){
 		String name = jaType.getName();
 		if(jaType.isArray()){
@@ -264,17 +273,25 @@ public class ClassUtils {
 		return roleObjects;
 	}
 	public static HashMap<String, CtField> getTypeFieldAnotatedAssist(CtClass target, Class<?> annotation) throws ClassNotFoundException, NotFoundException{
-		// Injected fields seem to only appear with target.getDeclaredFields()
 		HashMap<String, CtField> roleObjects = new HashMap<>();
-		for(CtField field : target.getFields()){
+		for(CtField field : getMixFields(target)){
 			if(field.getAnnotation(annotation)!=null){
 				roleObjects.put(field.getType().getSimpleName(), field);
 			}
 		}		
 		return roleObjects;
 	}
-	
-	
+	private static List<CtField> getMixFields(CtClass target){
+		// For inherited fields target.getFields()
+		// For private fields target.getDeclaredFields()
+		List<CtField> list = new LinkedList<CtField>(Arrays.asList(target.getFields()));
+		for(CtField field : target.getDeclaredFields()){
+			if(!list.contains(field)){
+				list.add(field);
+			}
+		}
+		return list;
+	}
 	
 	
 	/*public static void addAnnotation(CtClass cn, CtField newField, String annotation) {
@@ -434,6 +451,18 @@ public class ClassUtils {
 			}
 		}
 		return null;
+	}
+	
+	public static String getMethodIdFromSignature(String sig){
+		int argsStart = sig.indexOf("(");
+		String args = sig.substring(argsStart);
+		int throwsException = args.indexOf(" throws");
+		if(throwsException!=-1){
+			args = args.substring(0, throwsException);
+		}
+		String path = sig.substring(0, argsStart);
+		String name = path.substring(path.lastIndexOf("."));
+		return name+args;
 	}
 	
 	/*public static List<CtClass> extendz(CtClass clazz, CtClass possibleExtends){

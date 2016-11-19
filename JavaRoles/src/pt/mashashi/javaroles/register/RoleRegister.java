@@ -142,7 +142,7 @@ public abstract class RoleRegister {
 			CtMethod[] methods = cn.getDeclaredMethods();
 			HashMap<String, CtField> objRoles = ClassUtils.getTypeFieldAnotatedAssist(cn, ObjRole.class);
 			
-			areObjRolesTypesImplemented(objRoles);
+			areObjRolesTypesImplemented(cn, objRoles);
 			
 			applyInjections(cn);
 			
@@ -198,31 +198,130 @@ public abstract class RoleRegister {
 		}
 		
 	}
-
-	private void areObjRolesTypesImplemented(HashMap<String, CtField> objRoles) throws NotFoundException {
+	
+	private void areObjRolesTypesImplemented(CtClass cn, HashMap<String, CtField> objRoles) throws NotFoundException {
 		{ // BLOCK check if objroles
-			for(CtField v : objRoles.values()){
-				if(!v.getType().isInterface()){
-					throw new MissUseAnnotationExceptionException(
-							ObjRole.class, 
-							AnnotationException.NOT_INTERFACE, 
-							v.getDeclaringClass().getName(),
-							v.getName()
-					);
+			for(CtField objRole : objRoles.values()){
+				
+				try {
+					
+					ObjRole roleInterfacesAnnotation = (ObjRole) objRole.getAnnotation(ObjRole.class);
+					CtClass[] roleInterfaces = objRole.getType().getInterfaces();
+					
+					if(objRole.getType().isInterface()){
+						int newPos = roleInterfaces.length;
+						roleInterfaces = Arrays.copyOf(roleInterfaces, newPos+1);
+						roleInterfaces[newPos] = objRole.getType();
+					}
+					
+					CtClass rigid = objRole.getDeclaringClass();
+					CtClass[] rigidInterfaces = rigid.getInterfaces();
+					
+					if(roleInterfacesAnnotation.value().length==0){
+						
+						objRoleDeclaredOnType(objRole, rigidInterfaces);
+						
+					}else{
+						
+						// BLOCK Check if the interface is implemented by the rigid class and also by the role
+						List<Class<?>> missingInterfacesRigid = new LinkedList<Class<?>>();
+						List<Class<?>> missingInterfacesRole = new LinkedList<Class<?>>();
+						
+						for(Class<?> i : roleInterfacesAnnotation.value()){
+							
+							// check rigid
+							checkInterfacePresence(i, rigidInterfaces, missingInterfacesRigid);
+							
+							// check role
+							checkInterfacePresence(i, roleInterfaces, missingInterfacesRole);
+							
+						}
+						
+						String missingInterfaceStr = "";
+						if((missingInterfaceStr = getMissingInterfacesAsStr(missingInterfacesRole))!=null){
+							throw new MissUseAnnotationExceptionException(
+									ObjRole.class, 
+									AnnotationException.NOT_IMPLEMENTED_BY_ROLE, 
+									objRole.getDeclaringClass().getName()+"."+objRole.getName(),
+									objRole.getType().getName(),
+									missingInterfaceStr
+							);
+						}
+						
+						if((missingInterfaceStr = getMissingInterfacesAsStr(missingInterfacesRigid))!=null){
+							throw new MissUseAnnotationExceptionException(
+									ObjRole.class, 
+									AnnotationException.NOT_IMPLEMENTED_BY_RIGID, 
+									objRole.getDeclaringClass().getName(), 
+									objRole.getType().getName(),
+									missingInterfaceStr
+							);
+						}
+						
+					}
+					
+				} catch (ClassNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-				List<CtClass> a = Arrays.asList(v.getDeclaringClass().getInterfaces());
-				if(!a.contains(v.getType())){
-					throw new MissUseAnnotationExceptionException(
-							ObjRole.class, 
-							AnnotationException.NOT_IMPLEMENTED, 
-							v.getDeclaringClass().getName(), 
-							v.getType().getName(),
-							v.getName()
-					);
-				}
+				
 			}
 		}
 	}
+
+	private final String SEPARATOR = ", ";
+	
+	private String getMissingInterfacesAsStr(List<Class<?>> missingInterfacesRole) {
+		if(!missingInterfacesRole.isEmpty()){
+			StringBuffer listMissingInterfaces = new StringBuffer();	
+			for(Class<?> missing :missingInterfacesRole){
+				listMissingInterfaces.append(missing.getName());
+				listMissingInterfaces.append(SEPARATOR);
+			}	
+			return listMissingInterfaces.substring(0, listMissingInterfaces.length()-SEPARATOR.length()); 
+			// BLOCK If some interface is not implemented by the attribute
+		}
+		return null;
+	}
+	
+	private void checkInterfacePresence(Class<?> interfazi, CtClass[] implemented, List<Class<?>> addMissing) {
+		boolean isImplemented = false;
+		for(CtClass c : implemented){
+			isImplemented = c.getName().equals(interfazi.getName());
+			if(isImplemented){
+				break;
+			}
+		}
+		if(!isImplemented){
+			addMissing.add(interfazi);
+		}
+	}
+
+	private void objRoleDeclaredOnType(CtField objRole, CtClass[] rigidInterfaces) throws NotFoundException {
+		if(!objRole.getType().isInterface()){
+			throw new MissUseAnnotationExceptionException(
+					ObjRole.class, 
+					AnnotationException.NOT_INTERFACE, 
+					objRole.getDeclaringClass().getName(),
+					objRole.getName()
+			);
+		}
+		
+		if(!Arrays.asList(rigidInterfaces).contains(objRole.getType())){
+			throw new MissUseAnnotationExceptionException(
+					ObjRole.class, 
+					AnnotationException.NOT_IMPLEMENTED_BY_RIGID, 
+					objRole.getDeclaringClass().getName(), 
+					objRole.getType().getName(),
+					objRole.getName()
+			);
+		}
+	}
+	
+	
+	
+	
+	
 	
 	/**
 	 * If it is not using HashMap<String, Object> is an error
@@ -392,7 +491,7 @@ public abstract class RoleRegister {
 			if(!ClassUtils.classImplementsInterface(n.getDeclaringClass(), i)){
 				throw new MissUseAnnotationExceptionException(
 						ObjRigid.class, 
-						AnnotationException.NOT_IMPLEMENTED, 
+						AnnotationException.NOT_IMPLEMENTED_BY_RIGID, 
 						cn.getName(), 
 						n.getName(), 
 						cn.getSimpleName()
@@ -494,10 +593,9 @@ public abstract class RoleRegister {
 		
 		if(onlyFor!=null){
 			
-			{ // BLOCK Free up reference in the class loader
-				  /*
-			   This will unload the classes from the class loader if the roles for unloading a class are verified
-			   */
+			{ 
+				// BLOCK Free up reference in the class loader
+				// This will unload the classes from the class loader if the rules for unloading a class are verified
 				System.gc(); // Doesn't work for inner inner classes
 			}
 			

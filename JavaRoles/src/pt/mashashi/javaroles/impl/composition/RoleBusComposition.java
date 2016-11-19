@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -68,7 +69,41 @@ public class RoleBusComposition extends RoleBus{
 	    	    
 	    return returnByRole;
 	}
-
+	
+	/**
+	 * Check whether the method exist on the interface type declared on the role object or 
+	 * on the list of types declared on the annotation {@link ObjRole}.
+	 * 
+	 * @param fieldMethod
+	 * @param field
+	 * @return
+	 * @throws ClassNotFoundException
+	 * @throws NotFoundException
+	 */
+	private boolean existsInAnyInterface(CtMethod fieldMethod, CtField field) throws ClassNotFoundException, NotFoundException{
+		ObjRole objRole = (ObjRole) field.getAnnotation(ObjRole.class);
+		Class<?>[] interfazzis = objRole.value();
+		boolean computed = false;
+		Class<?> objRoleType = ClassUtils.getNativeType(field.getType());
+		if(objRoleType.isInterface() && !Arrays.asList(interfazzis).contains(objRoleType)){
+			// if the object type of the role type is an interface it also is subject to the search
+			int newPos = interfazzis.length;
+			interfazzis = Arrays.copyOf(interfazzis, newPos+1);
+			interfazzis[newPos] = objRoleType;
+		}
+		interfazzis: for(Class<?> i : interfazzis){
+			for(Method m: i.getDeclaredMethods()){
+				String iMethodId = ClassUtils.getMethodIdFromSignature(m.toGenericString());
+				String fMethodId = ClassUtils.getMethodIdFromSignature(fieldMethod.getLongName());
+				computed = iMethodId.equals(fMethodId);
+				if(computed){
+					break interfazzis;
+				}
+			}
+		}
+		return computed;
+	}
+	
 	public CtField getTargetObjectRoleField(CtMethod methodInvoked, CtField... exclude) throws ClassNotFoundException, NotFoundException {
 		CtField ctFieldRole = null;
 		List<CtField> roleObjects = ClassUtils.getListFieldAnotated(target, ObjRole.class);
@@ -80,9 +115,10 @@ public class RoleBusComposition extends RoleBus{
 				
 				Field fieldRole = null;
 				useIt: {
-					//boolean useIt = fieldMethod.getName().equals(methodInvoked.getName()) && fieldMethod.getSignature().equals(methodInvoked.getSignature());
-					if(!fieldMethod.equals(methodInvoked)) 
+					
+					if(!(fieldMethod.equals(methodInvoked) && existsInAnyInterface(fieldMethod, field))){
 						break useIt;
+					}
 					
 			    	try {
 			    		Object o = null;
@@ -93,8 +129,7 @@ public class RoleBusComposition extends RoleBus{
 							fieldRole = Class.forName(declaringClass).getDeclaredField(field.getName());
 							o = FieldUtils.readField(fieldRole, target, true);
 							
-					    	if(o==null) 
-					    		break useIt;
+					    	if(o==null) break useIt;
 			    		}
 			    		
 				    	for(Field f : ClassUtils.getListFieldAnnotated(o.getClass(), InjObjRigid.class)){

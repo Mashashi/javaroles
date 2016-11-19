@@ -15,4 +15,6 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
-public @interface ObjRole {}
+public @interface ObjRole {
+	Class<?>[] value() default {};
+}
