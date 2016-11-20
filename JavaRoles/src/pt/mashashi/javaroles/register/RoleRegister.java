@@ -207,7 +207,6 @@ public abstract class RoleRegister {
 					
 					ObjRole roleInterfacesAnnotation = (ObjRole) objRole.getAnnotation(ObjRole.class);
 					CtClass[] roleInterfaces = objRole.getType().getInterfaces();
-					
 					if(objRole.getType().isInterface()){
 						int newPos = roleInterfaces.length;
 						roleInterfaces = Arrays.copyOf(roleInterfaces, newPos+1);

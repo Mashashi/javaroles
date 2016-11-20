@@ -327,4 +327,9 @@ public class RolesTest {
 		TestObjectRoleDefinitionOnAnnotation.test();
 	}
 	
+	@Test
+	public void testPrivateRoleOnSuper() {
+		TestPrivateRoleOnSuper.test();
+	}
+	
 }

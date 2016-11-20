@@ -217,19 +217,22 @@ public class ClassUtils {
 		return null;
 	}*/
 	
-	public static List<CtField> getListFieldAnnotated(CtClass target, Class<? extends Annotation> annotation) throws ClassNotFoundException{
+	public static List<CtField> getListFieldAnnotated(CtClass target, Class<? extends Annotation> annotation) throws ClassNotFoundException, NotFoundException{
 		List<CtField> roleObjects = new LinkedList<>();
 		for(CtField field : target.getFields()){//Class.forName(target.getName()).getFields();
 			if(field.getAnnotation(annotation)!=null){
 				roleObjects.add(field);
 			}
 		}
-		{ // Get the private fields also
-			for(CtField field : target.getDeclaredFields()){//Class.forName(target.getName()).getFields();
+		CtClass clazz = target;
+		while(clazz != null){ 
+			// Get the private fields also from the class hierarchy
+			for(CtField field : clazz.getDeclaredFields()){
 				if(field.getAnnotation(annotation)!=null && !roleObjects.contains(field)){
 					roleObjects.add(field);
 				}
 			}
+			clazz = clazz.getSuperclass();
 		}
 		return roleObjects;
 	}
