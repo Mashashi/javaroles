@@ -6,6 +6,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
@@ -254,15 +255,19 @@ public class ClassUtils {
 		}
 		return roleObjects;
 	}
-	public static List<Field> getNativeFields(Class<?> target){
+	public static List<Field> getNativeFields(Class<?> target, boolean isStatic){
 		List<Field> roleObjects = new LinkedList<>();
 		for(Field field : target.getFields()){//Class.forName(target.getName()).getFields();
-			roleObjects.add(field);
+			boolean statics = Modifier.isStatic(field.getModifiers());
+			if(isStatic ? statics : !statics){
+				roleObjects.add(field);
+			}
 		}
 		Class<?> clazz = target;
 		while(clazz!=null){ // Get the private fields also
 			for(Field field : clazz.getDeclaredFields()){//Class.forName(target.getName()).getFields();
-				if(!roleObjects.contains(field)){
+				boolean statics = Modifier.isStatic(field.getModifiers());
+				if( (isStatic ? statics : !statics) && !roleObjects.contains(field) ){
 					roleObjects.add(field);
 				}
 			}

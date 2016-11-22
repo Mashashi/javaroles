@@ -12,7 +12,7 @@ public class InjectionStrategyMultiple extends InjectionStrategy {
 
 	@Override
 	protected void referenceSetCode(StringBuffer injectionCode) {
-		injectionCode.append(List.class.getName()+" l = "+ClassUtils.class.getName()+".getListFieldAnnotated(");
+		/*injectionCode.append(List.class.getName()+" l = "+ClassUtils.class.getName()+".getListFieldAnnotated(");
 			injectionCode.append("o.getClass(), "+InjObjRigid.class.getName()+".class");
 		injectionCode.append(");");
 		injectionCode.append("for(int i2=0;i2<l.size();i2++){");
@@ -26,12 +26,39 @@ public class InjectionStrategyMultiple extends InjectionStrategy {
 					injectionCode.append("f.set(o, this);");
 					//injectionCode.append("System.out.println(\"-->\"+rigidName);");//
 				injectionCode.append("}catch("+IllegalArgumentException.class.getName()+" e){");
-					injectionCode.append("/*Do nothing - Just a cast error*/");
+					//Do nothing - Just a cast error
 				injectionCode.append("}finally{");
 					injectionCode.append("f.setAccessible(accesibilityOriginal);");
 				injectionCode.append("}");
 			
-		injectionCode.append("}");
+		injectionCode.append("}");*/
+		injectionCode.append(InjectionStrategyMultiple.class.getName()+".staticDoIt(o, this, false);");
 	}
+	
+	public static void staticDoIt(Object o, Object thiz, boolean rewrite) throws ClassNotFoundException, IllegalAccessException{
+		List<Field> l = ClassUtils.getListFieldAnnotated(o.getClass(), InjObjRigid.class);
+		for(int i2=0;i2<l.size();i2++){
+			
+			Field f = l.get(i2);
+			
+			boolean accesibilityOriginal = f.isAccessible();
+			f.setAccessible(true);
+			//"String rigidName = f.getName();")
+			try{
+				f.set(o, thiz);
+				//"System.out.println(\"-->\"+rigidName);")
+			}catch(IllegalArgumentException e){
+				/*Do nothing - Just a cast error*/
+			}finally{
+				f.setAccessible(accesibilityOriginal);
+			}
 
+		}
+	}
+	
+	@Override
+	public void doIt(Object o, Object thiz, boolean rewrite) throws ClassNotFoundException, IllegalAccessException{
+		staticDoIt(o, thiz, rewrite);
+	}
+	
 }

@@ -16,21 +16,21 @@ public abstract class InjectionStrategy {
 	protected String params;
 	
 	
+	public void processFields(){
+		
+	}
 	
 	InjectionStrategy(){
 		
 		{
 			StringBuffer injectionCode = new StringBuffer("");
 			
-			injectionCode.append(List.class.getName()+" fs = "+ClassUtils.class.getName()+".getNativeFields(this.getClass());");
+			injectionCode.append(List.class.getName()+" fs = "+ClassUtils.class.getName()+".getNativeFields(this.getClass(), false);");
 			
 			injectionCode.append("for(int i=0;i<fs.size();i++){");
 			
-				injectionCode.append("Object o = null;");
-				//injectionCode.append("try{");
-					//injectionCode.append("System.out.println(("+Field.class.getName()+")fs.get(i));");
-					injectionCode.append("o = "+FieldUtils.class.getName()+".readField(("+Field.class.getName()+")fs.get(i), this, true);");
-				//injectionCode.append("}catch("+IllegalArgumentException.class.getName()+" e){}"); // Happens when the field can not be read
+				// injectionCode.append("System.out.println(("+Field.class.getName()+")fs.get(i));");
+				injectionCode.append("Object o = "+FieldUtils.class.getName()+".readField(("+Field.class.getName()+")fs.get(i), this, true);");
 				
 				injectionCode.append("if(o!=null){");
 					
@@ -91,7 +91,7 @@ public abstract class InjectionStrategy {
 	
 	
 	protected abstract void referenceSetCode(StringBuffer injectionCode);
-	
+	public abstract void doIt(Object o, Object thiz, boolean rewrite) throws ClassNotFoundException, IllegalAccessException;
 	
 	
 	public String setAll() {
@@ -111,6 +111,15 @@ public abstract class InjectionStrategy {
 	
 	public static InjectionStrategy getInstanceMultiple(){
 		return instanceMultiple;
+	}
+	
+	public static InjectionStrategy getInjectionStrategy(String injStrategyType){
+		if(injStrategyType.equals(InjectionStrategySingle.class.getName())){
+			return instanceSingle;
+		}else if(injStrategyType.equals(InjectionStrategyMultiple.class.getName())){
+			return instanceMultiple;
+		}
+		throw new IllegalArgumentException("Strategy of type: \""+injStrategyType+"\" not found.");
 	}
 	
 	protected void getCallbackInvokeCode(StringBuffer injectionCode){

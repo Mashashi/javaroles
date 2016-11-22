@@ -715,4 +715,8 @@ public abstract class RoleRegister {
 			return r;
 		}
 	
+		public String getInjStrategyType(){
+			return injRigStrategy.getClass().getName();
+		}
+		
 }

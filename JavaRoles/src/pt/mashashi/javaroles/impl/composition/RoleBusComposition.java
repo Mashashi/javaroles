@@ -21,6 +21,7 @@ import pt.mashashi.javaroles.annotations.InjObjRigid;
 import pt.mashashi.javaroles.annotations.MissMsgReceptor;
 import pt.mashashi.javaroles.annotations.ObjRole;
 import pt.mashashi.javaroles.annotations.ProxyRules;
+import pt.mashashi.javaroles.injection.InjectionStrategy;
 
 /**
  * Very restricted implementation of role objects the point of this RoleBus is to provide a way to mixin classes
@@ -32,11 +33,14 @@ import pt.mashashi.javaroles.annotations.ProxyRules;
  */
 public class RoleBusComposition extends RoleBus{
 	
+	private InjectionStrategy injectionStrategy;
+	
 	@SuppressWarnings("unused")
 	private RoleBusComposition() {}
 	
-	public RoleBusComposition(Object target) {
+	public RoleBusComposition(Object target, String injStrategyType) {
 		this.target = target;
+		injectionStrategy = InjectionStrategy.getInjectionStrategy(injStrategyType);
 	}
 	
 	public Object resolve(CtMethod methodInvoked, Object[] params) throws MissProcessingException, Throwable{
@@ -225,6 +229,11 @@ public class RoleBusComposition extends RoleBus{
 			}
 			
 			Class<?>[] paramsObjectRole = ClassUtils.getNativeTypes(methodInvoked.getParameterTypes());
+			
+			if(Modifier.isStatic(objectRole.getModifiers())){
+				// BLOCK Make static roles assume roles each time a method is invoked through a rigid
+				injectionStrategy.doIt(o, target, true);
+			}
 			
 			roleReturned = ClassUtils.invokeWithNativeTypes(o, methodInvoked.getName(), paramsObjectRole, params);
 

@@ -14,6 +14,8 @@ public class InjectionStrategySingle extends InjectionStrategy {
 	
 	@Override
 	protected void referenceSetCode(StringBuffer injectionCode) {
+		
+		/*
 		injectionCode.append(List.class.getName()+" l = "+ClassUtils.class.getName()+".getListFieldAnnotated(");
 			injectionCode.append("o.getClass(), "+InjObjRigid.class.getName()+".class");
 		injectionCode.append(");");
@@ -35,7 +37,7 @@ public class InjectionStrategySingle extends InjectionStrategy {
 					injectionCode.append("setIt = false;");
 					//injectionCode.append("System.out.println(\"-->\"+rigidName);");//
 				injectionCode.append("}catch("+IllegalArgumentException.class.getName()+" e){");
-					injectionCode.append("/*Do nothing - Just a cast error*/");
+					//Do nothing - Just a cast error
 				injectionCode.append("}finally{");
 					injectionCode.append("f.setAccessible(accesibilityOriginal);");
 				injectionCode.append("}");
@@ -43,5 +45,39 @@ public class InjectionStrategySingle extends InjectionStrategy {
 			injectionCode.append("}");
 			
 		injectionCode.append("}");
+		
+		*/
+		
+		injectionCode.append(InjectionStrategySingle.class.getName()+".staticDoIt(o, this, false);");
+		
 	}
+	
+	public static void staticDoIt(Object o, Object thiz, boolean rewrite) throws ClassNotFoundException, IllegalAccessException{
+		List<Field> l = ClassUtils.getListFieldAnnotated(o.getClass(), InjObjRigid.class);
+		boolean setIt = true;
+		for(int i2=0;i2<l.size() && setIt;i2++){
+			Field f = l.get(i2);
+			Object of = FieldUtils.readField(f, o, true);
+			if(of==null || rewrite){
+				boolean accesibilityOriginal = f.isAccessible();
+				f.setAccessible(true);
+				try{
+					f.set(o, thiz);
+					setIt = false;
+					//System.out.println(\"-->\"+rigidName);
+				}catch(IllegalArgumentException e){
+					/*Do nothing - Just a cast error*/
+				}finally{
+					f.setAccessible(accesibilityOriginal);
+				}
+			}
+		}
+
+	}
+	
+	@Override
+	public void doIt(Object o, Object thiz, boolean rewrite) throws ClassNotFoundException, IllegalAccessException{
+		staticDoIt(o, thiz, rewrite);
+	}
+	
 }

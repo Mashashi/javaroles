@@ -22,7 +22,10 @@ import pt.mashashi.javaroles.register.RoleRegister;
  * @see RoleRegister
  */
 public abstract class RoleBus {
-	 
+	
+	/**
+	 * Object in witch the this role bus was injected
+	 */
 	protected Object target;
 	
 	// key - rolename

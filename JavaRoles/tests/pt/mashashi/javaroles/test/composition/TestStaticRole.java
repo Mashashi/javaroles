@@ -48,6 +48,16 @@ public class TestStaticRole {
 		
 	}
 	
+	@Player
+	static class AnimalRolesSwaped4 implements Monkey{
+		@ObjRole private static Monkey monkey;
+		public AnimalRolesSwaped4(Monkey monkey){
+			this.monkey = monkey; 
+		}
+		@Override
+		public String hello(String[] a) { return "Default hello "+this.getClass().getName(); }
+	}
+	
 	public static void test(){
 		
 		Bonobo bonobo = new Bonobo();
@@ -83,6 +93,14 @@ public class TestStaticRole {
 		AnimalRolesSwaped3 b4 = new AnimalRolesSwaped3(bonobo);
 		String valb4 = b4.hello(null);
 		assertEquals(valb4, a4.toString());
+		
+		bonobo = new Bonobo();
+		AnimalRolesSwaped4 a5 = new AnimalRolesSwaped4(bonobo);
+		String vala5 = a5.hello(null);
+		assertEquals(vala5, a5.toString());
+		AnimalRolesSwaped4 b5 = new AnimalRolesSwaped4(bonobo);
+		String valb5 = b5.hello(null);
+		assertEquals(valb5, b5.toString());
 		
 	}
 	

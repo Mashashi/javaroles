@@ -109,7 +109,7 @@ public class RoleRegisterComposition extends RoleRegister{
 
 	@Override
 	protected String getRoleBusDeclaration() {
-		return "private "+RoleBusComposition.class.getName()+" "+roleBusVarName+" = new "+RoleBusComposition.class.getName()+"(this);";
+		return "private "+RoleBusComposition.class.getName()+" "+roleBusVarName+" = new "+RoleBusComposition.class.getName()+"(this,\""+super.getInjStrategyType()+"\");";
 	}
 
 	@Override
