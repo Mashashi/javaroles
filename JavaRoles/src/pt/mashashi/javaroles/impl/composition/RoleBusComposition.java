@@ -129,7 +129,9 @@ public class RoleBusComposition extends RoleBus{
 							fieldRole = Class.forName(declaringClass).getDeclaredField(field.getName());
 							o = FieldUtils.readField(fieldRole, target, true);
 							
-					    	if(o==null) break useIt;
+					    	if(o==null){
+					    		break useIt;
+					    	}
 			    		}
 			    		
 				    	for(Field f : ClassUtils.getListFieldAnnotated(o.getClass(), InjObjRigid.class)){
@@ -137,8 +139,9 @@ public class RoleBusComposition extends RoleBus{
 				    		InjObjRigid a = f.getAnnotation(InjObjRigid.class);
 				    		if(f.getType().isInstance(target) && a.required()){
 				    			Object o2 = FieldUtils.readField(f, o, true);
-				    			if(o2 == null || !o2.equals(target)) 
+				    			if(o2 == null || !o2.equals(target)){
 				    				break useIt;
+				    			}
 				    		}
 				    	}
 				    	

@@ -20,13 +20,12 @@ public class InjectionStrategySingle extends InjectionStrategy {
 		injectionCode.append("boolean setIt = true;");
 		
 		injectionCode.append("for(int i2=0;i2<l.size() && setIt;i2++){");
+		
 			
 			injectionCode.append(Field.class.getName()+" f = (("+Field.class.getName()+")l.get(i2));");
 			
 			injectionCode.append("Object of = "+FieldUtils.class.getName()+".readField(f, o, true);");
 			injectionCode.append("if(of==null){");
-			
-				
 			
 				injectionCode.append("boolean accesibilityOriginal = f.isAccessible();");
 				injectionCode.append("f.setAccessible(true);");

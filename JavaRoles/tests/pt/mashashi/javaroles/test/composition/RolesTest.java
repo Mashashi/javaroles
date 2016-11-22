@@ -332,4 +332,9 @@ public class RolesTest {
 		TestPrivateRoleOnSuper.test();
 	}
 	
+	@Test
+	public void testStaticRole() {
+		TestStaticRole.test();
+	}
+	
 }

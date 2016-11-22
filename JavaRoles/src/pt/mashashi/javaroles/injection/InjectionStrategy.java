@@ -22,12 +22,18 @@ public abstract class InjectionStrategy {
 		{
 			StringBuffer injectionCode = new StringBuffer("");
 			
-			injectionCode.append(Field.class.getName()+"[] fs=this.getClass().getFields();");
-			injectionCode.append("for(int i=0;i<fs.length;i++){");
+			injectionCode.append(List.class.getName()+" fs = "+ClassUtils.class.getName()+".getNativeFields(this.getClass());");
 			
-				injectionCode.append("Object o = "+FieldUtils.class.getName()+".readField(fs[i], this, true);");
-				injectionCode.append("if(o!=null){");
+			injectionCode.append("for(int i=0;i<fs.size();i++){");
+			
+				injectionCode.append("Object o = null;");
+				//injectionCode.append("try{");
+					//injectionCode.append("System.out.println(("+Field.class.getName()+")fs.get(i));");
+					injectionCode.append("o = "+FieldUtils.class.getName()+".readField(("+Field.class.getName()+")fs.get(i), this, true);");
+				//injectionCode.append("}catch("+IllegalArgumentException.class.getName()+" e){}"); // Happens when the field can not be read
 				
+				injectionCode.append("if(o!=null){");
+					
 					referenceSetCode(injectionCode);
 					getCallbackInvokeCode(injectionCode);
 				

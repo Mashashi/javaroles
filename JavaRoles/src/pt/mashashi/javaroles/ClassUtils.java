@@ -243,12 +243,30 @@ public class ClassUtils {
 				roleObjects.add(field);
 			}
 		}
-		{ // Get the private fields also
-			for(Field field : target.getDeclaredFields()){//Class.forName(target.getName()).getFields();
+		Class<?> clazz = target;
+		while(clazz!=null){ // Get the private fields also
+			for(Field field : clazz.getDeclaredFields()){//Class.forName(target.getName()).getFields();
 				if(field.getAnnotation(annotation)!=null && !roleObjects.contains(field)){
 					roleObjects.add(field);
 				}
 			}
+			clazz = clazz.getSuperclass();
+		}
+		return roleObjects;
+	}
+	public static List<Field> getNativeFields(Class<?> target){
+		List<Field> roleObjects = new LinkedList<>();
+		for(Field field : target.getFields()){//Class.forName(target.getName()).getFields();
+			roleObjects.add(field);
+		}
+		Class<?> clazz = target;
+		while(clazz!=null){ // Get the private fields also
+			for(Field field : clazz.getDeclaredFields()){//Class.forName(target.getName()).getFields();
+				if(!roleObjects.contains(field)){
+					roleObjects.add(field);
+				}
+			}
+			clazz = clazz.getSuperclass();
 		}
 		return roleObjects;
 	}
