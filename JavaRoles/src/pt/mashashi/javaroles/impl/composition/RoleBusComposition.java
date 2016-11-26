@@ -1,5 +1,7 @@
 package pt.mashashi.javaroles.impl.composition;
 
+import java.lang.ref.SoftReference;
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -8,6 +10,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.WeakHashMap;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.Lock;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
 
@@ -35,12 +40,15 @@ public class RoleBusComposition extends RoleBus{
 	
 	private InjectionStrategy injectionStrategy;
 	
+	private static WeakHashMap<String, Object> mutex = new WeakHashMap<String, Object>();
+	
 	@SuppressWarnings("unused")
 	private RoleBusComposition() {}
 	
 	public RoleBusComposition(Object target, String injStrategyType) {
 		this.target = target;
 		injectionStrategy = InjectionStrategy.getInjectionStrategy(injStrategyType);
+		
 	}
 	
 	public Object resolve(CtMethod methodInvoked, Object[] params) throws MissProcessingException, Throwable{
@@ -231,12 +239,15 @@ public class RoleBusComposition extends RoleBus{
 			Class<?>[] paramsObjectRole = ClassUtils.getNativeTypes(methodInvoked.getParameterTypes());
 			
 			if(Modifier.isStatic(objectRole.getModifiers())){
-				// BLOCK Make static roles assume roles each time a method is invoked through a rigid
-				injectionStrategy.doIt(o, target, true);
+				synchronized ( getMutex(Integer.toString(o.hashCode())) ) {
+					// BLOCK Make static roles assume roles each time a method is invoked through a rigid
+					injectionStrategy.doIt(o, target, true);
+					roleReturned = ClassUtils.invokeWithNativeTypes(o, methodInvoked.getName(), paramsObjectRole, params);
+				}
+			}else{
+				roleReturned = ClassUtils.invokeWithNativeTypes(o, methodInvoked.getName(), paramsObjectRole, params);
 			}
 			
-			roleReturned = ClassUtils.invokeWithNativeTypes(o, methodInvoked.getName(), paramsObjectRole, params);
-
 		}catch (NotFoundException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
 			
 			// TODO Enhance error handling code elegance
@@ -265,5 +276,18 @@ public class RoleBusComposition extends RoleBus{
 		
 		return roleReturned;
 	}
-
+	
+	
+	private Object getMutex(String id){
+		Object monitor = null;
+		synchronized(mutex){
+			monitor = mutex.get(id);
+			if(monitor==null){
+				monitor = new Object();
+				mutex.put(id, monitor);
+			}
+		}
+		return monitor;
+	}
+	
 }

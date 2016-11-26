@@ -332,9 +332,25 @@ public class RolesTest {
 		TestPrivateRoleOnSuper.test();
 	}
 	
+	/**
+	 * Test a rigid that has a role object declared as static.
+	 */
 	@Test
 	public void testStaticRole() {
 		TestStaticRole.test();
+	}
+	
+	/**
+	 * Guarantees that the rigid object doesn't change while the object role method is being executed if
+	 * the role object on te rigid is declared as static. 
+	 */
+	@Test
+	public void testLoadCallsStaticRole() {
+		try {
+			TestLoadCallsStaticRole.test();
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
 	}
 	
 }
