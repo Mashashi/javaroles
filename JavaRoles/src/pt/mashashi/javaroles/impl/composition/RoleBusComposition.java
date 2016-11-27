@@ -26,6 +26,7 @@ import pt.mashashi.javaroles.annotations.InjObjRigid;
 import pt.mashashi.javaroles.annotations.MissMsgReceptor;
 import pt.mashashi.javaroles.annotations.ObjRole;
 import pt.mashashi.javaroles.annotations.ProxyRules;
+import pt.mashashi.javaroles.annotations.ThreadSafeRole;
 import pt.mashashi.javaroles.injection.InjectionStrategy;
 
 /**
@@ -40,7 +41,7 @@ public class RoleBusComposition extends RoleBus{
 	
 	private InjectionStrategy injectionStrategy;
 	
-	private static WeakHashMap<String, Object> mutex = new WeakHashMap<String, Object>();
+	private static WeakHashMap<Object, Object> mutex = new WeakHashMap<Object, Object>();
 	
 	@SuppressWarnings("unused")
 	private RoleBusComposition() {}
@@ -236,16 +237,12 @@ public class RoleBusComposition extends RoleBus{
 				}
 			}
 			
-			Class<?>[] paramsObjectRole = ClassUtils.getNativeTypes(methodInvoked.getParameterTypes());
-			
-			if(Modifier.isStatic(objectRole.getModifiers())){
-				synchronized ( getMutex(Integer.toString(o.hashCode())) ) {
-					// BLOCK Make static roles assume roles each time a method is invoked through a rigid
-					injectionStrategy.doIt(o, target, true);
-					roleReturned = ClassUtils.invokeWithNativeTypes(o, methodInvoked.getName(), paramsObjectRole, params);
+			if(o.getClass().getAnnotation(ThreadSafeRole.class)!=null){
+				synchronized ( getMutex(o) ) {
+					roleReturned = invoke(methodInvoked, params, objectRole, o);
 				}
 			}else{
-				roleReturned = ClassUtils.invokeWithNativeTypes(o, methodInvoked.getName(), paramsObjectRole, params);
+				roleReturned = invoke(methodInvoked, params, objectRole, o);
 			}
 			
 		}catch (NotFoundException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
@@ -276,15 +273,39 @@ public class RoleBusComposition extends RoleBus{
 		
 		return roleReturned;
 	}
+
+	/**
+	 * @param methodInvoked
+	 * @param params
+	 * @param objectRole
+	 * @param o
+	 * @param paramsObjectRole
+	 * @return
+	 * @throws ClassNotFoundException
+	 * @throws IllegalAccessException
+	 * @throws InvocationTargetException
+	 * @throws NoSuchMethodException
+	 * @throws NotFoundException 
+	 */
+	private Object invoke(CtMethod methodInvoked, Object[] params, Field objectRole, Object o)
+			throws ClassNotFoundException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, NotFoundException {
+		Class<?>[] paramsObjectRole = ClassUtils.getNativeTypes(methodInvoked.getParameterTypes());
+		Object roleReturned;
+		if(Modifier.isStatic(objectRole.getModifiers())){
+			injectionStrategy.doIt(o, target, true);
+		}
+		roleReturned = ClassUtils.invokeWithNativeTypes(o, methodInvoked.getName(), paramsObjectRole, params);
+		return roleReturned;
+	}
 	
 	
-	private Object getMutex(String id){
+	private Object getMutex(Object objRole){
 		Object monitor = null;
 		synchronized(mutex){
-			monitor = mutex.get(id);
+			monitor = mutex.get(objRole);
 			if(monitor==null){
 				monitor = new Object();
-				mutex.put(id, monitor);
+				mutex.put(objRole, monitor);
 			}
 		}
 		return monitor;

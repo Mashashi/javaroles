@@ -345,9 +345,9 @@ public class RolesTest {
 	 * the role object on te rigid is declared as static. 
 	 */
 	@Test
-	public void testLoadCallsStaticRole() {
+	public void testLoadCallsRole() {
 		try {
-			TestLoadCallsStaticRole.test();
+			TestLoadCallsRole.test();
 		} catch (InterruptedException e) {
 			throw new RuntimeException(e);
 		}

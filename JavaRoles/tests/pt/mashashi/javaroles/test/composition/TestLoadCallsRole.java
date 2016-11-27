@@ -3,14 +3,17 @@ package pt.mashashi.javaroles.test.composition;
 import pt.mashashi.javaroles.annotations.InjObjRigid;
 import pt.mashashi.javaroles.annotations.ObjRole;
 import pt.mashashi.javaroles.annotations.Player;
+import pt.mashashi.javaroles.annotations.ThreadSafeRole;
+
 import static org.junit.Assert.assertEquals;
 
 import java.util.Scanner;
 
-public class TestLoadCallsStaticRole {
+public class TestLoadCallsRole {
 	
 	interface Monkey{ String hello(); }
 	
+	@ThreadSafeRole
 	static class Bonobo implements Monkey{
 		@InjObjRigid Object obj;
 		@Override 
@@ -35,8 +38,6 @@ public class TestLoadCallsStaticRole {
 		} 
 	}
 	
-	
-	
 	@Player
 	static class AnimalRoles implements Monkey{
 		@ObjRole private static Monkey monkey;
@@ -50,10 +51,55 @@ public class TestLoadCallsStaticRole {
 	}
 	
 	
+	
+	
+	
+	
+	@Player
+	static class AnimalRoles2 implements Monkey{
+		@ObjRole private Monkey monkey;
+		public AnimalRoles2(Monkey monkey){
+			this.monkey = monkey; 
+		}
+		@Override
+		public String hello() { return "Default hello "+this.getClass().getName(); }
+		
+		public String dummy(){return "dummy";}
+	}
+	
+	@ThreadSafeRole
+	static class Gorila implements Monkey{
+		private long token;
+		@InjObjRigid Object obj;
+		@Override 
+		public String hello() {
+			
+			long times = Math.round(Math.random()*100);
+			//System.out.println("Times: "+times);
+			while(times-->0){
+				long token = Math.round(Math.random()*10000);
+				this.token = token;
+				try {
+					long milis = Math.round(Math.random()*100);
+					Thread.sleep(milis);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				try{
+					assertEquals(obj, this.obj);
+					assertEquals(token, this.token);
+				}catch(AssertionError e){
+					return e.getMessage();
+				}
+			}
+			return null; 
+		} 
+	}
+	
 	static class MyRunnable implements Runnable{
-		AnimalRoles ar;
+		Monkey ar;
 		String failedMsg;
-		public MyRunnable(AnimalRoles ar){
+		public MyRunnable(Monkey ar){
 			this.ar = ar;
 		}
 		@Override
@@ -61,6 +107,11 @@ public class TestLoadCallsStaticRole {
 			failedMsg = ar.hello();
 		}
 	}
+	
+	
+	
+	
+	
 	public static void test() throws InterruptedException{
 		
 		Bonobo bonobo = new Bonobo();
@@ -103,12 +154,42 @@ public class TestLoadCallsStaticRole {
 			throw new AssertionError(r3.failedMsg);
 		}
 		
-		/*while(true){
-			new Scanner(System.in).nextLine();
-			System.out.println(t1.getState());
-			t1.start();
-		}*/
+		//
 		
+		Gorila gorila = new Gorila();
+		
+		final AnimalRoles2 animalRoles4 = new AnimalRoles2(gorila);
+		final AnimalRoles2 animalRoles5 = new AnimalRoles2(gorila);
+		final AnimalRoles2 animalRoles6 = new AnimalRoles2(gorila);
+		
+		MyRunnable r4 = new MyRunnable(animalRoles4);
+		Thread t4 = new Thread(r4);
+		t4.start();
+		
+		MyRunnable r5 = new MyRunnable(animalRoles5);
+		Thread t5 = new Thread(r5);
+		t5.start();
+		
+		MyRunnable r6 = new MyRunnable(animalRoles6);
+		Thread t6 = new Thread(r6);
+		t6.start();
+		
+		t4.join();
+		t5.join();
+		t6.join();
+		
+		if(r4.failedMsg!=null){
+			throw new AssertionError(r4.failedMsg);
+		}
+		
+		if(r5.failedMsg!=null){
+			throw new AssertionError(r5.failedMsg);
+		}
+		
+		if(r6.failedMsg!=null){
+			throw new AssertionError(r6.failedMsg);
+		}
+
 		
 	}
 	
