@@ -57,7 +57,7 @@ public class RoleBusTyped extends RoleBus{
 	}
 	
 	@SuppressWarnings("unchecked")
-	public Object resolve(CtMethod methodInvoked, Object[] params) throws MissProcessingException{
+	public Object resolve(CtMethod methodInvoked, Object[] params) throws MissProcessingException, Throwable{
 		
 		Object returnByRole = null;
 		

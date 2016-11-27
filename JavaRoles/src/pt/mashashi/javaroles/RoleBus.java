@@ -51,7 +51,7 @@ public abstract class RoleBus {
 	
 	private abstract class DealWithInvocationErrors{
 		public abstract void run(Object... params) throws NoSuchMethodException, InvocationTargetException, SecurityException, IllegalAccessException, IllegalArgumentException;
-		public void invoke(Object... params){
+		public void invoke(Object... params) throws Throwable{
 			try {
 				run(params);
 			} catch (NoSuchMethodException e) {
@@ -59,7 +59,7 @@ public abstract class RoleBus {
 				//e.printStackTrace();
 			} catch (InvocationTargetException e){
 				// An exception was thrown inside the invoke method
-				throw new RuntimeException(e.getMessage(), e.getCause());
+				throw e.getCause();
 			} catch (SecurityException | IllegalAccessException | IllegalArgumentException e){
 				// Not handled
 			}
@@ -122,7 +122,7 @@ public abstract class RoleBus {
 		
 	};
 	
-	protected void invokeLifeCycleCallbacks(String roleName, CtMethod methodInvoked) {
+	protected void invokeLifeCycleCallbacks(String roleName, CtMethod methodInvoked) throws Throwable {
 		Boolean roleNameFirstCall = roleCallMade.get(roleName);
 		
 		if(roleNameFirstCall==null){

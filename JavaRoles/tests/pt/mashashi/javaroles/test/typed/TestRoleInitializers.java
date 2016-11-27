@@ -2,70 +2,65 @@ package pt.mashashi.javaroles.test.typed;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import javassist.CtMethod;
 import pt.mashashi.javaroles.impl.typed.TurnOnRole;
 
 public class TestRoleInitializers {
 	
 	public interface Monkey {
-		String hello();
+		List<String> hello();
 	}
 	public static class Animal implements Monkey{
-		
-		public String ret;
-		
-		public String getRet(){
-			return ret;
-		}
-		
+		public List<String> order;
 		public Animal(){
-			ret = "Init";
+			order = new LinkedList<String>();
+			order.add("Init");
 		}
-		
-		
-		/**
-		 * When a method of a role is called the pre is always invoked first
-		 * 
-		 * @param role
-		 * @param method
-		 */
-		public void Pre(String role, CtMethod method){
-			//System.out.println("Pre "+role+", method "+method.getName());
-			this.ret = role;
-		}
-		
-		
-		@Override
-		@TurnOnRole
-		public String hello() {
-			return ret;
-		}
-		
 		public void Monkey(){
-			
-		}
-		public void MonkeyStart(String oldRole){
-			assertEquals(null, oldRole);
+			order.add("Role Constructor");
 		}
 		public void nullStop(String newRole){
-			assertEquals("Monkey", newRole);
+			order.add(newRole);
 			//throw new RuntimeException("tips");
 		}
+		public void MonkeyStart(String oldRole){
+			order.add(oldRole);
+		}
 		public void MonkeyPre(CtMethod invokedMethod){
-			
+			order.add(invokedMethod.getName());
+		}
+		public void Pre(String role, CtMethod method){
+			order.add(role);
+			order.add(method.getName());
+			throw new RuntimeException("Expected message");
+		}
+		@Override
+		@TurnOnRole
+		public List<String> hello() {
+			return order;
 		}
 	}
 	
 	public static void test(){
 		
-		class AnimalShelter{
-			public AnimalShelter(Monkey k){
-				k.hello();
-			}
-		}
+		
 		Animal a = new Animal();
-		new AnimalShelter((Monkey) a);
-		assertEquals("Yap", "Monkey", a.ret);
+		try{
+			((Monkey) a).hello();
+		}catch(RuntimeException e){
+			// Do nothing...
+			assertEquals(e.getMessage(), "Expected message");
+		}
+		assertEquals("Init", a.order.get(0));
+		assertEquals("Role Constructor", a.order.get(1));
+		assertEquals("Monkey", a.order.get(2));
+		assertEquals(null, a.order.get(3));
+		assertEquals("hello", a.order.get(4));
+		assertEquals("Monkey", a.order.get(5));
+		assertEquals("hello", a.order.get(6));
 		
 	}
 }
