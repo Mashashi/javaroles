@@ -49,6 +49,79 @@ public abstract class RoleBus {
 	 */
 	public abstract Object resolve(CtMethod methodInvoked, Object[] params) throws MissProcessingException, Throwable;
 	
+	private abstract class DealWithInvocationErrors{
+		public abstract void run(Object... params) throws NoSuchMethodException, InvocationTargetException, SecurityException, IllegalAccessException, IllegalArgumentException;
+		public void invoke(Object... params){
+			try {
+				run(params);
+			} catch (NoSuchMethodException e) {
+				// Do nothing user probably didn't implement the method for call back
+				//e.printStackTrace();
+			} catch (InvocationTargetException e){
+				// An exception was thrown inside the invoke method
+				throw new RuntimeException(e.getMessage(), e.getCause());
+			} catch (SecurityException | IllegalAccessException | IllegalArgumentException e){
+				// Not handled
+			}
+		}
+	}
+	
+	private DealWithInvocationErrors invokeConstructor = new DealWithInvocationErrors() {
+		
+		@Override
+		public void run(Object... params) throws NoSuchMethodException, InvocationTargetException, SecurityException,
+				IllegalAccessException, IllegalArgumentException {
+			Method callback = target.getClass().getMethod((String) params[0]);
+			callback.invoke(target);	
+		}
+		
+	};
+	
+	private DealWithInvocationErrors invokeStopRole = new DealWithInvocationErrors() {
+		
+		@Override
+		public void run(Object... params) throws NoSuchMethodException, InvocationTargetException, SecurityException,
+				IllegalAccessException, IllegalArgumentException {
+			Method callback = target.getClass().getMethod(params[0]+"Stop", String.class);
+			callback.invoke(target, params[1]);
+		}
+		
+	};
+	
+	private DealWithInvocationErrors invokeStartRole = new DealWithInvocationErrors() {
+		
+		@Override
+		public void run(Object... params) throws NoSuchMethodException, InvocationTargetException, SecurityException,
+				IllegalAccessException, IllegalArgumentException {
+			Method callback = target.getClass().getMethod(params[0]+"Start", String.class);
+			callback.invoke(target, params[1]);
+		}
+		
+	};
+	
+	private DealWithInvocationErrors invokePreRole = new DealWithInvocationErrors() {
+		
+		@Override
+		public void run(Object... params) throws NoSuchMethodException, InvocationTargetException, SecurityException,
+				IllegalAccessException, IllegalArgumentException {
+			Method callback = target.getClass().getMethod(params[0]+"Pre", CtMethod.class);
+			callback.invoke(target, params[1]);
+		}
+		
+	};
+	
+	
+	private DealWithInvocationErrors invokePre = new DealWithInvocationErrors() {
+		
+		@Override
+		public void run(Object... params) throws NoSuchMethodException, InvocationTargetException, SecurityException,
+				IllegalAccessException, IllegalArgumentException {
+			Method callback = target.getClass().getMethod("Pre", String.class, CtMethod.class);
+			callback.invoke(target, params[0], params[1]);
+		}
+		
+	};
+	
 	protected void invokeLifeCycleCallbacks(String roleName, CtMethod methodInvoked) {
 		Boolean roleNameFirstCall = roleCallMade.get(roleName);
 		
@@ -57,50 +130,21 @@ public abstract class RoleBus {
 		}
 		
 		if(roleNameFirstCall){
-			try {
-				Method callback = target.getClass().getMethod(roleName);
-				callback.invoke(target);
-			} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-				// Do nothing user probably didn't implement the method for call back
-				//e.printStackTrace();
-			}
+			invokeConstructor.invoke(roleName);
 		}
 		
-		{	
-			String oldRole = (String) callHistory.get();
-			if(!roleName.equals(oldRole)){
-				try {
-					Method callback = target.getClass().getMethod(oldRole+"Stop", String.class);
-					callback.invoke(target, roleName);
-				} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-					// Do nothing user probably didn't implement the method for call back
-					//e.printStackTrace();
-				}
-				try {
-					Method callback = target.getClass().getMethod(roleName+"Start", String.class);
-					callback.invoke(target, oldRole);
-				} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-					// Do nothing user probably didn't implement the method for call back
-					//e.printStackTrace();
-				}
-			}
+		String oldRole = (String) callHistory.get();
+		if(!roleName.equals(oldRole)){
+			
+			invokeStopRole.invoke(oldRole, roleName);
+			
+			invokeStartRole.invoke(roleName, oldRole);
+			
 		}
 		
-		try {
-			Method callback = target.getClass().getMethod(roleName+"Pre", CtMethod.class);
-			callback.invoke(target, methodInvoked);
-		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			// Do nothing user probably didn't implement the method for call back
-			//e.printStackTrace();
-		}
+		invokePreRole.invoke(roleName, methodInvoked);
 
-		try {
-			Method callback = target.getClass().getMethod("Pre", String.class, CtMethod.class);
-			callback.invoke(target, roleName, methodInvoked);
-		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			// Do nothing user probably didn't implement the method for call back
-			//e.printStackTrace();
-		}
+		invokePre.invoke(roleName, methodInvoked);
 		
 		callHistory.add(roleName);
 		

@@ -59,6 +59,10 @@ public class RolesTest {
 			.registerRoles();
 	}
 	
+	@Test
+	public void testRoleInitilizers(){
+		TestRoleInitializers.test();
+	}
 	
 	@Test
 	public void testSingleLineCall(){
