@@ -3,7 +3,7 @@ package pt.mashashi.javaroles.test.composition;
 import static org.junit.Assert.*;
 
 import org.junit.BeforeClass;
-
+import org.junit.Rule;
 import org.junit.Test;
 
 import pt.mashashi.javaroles.annotations.AnnotationException;
@@ -12,6 +12,7 @@ import pt.mashashi.javaroles.annotations.MissUseAnnotationExceptionException;
 import pt.mashashi.javaroles.annotations.ObjRigid;
 import pt.mashashi.javaroles.impl.composition.RoleRegisterComposition;
 import pt.mashashi.javaroles.register.RoleRegisterAssembler;
+import pt.mashashi.javaroles.test.SpecificTestRule;
 
 /*
 import org.junit.Rule;
@@ -56,6 +57,8 @@ public class RolesTest {
 	    }
 	}
 	@Rule public SingleTestRule test = new SingleTestRule("testCallMultiInput");*/
+	
+	@Rule public SpecificTestRule specificTestRule = new SpecificTestRule();
 	
 	@BeforeClass
 	public static void setup(){
@@ -316,7 +319,7 @@ public class RolesTest {
 	public void testNotNullParams() {
 		TestNotNullParams.test();
 	}
-	
+
 	@Test
 	public void testProxyRules() {
 		TestProxyRules.test();

@@ -1,11 +1,12 @@
 package pt.mashashi.javaroles.test.typed;
 
 import org.junit.BeforeClass;
-
+import org.junit.Rule;
 import org.junit.Test;
 
 import pt.mashashi.javaroles.impl.typed.RoleRegisterTyped;
 import pt.mashashi.javaroles.register.RoleRegisterAssembler;
+import pt.mashashi.javaroles.test.SpecificTestRule;
 
 /*
 import org.junit.Rule;
@@ -49,7 +50,9 @@ public class RolesTest {
 	    }
 	}
 	@Rule public SingleTestRule test = new SingleTestRule("");*/
-
+	
+	@Rule public SpecificTestRule specificTestRule = new SpecificTestRule();
+	
 	@BeforeClass
 	public static void setup(){
 		//Role.registerRool("Animal");

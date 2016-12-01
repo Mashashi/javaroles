@@ -48,9 +48,9 @@ public class TestProxyRules {
 				.registerRoles();
 		AnimalRoles a = new AnimalRoles();
 		a.rolesActive = true;
-		assertEquals("Yap", "Hello buddy", a.hello());
+		assertEquals("Hello buddy", a.hello());
 		a.rolesActive = false;
-		assertEquals("Yap",  "Default hello pt.mashashi.javaroles.test.composition.TestProxyRules$AnimalRoles", a.hello());
+		assertEquals("Default hello pt.mashashi.javaroles.test.composition.TestProxyRules$AnimalRoles", a.hello());
 		
 		
 	}
