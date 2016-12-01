@@ -142,12 +142,6 @@
 				<include>**/*.java</include>
 			</includes>
 		</resource>
-		<resource>
-			<directory>helpers</directory>
-			<includes>
-				<include>**/*.java</include>
-			</includes>
-		</resource>
 	</resources>
 
   </build>
