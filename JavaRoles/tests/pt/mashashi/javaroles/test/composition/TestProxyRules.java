@@ -6,7 +6,6 @@ import pt.mashashi.javaroles.annotations.ObjRole;
 import pt.mashashi.javaroles.annotations.ProxyRules;
 import pt.mashashi.javaroles.impl.composition.RoleRegisterComposition;
 import pt.mashashi.javaroles.register.RoleRegisterAssembler;
-import pt.mashashi.javaroles.test.Test;
 
 public class TestProxyRules {
 	
@@ -42,18 +41,17 @@ public class TestProxyRules {
 	
 	public static void test(){
 	
-		if(Test.doTest(Test.Type.AGGRESSIVE)){
-			new RoleRegisterAssembler(new RoleRegisterComposition())
-					.includeGiven(TestProxyRules.class)
-					.get()
-					.registerRoles();
-			AnimalRoles a = new AnimalRoles();
-			a.rolesActive = true;
-			assertEquals("Yap", "Hello buddy", a.hello());
-			a.rolesActive = false;
-			assertEquals("Yap",  "Default hello pt.mashashi.javaroles.test.composition.TestProxyRules$AnimalRoles", a.hello());
-		}
-		//else{ System.out.println("nop"); }
+		//if(Test.doTest(Test.Type.AGGRESSIVE)){}
+		new RoleRegisterAssembler(new RoleRegisterComposition())
+				.includeGiven(TestProxyRules.class)
+				.get()
+				.registerRoles();
+		AnimalRoles a = new AnimalRoles();
+		a.rolesActive = true;
+		assertEquals("Yap", "Hello buddy", a.hello());
+		a.rolesActive = false;
+		assertEquals("Yap",  "Default hello pt.mashashi.javaroles.test.composition.TestProxyRules$AnimalRoles", a.hello());
+		
 		
 	}
 	
