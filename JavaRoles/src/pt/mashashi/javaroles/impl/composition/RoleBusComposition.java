@@ -162,6 +162,7 @@ public class RoleBusComposition extends RoleBus{
 				    	// get all methods which have rigid, role
 				    	ProxyRules proxyRules = target.getClass().getAnnotation(ProxyRules.class);
 				    	if(proxyRules!=null){
+				    		LinkedList<Boolean> inquiryReturn = new LinkedList<Boolean>();
 				    		for(Class<?> r : proxyRules.value()){
 				    			List<Method> ms1 = ClassUtils.getMethodsWithParams(r, target.getClass(), o.getClass());
 				    			List<Method> ms2 = ClassUtils.getMethodsWithParams(r, target.getClass());
@@ -172,19 +173,15 @@ public class RoleBusComposition extends RoleBus{
 				    			for(List<Method> ms : mss){
 					    			for(Method m : ms){
 					    				if(	
-					    						m.getReturnType().equals(Boolean.class) && 
-					    						Modifier.isStatic(m.getModifiers())
+					    						m.getReturnType().equals(Boolean.class) && Modifier.isStatic(m.getModifiers())
 					    				){
 						    				try {
 						    					Boolean ret =null;
 						    					if(ms==ms1){
-						    						ret = (Boolean) m.invoke(r, target, o); // return might be null
+						    						inquiryReturn.add((Boolean) ClassUtils.invokeSetAccessible(null, m, target, o)); // return might be null
 						    					}else if(ms==ms2){
-						    						ret = (Boolean) m.invoke(r, target); // return might be null
+						    						inquiryReturn.add((Boolean) ClassUtils.invokeSetAccessible(null, m, target)); // return might be null
 						    					}
-												if(ret!=true){ 
-													break useIt;
-												}
 											} catch (IllegalArgumentException e) {
 												// This is not supposed to happen
 												throw new RuntimeException(e);
@@ -196,6 +193,19 @@ public class RoleBusComposition extends RoleBus{
 					    			}
 				    			}
 				    		}
+				    		
+				    		{
+			    				boolean use = false;
+				    			for(boolean ret : inquiryReturn){
+				    				if(ret){
+				    					use = true;
+				    				}
+								}
+				    			if(!use){
+				    				break useIt;
+				    			}
+			    			}
+				    		
 				    	}
 				    	
 			    	} catch (NoSuchFieldException | SecurityException | IllegalAccessException e) {

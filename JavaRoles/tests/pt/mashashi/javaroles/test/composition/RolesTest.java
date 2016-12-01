@@ -12,7 +12,6 @@ import pt.mashashi.javaroles.annotations.MissUseAnnotationExceptionException;
 import pt.mashashi.javaroles.annotations.ObjRigid;
 import pt.mashashi.javaroles.impl.composition.RoleRegisterComposition;
 import pt.mashashi.javaroles.register.RoleRegisterAssembler;
-import pt.mashashi.javaroles.test.SpecificTestRule;
 
 /*
 import org.junit.Rule;
@@ -56,9 +55,7 @@ public class RolesTest {
 	        };
 	    }
 	}
-	@Rule public SingleTestRule test = new SingleTestRule("testCallMultiInput");*/
-	
-	@Rule public SpecificTestRule specificTestRule = new SpecificTestRule();
+	@Rule public SpecificTestRule specificTestRule = new SpecificTestRule();*/
 	
 	@BeforeClass
 	public static void setup(){
@@ -86,7 +83,6 @@ public class RolesTest {
 				,TestMethodRoleObjectNotInter.class
 				,TestMethodRoleObjectExtend.class
 				,TestMethodRigidInaccessibleInterface.class
-				,TestProxyRules.class
 				
 				,pt.mashashi.javaroles.test.composition.TestObjectRoleDefinitionOnAnnotation.NotImplementedInterfaceOnRigid.class
 				,pt.mashashi.javaroles.test.composition.TestObjectRoleDefinitionOnAnnotation.NotImplementedInterfaceOnRole1.class

@@ -140,12 +140,10 @@ public class ClassUtils {
 	public static Object invokeWithNativeTypes(Object target, String methodName, CtClass[] jaTypes, Object[] args) throws ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException{
 		Class<?>[] types = getNativeTypes(jaTypes);
 		Method m = target.getClass().getMethod(methodName, types);
-		boolean access = m.isAccessible();
-		m.setAccessible(true);
-		Object ret = m.invoke(target, args);
-		m.setAccessible(access);
-		return ret;
+		return ClassUtils.invokeSetAccessible(target, m, args);
 	}
+	
+	
 	
 	public static String getMethodCall(String methodName, CtClass[] jaTypes, String objArgsVar){
 		String s = new String("");
@@ -181,6 +179,10 @@ public class ClassUtils {
 	
 	public static Object invokeWithNativeTypes(Object target, String methodName, Class<?>[] types, Object[] args) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException{
 		Method m = target.getClass().getDeclaredMethod(methodName, types);
+		return ClassUtils.invokeSetAccessible(target, m, args);
+	}
+	
+	public static Object invokeSetAccessible(Object target, Method m, Object... args) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException{
 		boolean access = m.isAccessible();
 		m.setAccessible(true);
 		Object ret = m.invoke(target, args);
@@ -520,12 +522,12 @@ public class ClassUtils {
 	
 	public static List<Method> getMethodsWithParams(Class<?> clazz, Class<?>... params){
 		List<Method> ms = new LinkedList<>();
-		nextMethod: for(Method m : clazz.getMethods()){
+		nextMethod: for(Method m : getMixMethods(clazz)){
 			Class<?>[] mParams = m.getParameterTypes();
 			if(mParams.length == params.length){
-				int i = Math.max(mParams.length, params.length)-1;
-				while(i>0){
-					if(!mParams[i].equals(params[i])){
+				int i = mParams.length-1;
+				while(i>=0){
+					if(!mParams[i].isAssignableFrom(params[i])){
 						continue nextMethod;
 					}
 					i--;
@@ -534,6 +536,19 @@ public class ClassUtils {
 			}
 		}
 		return ms;
+	}
+	
+	
+	private static List<Method> getMixMethods(Class target){
+		// For inherited fields target.getFields()
+		// For private fields target.getDeclaredFields()
+		List<Method> list = new LinkedList<Method>(Arrays.asList(target.getMethods()));
+		for(Method field : target.getDeclaredMethods()){
+			if(!list.contains(field)){
+				list.add(field);
+			}
+		}
+		return list;
 	}
 	
 }
