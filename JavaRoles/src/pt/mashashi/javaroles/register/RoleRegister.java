@@ -9,6 +9,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -200,6 +202,10 @@ public abstract class RoleRegister {
 	}
 	
 	private void areObjRolesTypesImplemented(CtClass cn, HashMap<String, CtField> objRoles) throws NotFoundException {
+		
+		HashMap<String, CtField> newRoleAssoc = new HashMap<String, CtField>();
+		HashMap<String, CtField> deleteRoleAssoc = new HashMap<String, CtField>();
+		
 		{ // BLOCK check if objroles
 			for(CtField objRole : objRoles.values()){
 				
@@ -211,6 +217,15 @@ public abstract class RoleRegister {
 						int newPos = roleInterfaces.length;
 						roleInterfaces = Arrays.copyOf(roleInterfaces, newPos+1);
 						roleInterfaces[newPos] = objRole.getType();
+					}else{
+						deleteRoleAssoc.put(objRole.getType().getSimpleName(), objRole);
+						for(Class<?> clazz: roleInterfacesAnnotation.value()){
+							Pattern pat = Pattern.compile("interface .*?(\\.)?(?<simpleName>[^\\.]*)");
+							Matcher matcher = pat.matcher(clazz.toString());
+							if(matcher.matches()){
+								newRoleAssoc.put(matcher.group("simpleName"), objRole);
+							}
+						}
 					}
 					
 					CtClass rigid = objRole.getDeclaringClass();
@@ -259,12 +274,19 @@ public abstract class RoleRegister {
 						
 					}
 					
+					
+					
 				} catch (ClassNotFoundException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				
 			}
+		}
+		objRoles.putAll(newRoleAssoc);
+		
+		for(String toDel: deleteRoleAssoc.keySet()){
+			objRoles.remove(toDel);
 		}
 	}
 

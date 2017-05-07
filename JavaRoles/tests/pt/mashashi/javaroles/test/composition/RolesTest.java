@@ -352,4 +352,9 @@ public class RolesTest {
 		}
 	}
 	
+	@Test
+	public void testNotAbleToObtainPrivate() {
+		TestNotAbleToObtainPrivate.test();
+	}
+	
 }
